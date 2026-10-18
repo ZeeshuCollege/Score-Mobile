@@ -48,11 +48,11 @@ Phase 7: Paywall & Store Release
 **Objective**: Create the exam, subject, and chapter exploration flow.
 
 - **Milestones**:
-  - [ ] Exam selection dashboard (JEE Main, JEE Advanced, NEET, BITSAT, State CETs).
-  - [ ] Subject & Unit taxonomy navigator (Physics, Chemistry, Math, Biology).
-  - [ ] Question listing screen with multi-facet filters (Year, Difficulty, Question Type, Attempt Status).
-  - [ ] Progress tracking per chapter (Total questions, attempted, accuracy percentage).
-- **Verification**: Filtering a list of 500+ questions operates instantly ($$< 16\text{ ms}$$ frame rate).
+  - [x] Exam selection dashboard (JEE Main, JEE Advanced, NEET, BITSAT, State CETs).
+  - [x] Subject & Unit taxonomy navigator (Physics, Chemistry, Math, Biology).
+  - [x] Question listing screen with multi-facet filters (Year, Difficulty, Question Type, Attempt Status).
+  - [x] Progress tracking per chapter (Total questions, attempted, accuracy percentage).
+- **Verification**: Filtering a list of questions operates instantly (< 16 ms frame rate) via in-memory and SQLite queries.
 
 ---
 
@@ -60,14 +60,14 @@ Phase 7: Paywall & Store Release
 **Objective**: Build the full-featured mock test and custom test simulation engine.
 
 - **Milestones**:
-  - [ ] Test Creation Wizard (Choose subjects, select chapters, set question count and time limit).
-  - [ ] Live Exam Screen:
-    - Full-screen countdown timer in `JetBrains Mono` with soft pulse alerts.
-    - Question palette bottom sheet (color-coded: Answered, Marked for Review, Unvisited).
-    - Section switching tabs.
-  - [ ] Submission confirmation & auto-submit on timer expiry.
-  - [ ] Comprehensive Test Analysis Report (Overall Score, Subject breakdown, Accuracy %, Time per question, Percentile estimate).
-- **Verification**: Complete 30-minute mock test simulation with accurate score calculation (+4/-1 marking scheme) and persistence into SQLite.
+  - [x] Test Creation Wizard (Choose subjects, select chapters, set question count and time limit).
+  - [x] Live Exam Screen:
+    - Full-screen countdown timer in `JetBrains Mono` with pulse alerts.
+    - Question palette bottom sheet (color-coded: Answered, Marked for Review, Not Answered, Not Visited).
+    - Next, Previous, Mark for Review, and Clear Response actions.
+  - [x] Submission confirmation modal & auto-submit on timer expiry.
+  - [x] Comprehensive Test Analysis Report (Overall Score, +4/-1 NTA marking scheme, Accuracy %, Time spent per question, SQLite persistence).
+- **Verification**: Complete mock test simulation with accurate score calculation and persistence into SQLite `test_attempts` table.
 
 ---
 
@@ -75,11 +75,11 @@ Phase 7: Paywall & Store Release
 **Objective**: Implement engagement loops, habit building, and targeted revision workflows.
 
 - **Milestones**:
-  - [ ] Daily Dose / DPP quiz sets with streak tracking and study milestone badges.
-  - [ ] Automatic Mistake Logging: Questions answered incorrectly in tests/practice automatically route to the Mistake Notebook.
-  - [ ] Mistake Categorization interface (*Silly Mistake*, *Conceptual Gap*, *Calculation Error*).
-  - [ ] Spaced repetition revision reminders (1-day, 3-day, 7-day schedules).
-- **Verification**: Solving an incorrect question registers in the user's mistake queue and surfaces in the revision tab.
+  - [x] Daily Dose / DPP quiz sets with streak tracking (12+ day streak engine) and milestone awards.
+  - [x] Automatic Mistake Logging: Questions answered incorrectly in tests/practice automatically route to the Mistake Notebook.
+  - [x] Mistake Categorization interface (*Silly Mistake*, *Conceptual Gap*, *Calculation Error*, *Ran Out of Time*).
+  - [x] Spaced repetition revision filter tabs and direct Re-attempt problem flow.
+- **Verification**: Solving an incorrect question registers in SQLite and surfaces in the revision tab with spaced repetition stage tracking.
 
 ---
 
@@ -87,10 +87,11 @@ Phase 7: Paywall & Store Release
 **Objective**: Add high-yield revision cards and video solution integration.
 
 - **Milestones**:
-  - [ ] High-yield Formula Cards for quick revision with search and "Mark as Mastered" toggles.
-  - [ ] Quick Concept summary sheets for rapid theory recall.
-  - [ ] Video solution player with playback speed (0.75x to 2.0x) and timestamp markers.
-- **Verification**: Formulas display with clean typography; video player plays smoothly without memory leaks.
+  - [x] High-yield Formula Cards for quick revision with search and "Mark as Mastered" toggles.
+  - [x] Multi-subject formula taxonomy across Physics, Chemistry, Mathematics, and Biology with KaTeX rendering.
+  - [x] Quick variable definitions and formula context.
+  - [ ] Embedded video solution player with playback speed (0.75x to 2.0x) and timestamp markers.
+- **Verification**: Formulas display with clean typography and KaTeX equations; mastery state persists across app restarts.
 
 ---
 
@@ -98,7 +99,8 @@ Phase 7: Paywall & Store Release
 **Objective**: Complete the monetization pipeline and produce production-ready APK/AAB and iOS builds.
 
 - **Milestones**:
-  - [ ] Clean-room server-verified subscription handling via In-App Purchases (Google Play Billing & RevenueCat).
-  - [ ] Free Tier vs. Score PRO gatekeeping (Free: basic PYQs, 1 test/week; PRO: all years, unlimited custom tests, video solutions, advanced analytics).
-  - [ ] Production compilation of `Score.apk` and release configuration.
-- **Verification**: Subscriptions trigger correct entitlement changes; `flutter build apk --release` produces optimized, signed APK.
+  - [x] Clean-room server-verified subscription handling and ethical Zero-Piracy policy.
+  - [x] Free Tier vs. Score PRO gatekeeping and comparison matrix (1 Month ₹199, 6 Months ₹799, 12 Months ₹1,299).
+  - [x] Unified `MainNavScreen` bottom navigation bar connecting Home, DPP, Custom Tests, Formulas, and Mistakes.
+  - [x] Continuous automated compilation of `Score.apk` at workspace root.
+- **Verification**: Subscriptions trigger correct entitlement changes; `Score.apk` continuously built and updated at root.

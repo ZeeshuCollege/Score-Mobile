@@ -6,6 +6,9 @@ import '../../domain/entities/exam_entity.dart';
 import '../cpyq/chapter_list_screen.dart';
 import '../custom_test/custom_test_screen.dart';
 import '../mistakes/mistake_notebook_screen.dart';
+import '../dpp/dpp_screen.dart';
+import '../formula_cards/formula_cards_screen.dart';
+import '../subscription/subscription_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -67,20 +70,29 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         actions: [
-          Container(
-            margin: const EdgeInsets.only(right: 16),
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(
-              color: AppColors.reviewAmber.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.local_fire_department_rounded,
-                    color: AppColors.reviewAmber, size: 20),
-                const SizedBox(width: 4),
-                Text('12d', style: AppTypography.monoNumber(AppColors.reviewAmber)),
-              ],
+          InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => DppScreen(examId: _selectedExamId)),
+              );
+            },
+            borderRadius: BorderRadius.circular(16),
+            child: Container(
+              margin: const EdgeInsets.only(right: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: AppColors.reviewAmber.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.local_fire_department_rounded,
+                      color: AppColors.reviewAmber, size: 20),
+                  const SizedBox(width: 4),
+                  Text('12d', style: AppTypography.monoNumber(AppColors.reviewAmber)),
+                ],
+              ),
             ),
           ),
         ],
@@ -91,55 +103,79 @@ class _HomeScreenState extends State<HomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Daily Goal & Stats Card
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(18),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Today\'s Practice Goal',
-                                style: AppTypography.labelLarge(textSecondary)),
-                            const SizedBox(height: 4),
-                            Text('24 / 30 Questions',
-                                style: AppTypography.displayMedium(textPrimary)),
-                          ],
-                        ),
-                        Container(
-                          width: 52,
-                          height: 52,
-                          decoration: BoxDecoration(
-                            color: AppColors.correctGreen.withValues(alpha: 0.15),
-                            shape: BoxShape.circle,
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => DppScreen(examId: _selectedExamId)),
+                );
+              },
+              borderRadius: BorderRadius.circular(16),
+              child: Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(18),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Today\'s Practice Goal (DPP)',
+                                  style: AppTypography.labelLarge(textSecondary)),
+                              const SizedBox(height: 4),
+                              Text('24 / 30 Questions',
+                                  style: AppTypography.displayMedium(textPrimary)),
+                            ],
                           ),
-                          child: const Icon(Icons.bolt_rounded,
-                              color: AppColors.correctGreen, size: 30),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 14),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(4),
-                      child: const LinearProgressIndicator(
-                        value: 24 / 30,
-                        minHeight: 8,
-                        backgroundColor: Color(0xFFE2E8F0),
-                        valueColor: AlwaysStoppedAnimation<Color>(AppColors.correctGreen),
+                          Container(
+                            width: 52,
+                            height: 52,
+                            decoration: BoxDecoration(
+                              color: AppColors.correctGreen.withValues(alpha: 0.15),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(Icons.bolt_rounded,
+                                color: AppColors.correctGreen, size: 30),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 14),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(4),
+                        child: const LinearProgressIndicator(
+                          value: 24 / 30,
+                          minHeight: 8,
+                          backgroundColor: Color(0xFFE2E8F0),
+                          valueColor: AlwaysStoppedAnimation<Color>(AppColors.correctGreen),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
             const SizedBox(height: 20),
 
-            // Quick Actions: Custom Test & Mistake Notebook
+            // Quick Actions (4-Grid)
             Row(
               children: [
+                Expanded(
+                  child: _buildActionTile(
+                    title: 'Daily DPP',
+                    subtitle: 'Streak & goals',
+                    icon: Icons.local_fire_department_outlined,
+                    iconBg: AppColors.reviewAmber,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => DppScreen(examId: _selectedExamId)),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(width: 12),
                 Expanded(
                   child: _buildActionTile(
                     title: 'Custom Mock Test',
@@ -150,6 +186,25 @@ class _HomeScreenState extends State<HomeScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (_) => const CustomTestScreen()),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildActionTile(
+                    title: 'Formula Cards',
+                    subtitle: 'KaTeX flashcards',
+                    icon: Icons.functions_rounded,
+                    iconBg: AppColors.correctGreen,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const FormulaCardsScreen()),
                       );
                     },
                   ),
@@ -225,8 +280,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: 14),
                   ElevatedButton(
                     onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Score PRO Subscription Checkout')),
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const SubscriptionScreen()),
                       );
                     },
                     style: ElevatedButton.styleFrom(

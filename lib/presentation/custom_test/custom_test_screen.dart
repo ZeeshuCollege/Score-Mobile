@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../app/theme/app_colors.dart';
 import '../../app/theme/app_typography.dart';
 import '../../domain/entities/exam_entity.dart';
-import '../cpyq/question_solve_screen.dart';
+import 'test_simulation_screen.dart';
 
 class CustomTestScreen extends StatefulWidget {
   const CustomTestScreen({super.key});
@@ -150,9 +150,11 @@ class _CustomTestScreenState extends State<CustomTestScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => QuestionSolveScreen(
-                        title: 'Custom Mock Test ($_selectedExam)',
+                      builder: (_) => TestSimulationScreen(
+                        testTitle: 'Custom Mock Test (${_selectedExam.toUpperCase()})',
+                        durationMinutes: _durationMinutes,
                         examId: _selectedExam,
+                        subjects: _selectedSubjects.toList(),
                       ),
                     ),
                   );

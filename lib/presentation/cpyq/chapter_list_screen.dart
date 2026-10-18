@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../app/theme/app_colors.dart';
 import '../../app/theme/app_typography.dart';
 import '../../domain/entities/exam_entity.dart';
-import 'question_solve_screen.dart';
+import 'question_list_screen.dart';
 
 class ChapterListScreen extends StatelessWidget {
   final String examId;
@@ -148,7 +148,7 @@ class ChapterListScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => QuestionSolveScreen(
+                    builder: (_) => QuestionListScreen(
                       title: ch.name,
                       examId: examId,
                       subjectId: subjectId,

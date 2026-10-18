@@ -91,9 +91,23 @@
 - **Action 16**: Resolved Windows multi-drive Kotlin compilation constraints via `android/gradle.properties` (`kotlin.incremental=false`), ran `flutter analyze` (0 issues), and passed `flutter test` test suite.
 - **Action 17**: Recompiled and published updated [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) (173 MB), synced changes to Git, and pushed to origin `main` (commit `762f45c`).
 
+### Phase 3, 4, 5, 6 & 7: Test Engine, DPP, Formulas, Paywall & Navigation (Completed)
+- **Action 18**: Built [`QuestionFilterSheet`](file:///d:/CodeSupa/Score/lib/presentation/cpyq/widgets/question_filter_sheet.dart) supporting multi-criteria filtering by difficulty, year range, and question type (MCQ vs Numerical).
+- **Action 19**: Implemented [`QuestionListScreen`](file:///d:/CodeSupa/Score/lib/presentation/cpyq/question_list_screen.dart) with chapter-wise question preview, active filter chips, search query matching, and direct jump to solve view.
+- **Action 20**: Created full NTA-style CBT [`TestSimulationScreen`](file:///d:/CodeSupa/Score/lib/presentation/custom_test/test_simulation_screen.dart) with full-screen countdown timer, interactive Question Palette (Answered, Marked for Review, Not Visited), section navigation, and auto-submit.
+- **Action 21**: Built [`TestResultAnalysisScreen`](file:///d:/CodeSupa/Score/lib/presentation/custom_test/test_result_analysis_screen.dart) with NTA marking (+4/-1), accuracy %, time breakdown, question-by-question review, and direct one-click logging to the Mistake Notebook.
+- **Action 22**: Implemented [`DppScreen`](file:///d:/CodeSupa/Score/lib/presentation/dpp/dpp_screen.dart) featuring Daily Practice Problems, 12+ day streak engine, completion dialog, milestone achievements, and local state persistence.
+- **Action 23**: Built [`FormulaEntity`](file:///d:/CodeSupa/Score/lib/domain/entities/formula_entity.dart) and [`FormulaCardsScreen`](file:///d:/CodeSupa/Score/lib/presentation/formula_cards/formula_cards_screen.dart) supporting high-yield KaTeX equations across Physics, Chemistry, Mathematics, and Biology with real-time search and "Mark as Mastered" toggling.
+- **Action 24**: Upgraded [`MistakeNotebookScreen`](file:///d:/CodeSupa/Score/lib/presentation/mistakes/mistake_notebook_screen.dart) with mistake type tabs (*Silly Mistake*, *Conceptual Gap*, *Calculation Error*, *Ran Out of Time*), spaced repetition stage indicators, and direct re-attempt flows.
+- **Action 25**: Implemented ethical, zero-piracy [`SubscriptionScreen`](file:///d:/CodeSupa/Score/lib/presentation/subscription/subscription_screen.dart) with Free vs. PRO comparison table, monthly/6-month/annual pricing tiers, and entitlement validation.
+- **Action 26**: Built unified [`MainNavScreen`](file:///d:/CodeSupa/Score/lib/presentation/main_nav_screen.dart) providing bottom navigation between Home, DPP, Tests, Formulas, and Mistakes.
+- **Action 27**: Ran full `flutter analyze` with 0 errors and 0 warnings.
+- **Action 28**: Recompiled debug binary and updated [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) (208 MB) at the root of the workspace.
+
 ---
 
 ## 5. Next Immediate Actions
-1. **Phase 3 & Phase 4**: Expand the Chapter-wise PYQ multi-filter drawer (filtering by years 2010–2026, shifts, and difficulty level).
-2. Implement full-screen Mock Test simulation mode with live countdown timer and question palette bottom sheet.
-3. Keep [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) refreshed after subsequent commits.
+1. Keep [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) continuously refreshed upon subsequent commits.
+2. Synchronize and push latest commits to remote repository `https://github.com/ZeeshuCollege/Score-Mobile.git`.
+3. Add offline SQLite sync and mock video solution player for high-yield problems.
+
