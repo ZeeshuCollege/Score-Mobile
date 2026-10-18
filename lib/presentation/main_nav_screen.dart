@@ -1,5 +1,9 @@
+import 'dart:ui';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../app/theme/app_colors.dart';
+import '../app/theme/app_typography.dart';
 import 'home/home_screen.dart';
 import 'dpp/dpp_screen.dart';
 import 'custom_test/custom_test_screen.dart';
@@ -24,49 +28,105 @@ class _MainNavScreenState extends State<MainNavScreen> {
     MistakeNotebookScreen(),
   ];
 
+  final List<Map<String, dynamic>> _tabs = const [
+    {
+      'label': 'Home',
+      'icon': CupertinoIcons.house,
+      'activeIcon': CupertinoIcons.house_fill,
+    },
+    {
+      'label': 'DPP',
+      'icon': CupertinoIcons.flame,
+      'activeIcon': CupertinoIcons.flame_fill,
+    },
+    {
+      'label': 'Tests',
+      'icon': CupertinoIcons.timer,
+      'activeIcon': CupertinoIcons.timer_fill,
+    },
+    {
+      'label': 'Formulas',
+      'icon': CupertinoIcons.function,
+      'activeIcon': CupertinoIcons.function,
+    },
+    {
+      'label': 'Mistakes',
+      'icon': CupertinoIcons.bookmark,
+      'activeIcon': CupertinoIcons.bookmark_fill,
+    },
+  ];
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final activeColor = isDark ? AppColors.systemBlueDark : AppColors.systemBlue;
+    final inactiveColor = isDark ? AppColors.darkTextSecondary : AppColors.lightTextMuted;
+    final glassColor = isDark ? AppColors.darkCardSurface.withValues(alpha: 0.82) : AppColors.lightCardSurface.withValues(alpha: 0.85);
+    final borderColor = isDark ? AppColors.darkCardStroke : AppColors.lightCardStroke;
 
     return Scaffold(
+      extendBody: true,
       body: IndexedStack(
         index: _currentIndex,
         children: _screens,
       ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _currentIndex,
-        onDestinationSelected: (index) {
-          setState(() => _currentIndex = index);
-        },
-        backgroundColor: isDark ? AppColors.darkCardSurface : AppColors.lightCardSurface,
-        indicatorColor: AppColors.brandBlue.withValues(alpha: 0.15),
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home_rounded, color: AppColors.brandBlue),
-            label: 'Home',
+      bottomNavigationBar: ClipRect(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+          child: Container(
+            decoration: BoxDecoration(
+              color: glassColor,
+              border: Border(
+                top: BorderSide(color: borderColor, width: 0.5),
+              ),
+            ),
+            child: SafeArea(
+              top: false,
+              child: SizedBox(
+                height: 50,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: List.generate(_tabs.length, (index) {
+                    final isSelected = _currentIndex == index;
+                    final tab = _tabs[index];
+
+                    return Expanded(
+                      child: CupertinoButton(
+                        padding: EdgeInsets.zero,
+                        onPressed: () {
+                          if (_currentIndex != index) {
+                            HapticFeedback.selectionClick();
+                            setState(() => _currentIndex = index);
+                          }
+                        },
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              isSelected ? tab['activeIcon'] as IconData : tab['icon'] as IconData,
+                              size: 22,
+                              color: isSelected ? activeColor : inactiveColor,
+                            ),
+                            const SizedBox(height: 3),
+                            Text(
+                              tab['label'] as String,
+                              style: AppTypography.labelSmall(
+                                isSelected ? activeColor : inactiveColor,
+                              ).copyWith(
+                                fontSize: 10,
+                                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }),
+                ),
+              ),
+            ),
           ),
-          NavigationDestination(
-            icon: Icon(Icons.local_fire_department_outlined),
-            selectedIcon: Icon(Icons.local_fire_department_rounded, color: AppColors.reviewAmber),
-            label: 'DPP',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.timer_outlined),
-            selectedIcon: Icon(Icons.timer_rounded, color: AppColors.brandBlue),
-            label: 'Tests',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.functions_rounded),
-            selectedIcon: Icon(Icons.functions_rounded, color: AppColors.correctGreen),
-            label: 'Formulas',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.bookmark_border_rounded),
-            selectedIcon: Icon(Icons.bookmark_rounded, color: AppColors.errorRed),
-            label: 'Mistakes',
-          ),
-        ],
+        ),
       ),
     );
   }

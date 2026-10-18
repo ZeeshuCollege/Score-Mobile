@@ -1,7 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../app/theme/app_colors.dart';
 import '../../app/theme/app_typography.dart';
 import '../../domain/entities/exam_entity.dart';
+import '../common/ios_grouped_list.dart';
 import 'question_list_screen.dart';
 
 class ChapterListScreen extends StatelessWidget {
@@ -38,7 +41,7 @@ class ChapterListScreen extends StatelessWidget {
         id: 'laws_of_motion',
         subjectId: 'physics',
         name: 'Laws of Motion & Friction',
-        unitName: 'Mechanics 1',
+        unitName: 'Mechanics',
         totalQuestions: 72,
         solvedQuestions: 18,
       ),
@@ -46,7 +49,7 @@ class ChapterListScreen extends StatelessWidget {
         id: 'thermodynamics',
         subjectId: 'physics',
         name: 'Thermodynamics & Heat Transfer',
-        unitName: 'Thermodynamics',
+        unitName: 'Thermal Physics',
         totalQuestions: 65,
         solvedQuestions: 50,
       ),
@@ -55,7 +58,7 @@ class ChapterListScreen extends StatelessWidget {
       ChapterEntity(
         id: 'chemical_kinetics',
         subjectId: 'chemistry',
-        name: 'Chemical Kinetics',
+        name: 'Chemical Kinetics & Rate Laws',
         unitName: 'Physical Chemistry',
         totalQuestions: 68,
         solvedQuestions: 40,
@@ -131,75 +134,94 @@ class ChapterListScreen extends StatelessWidget {
 
     final chapters = sampleChapters[subjectId.toLowerCase()] ?? [];
 
+    // Group chapters by unit
+    final Map<String, List<ChapterEntity>> groupedByUnit = {};
+    for (final ch in chapters) {
+      groupedByUnit.putIfAbsent(ch.unitName, () => []).add(ch);
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(subjectName),
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: chapters.length,
-        itemBuilder: (context, index) {
-          final ch = chapters[index];
-          return Card(
-            margin: const EdgeInsets.only(bottom: 14),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(12),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => QuestionListScreen(
-                      title: ch.name,
-                      examId: examId,
-                      subjectId: subjectId,
-                      chapterId: ch.id,
-                    ),
-                  ),
-                );
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          ch.unitName.toUpperCase(),
-                          style: AppTypography.labelSmall(AppColors.brandBlue),
+      body: ListView(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        children: [
+          for (final entry in groupedByUnit.entries) ...[
+            IosGroupedSection(
+              header: entry.key,
+              children: [
+                for (final ch in entry.value)
+                  CupertinoButton(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    onPressed: () {
+                      HapticFeedback.lightImpact();
+                      Navigator.push(
+                        context,
+                        CupertinoPageRoute(
+                          builder: (_) => QuestionListScreen(
+                            title: ch.name,
+                            examId: examId,
+                            subjectId: subjectId,
+                            chapterId: ch.id,
+                          ),
                         ),
-                        Text(
-                          '${ch.solvedQuestions} / ${ch.totalQuestions} solved',
-                          style: AppTypography.monoNumber(textSecondary, fontSize: 12),
+                      );
+                    },
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                ch.name,
+                                style: AppTypography.titleMedium(textPrimary).copyWith(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(3),
+                                      child: LinearProgressIndicator(
+                                        value: ch.progress,
+                                        minHeight: 4,
+                                        backgroundColor: isDark
+                                            ? const Color(0xFF2C2C2E)
+                                            : const Color(0xFFE5E5EA),
+                                        valueColor: const AlwaysStoppedAnimation<Color>(
+                                          AppColors.systemBlue,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Text(
+                                    '${ch.solvedQuestions} / ${ch.totalQuestions}',
+                                    style: AppTypography.monoNumber(textSecondary, fontSize: 12),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Icon(
+                          CupertinoIcons.chevron_right,
+                          size: 14,
+                          color: textSecondary.withValues(alpha: 0.6),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      ch.name,
-                      style: AppTypography.titleMedium(textPrimary),
-                    ),
-                    const SizedBox(height: 12),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(4),
-                      child: LinearProgressIndicator(
-                        value: ch.progress,
-                        minHeight: 6,
-                        backgroundColor: isDark
-                            ? const Color(0xFF1E293B)
-                            : const Color(0xFFE2E8F0),
-                        valueColor: const AlwaysStoppedAnimation<Color>(
-                          AppColors.brandBlue,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                  ),
+              ],
             ),
-          );
-        },
+          ],
+        ],
       ),
     );
   }

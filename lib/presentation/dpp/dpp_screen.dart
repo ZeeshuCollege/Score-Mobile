@@ -1,8 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../app/theme/app_colors.dart';
 import '../../app/theme/app_typography.dart';
+import '../common/ios_grouped_list.dart';
 import '../cpyq/question_solve_screen.dart';
 
 class DppScreen extends StatefulWidget {
@@ -52,43 +54,31 @@ class _DppScreenState extends State<DppScreen> {
     });
 
     if (mounted) {
-      showDialog(
+      HapticFeedback.heavyImpact();
+      showCupertinoDialog(
         context: context,
-        builder: (_) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: Row(
-            children: [
-              const Icon(Icons.emoji_events_rounded, color: Colors.amber, size: 28),
-              const SizedBox(width: 8),
-              const Text('Streak Maintained!'),
-            ],
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                '$_currentStreak DAYS',
-                style: GoogleFonts.outfit(
-                  fontSize: 32,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.reviewAmber,
+        builder: (_) => CupertinoAlertDialog(
+          title: const Text('Streak Maintained!'),
+          content: Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Column(
+              children: [
+                Text(
+                  '$_currentStreak DAYS',
+                  style: AppTypography.displayLarge(AppColors.reviewAmber),
                 ),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'You\'ve successfully completed today\'s Daily Practice Problem set. Keep the momentum going tomorrow!',
-                textAlign: TextAlign.center,
-              ),
-            ],
+                const SizedBox(height: 8),
+                const Text(
+                  'You\'ve successfully completed today\'s Daily Practice Problem set. Keep the momentum going tomorrow!',
+                ),
+              ],
+            ),
           ),
           actions: [
-            ElevatedButton(
+            CupertinoDialogAction(
+              isDefaultAction: true,
               onPressed: () => Navigator.pop(context),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.brandBlue,
-                foregroundColor: Colors.white,
-              ),
-              child: const Text('Awesome!'),
+              child: const Text('Awesome'),
             ),
           ],
         ),
@@ -98,33 +88,29 @@ class _DppScreenState extends State<DppScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textPrimary = isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
-    final textSecondary = isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary;
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Daily Practice (DPP)'),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Streak Hero Banner
-            Container(
+      body: ListView(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        children: [
+          // iOS Hero Flame Card
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Container(
               width: double.infinity,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [Color(0xFFEA580C), Color(0xFFF97316)],
+                  colors: [Color(0xFFE65100), Color(0xFFFF9500)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFFEA580C).withValues(alpha: 0.3),
+                    color: const Color(0xFFFF9500).withValues(alpha: 0.25),
                     blurRadius: 16,
                     offset: const Offset(0, 6),
                   ),
@@ -133,16 +119,16 @@ class _DppScreenState extends State<DppScreen> {
               child: Row(
                 children: [
                   Container(
-                    width: 64,
-                    height: 64,
+                    width: 56,
+                    height: 56,
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.2),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(
-                      Icons.local_fire_department_rounded,
+                      CupertinoIcons.flame_fill,
                       color: Colors.white,
-                      size: 40,
+                      size: 32,
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -151,12 +137,8 @@ class _DppScreenState extends State<DppScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '$_currentStreak Day Streak!',
-                          style: GoogleFonts.outfit(
-                            color: Colors.white,
-                            fontSize: 22,
-                            fontWeight: FontWeight.w800,
-                          ),
+                          '$_currentStreak Day Streak',
+                          style: AppTypography.displayMedium(Colors.white),
                         ),
                         const SizedBox(height: 4),
                         Text(
@@ -174,134 +156,115 @@ class _DppScreenState extends State<DppScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 24),
+          ),
+          const SizedBox(height: 12),
 
-            // Today's Target Card
-            Text('Today\'s Dose (${widget.examId.toUpperCase().replaceAll('_', ' ')})',
-                style: AppTypography.titleLarge(textPrimary)),
-            const SizedBox(height: 4),
-            Text('10 curated questions across Physics, Chem & Math',
-                style: AppTypography.bodySmall(textSecondary)),
-            const SizedBox(height: 12),
+          // Today's Target Inset Section
+          IosGroupedSection(
+            header: 'Today\'s Curated Dose',
+            footer: 'Curated mix of past examination questions to test daily recall',
+            children: [
+              IosGroupedTile(
+                icon: CupertinoIcons.bolt_fill,
+                iconBgColor: AppColors.systemIndigo,
+                title: 'Physics',
+                subtitle: 'Electrostatics & Current Electricity',
+                trailingText: '3 Questions',
+                showChevron: false,
+              ),
+              IosGroupedTile(
+                icon: CupertinoIcons.lab_flask_solid,
+                iconBgColor: AppColors.correctGreen,
+                title: 'Chemistry',
+                subtitle: 'Equilibrium & Kinetics',
+                trailingText: '3 Questions',
+                showChevron: false,
+              ),
+              IosGroupedTile(
+                icon: CupertinoIcons.function,
+                iconBgColor: AppColors.systemBlue,
+                title: 'Mathematics',
+                subtitle: 'Calculus & Integration',
+                trailingText: '4 Questions',
+                showChevron: false,
+              ),
+            ],
+          ),
 
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(18),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Curated Set #84', style: AppTypography.titleMedium(textPrimary)),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: _isTodayCompleted
-                                ? AppColors.correctGreen.withValues(alpha: 0.15)
-                                : AppColors.brandBlue.withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            _isTodayCompleted ? 'COMPLETED' : 'PENDING',
-                            style: AppTypography.labelSmall(
-                              _isTodayCompleted ? AppColors.correctGreen : AppColors.brandBlue,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 14),
-                    _dppSubjectRow('Physics', 'Electrostatics & Current', '3 Questions'),
-                    const Divider(height: 16),
-                    _dppSubjectRow('Chemistry', 'Equilibrium & Kinetics', '3 Questions'),
-                    const Divider(height: 16),
-                    _dppSubjectRow('Mathematics', 'Calculus & Integration', '4 Questions'),
-                    const SizedBox(height: 20),
-
-                    SizedBox(
-                      width: double.infinity,
-                      height: 48,
-                      child: ElevatedButton.icon(
-                        icon: Icon(_isTodayCompleted ? Icons.check_circle_rounded : Icons.play_arrow_rounded),
-                        label: Text(_isTodayCompleted ? 'Practice Again' : 'Solve Today\'s DPP'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: _isTodayCompleted ? AppColors.correctGreen : AppColors.brandBlue,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        ),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => QuestionSolveScreen(
-                                title: 'Daily Practice Set #84',
-                                examId: widget.examId,
-                              ),
-                            ),
-                          ).then((_) {
-                            if (!_isTodayCompleted) {
-                              _markTodayComplete();
-                            }
-                          });
-                        },
+          // Solve CTA Button
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: CupertinoButton(
+                color: _isTodayCompleted ? AppColors.correctGreen : AppColors.systemBlue,
+                borderRadius: BorderRadius.circular(12),
+                padding: EdgeInsets.zero,
+                onPressed: () {
+                  HapticFeedback.mediumImpact();
+                  Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                      builder: (_) => QuestionSolveScreen(
+                        title: 'Daily Practice Set #84',
+                        examId: widget.examId,
                       ),
+                    ),
+                  ).then((_) {
+                    if (!_isTodayCompleted) {
+                      _markTodayComplete();
+                    }
+                  });
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      _isTodayCompleted ? CupertinoIcons.checkmark_circle_fill : CupertinoIcons.play_arrow_solid,
+                      size: 18,
+                      color: Colors.white,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      _isTodayCompleted ? 'Practice Again' : 'Solve Today\'s DPP (10 Questions)',
+                      style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.white),
                     ),
                   ],
                 ),
               ),
             ),
-            const SizedBox(height: 24),
+          ),
 
-            // Performance & Consistency History
-            Text('Practice Milestones', style: AppTypography.titleLarge(textPrimary)),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                _milestoneCard('Total DPPs', '$_totalDppsSolved', Icons.auto_awesome_rounded, AppColors.brandBlue),
-                const SizedBox(width: 12),
-                _milestoneCard('Weekly Goal', '5/7 Days', Icons.calendar_today_rounded, AppColors.correctGreen),
-                const SizedBox(width: 12),
-                _milestoneCard('Accuracy', '86.4%', Icons.track_changes_rounded, AppColors.reviewAmber),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _dppSubjectRow(String subject, String topics, String count) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(subject, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-            Text(topics, style: const TextStyle(color: Colors.grey, fontSize: 12)),
-          ],
-        ),
-        Text(count, style: AppTypography.monoNumber(AppColors.brandBlue, fontSize: 13)),
-      ],
-    );
-  }
-
-  Widget _milestoneCard(String title, String val, IconData icon, Color color) {
-    return Expanded(
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-          child: Column(
+          // Milestone Stats Inset Group
+          IosGroupedSection(
+            header: 'Practice Consistency & Milestones',
             children: [
-              Icon(icon, color: color, size: 24),
-              const SizedBox(height: 6),
-              Text(val, style: AppTypography.titleMedium(color)),
-              const SizedBox(height: 2),
-              Text(title, style: AppTypography.labelSmall(Colors.grey), textAlign: TextAlign.center),
+              IosGroupedTile(
+                icon: CupertinoIcons.check_mark_circled_solid,
+                iconBgColor: AppColors.systemBlue,
+                title: 'Total Sets Completed',
+                trailingText: '$_totalDppsSolved Sets',
+                showChevron: false,
+              ),
+              IosGroupedTile(
+                icon: CupertinoIcons.calendar,
+                iconBgColor: AppColors.correctGreen,
+                title: 'Weekly Target',
+                trailingText: '5 / 7 Days',
+                showChevron: false,
+              ),
+              IosGroupedTile(
+                icon: CupertinoIcons.chart_pie_fill,
+                iconBgColor: AppColors.reviewAmber,
+                title: 'Average Accuracy',
+                trailingText: '86.4%',
+                showChevron: false,
+              ),
             ],
           ),
-        ),
+          const SizedBox(height: 80),
+        ],
       ),
     );
   }

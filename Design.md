@@ -105,3 +105,28 @@ The primary interaction element of the application. Rendered with custom squircl
 - **Answer Validation**: Subtle `350ms` ease-out slide for the solution panel from the bottom.
 - **Timer Warning**: Soft ambient glow pulsing at $$0.5\text{ Hz}$$ when remaining time drops below 5 minutes.
 - **Page Transitions**: Shared axis vertical slide (`CupertinoPageRoute` feel on iOS, smooth fade-through on Android).
+
+---
+
+## 6. Apple Human Interface Guidelines (HIG) Architecture
+
+Following the audit with the **Apple Design Skill** (`apple-design`), the entire SCORE interface has been calibrated to authentic iOS standards:
+
+### 6.1. System Grouped Materials & Colors
+- **Light Appearance**: System Grouped Canvas (`#F2F2F7`), Secondary Grouped Cell (`#FFFFFF`), 0.5px hairline dividers (`#E5E5EA`).
+- **Dark Appearance**: Pure OLED Midnight Canvas (`#000000`), Secondary Grouped Cell (`#1C1C1E`), Tertiary Elevated (`#2C2C2E`).
+- **Semantic Accents**: iOS System Blue (`#007AFF`), iOS System Green (`#34C759`), iOS System Orange (`#FF9500`), iOS System Red (`#FF3B30`).
+- **Touch Feedback**: `NoSplash.splashFactory` with iOS opacity dimming on press, eliminating uncalibrated Android ripple bleeding.
+
+### 6.2. Floating Liquid Glass Navigation Bar
+- Grounded in Apple HIG translucent materials:
+  - Frosted blur: `BackdropFilter` with `sigmaX: 25`, `sigmaY: 25`.
+  - Ambient elevation: Tinted pill floating `16dp` above bottom edge with squircle radius `28dp`.
+  - Active tab indicators: Dynamic Cupertino filled/outline glyph transitions with selection haptic tick (`HapticFeedback.selectionClick()`).
+
+### 6.3. Inset Grouped Section Pattern
+- Standardized iOS Settings-style cards (`IosGroupedSection` & `IosGroupedTile`):
+  - Squircle app icons with Apple semantic tint backgrounds.
+  - 0.5px hairline dividers indented `58dp` to match text margin.
+  - Cupertino disclosure chevrons (`CupertinoIcons.chevron_forward`).
+

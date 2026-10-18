@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../app/theme/app_colors.dart';
@@ -144,7 +145,7 @@ class _QuestionSolveScreenState extends State<QuestionSolveScreen> {
     if (_isLoading) {
       return Scaffold(
         appBar: AppBar(title: Text(widget.title)),
-        body: const Center(child: CircularProgressIndicator(color: AppColors.brandBlue)),
+        body: const Center(child: CupertinoActivityIndicator(radius: 14)),
       );
     }
 
@@ -155,7 +156,7 @@ class _QuestionSolveScreenState extends State<QuestionSolveScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.menu_book_rounded, size: 64, color: textSecondary),
+              Icon(CupertinoIcons.book, size: 60, color: textSecondary),
               const SizedBox(height: 16),
               Text('No questions found for this selection', style: AppTypography.titleMedium(textPrimary)),
             ],
@@ -173,28 +174,32 @@ class _QuestionSolveScreenState extends State<QuestionSolveScreen> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(widget.title, style: AppTypography.titleMedium(textPrimary)),
+            Text(widget.title, style: AppTypography.headlineSmall(textPrimary).copyWith(fontSize: 17)),
             Text(
               '${currentQ.year} · ${currentQ.shift}',
-              style: AppTypography.labelSmall(AppColors.brandBlue),
+              style: AppTypography.labelSmall(AppColors.systemBlue),
             ),
           ],
         ),
         actions: [
-          IconButton(
-            icon: Icon(
-              _isBookmarked ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
-              color: _isBookmarked ? AppColors.reviewAmber : textSecondary,
-            ),
+          CupertinoButton(
+            padding: const EdgeInsets.symmetric(horizontal: 14),
+            minimumSize: Size.zero,
             onPressed: () async {
+              HapticFeedback.lightImpact();
               await AppDatabase.instance.toggleBookmark(currentQ.id);
               _checkBookmark(currentQ.id);
             },
+            child: Icon(
+              _isBookmarked ? CupertinoIcons.bookmark_fill : CupertinoIcons.bookmark,
+              color: _isBookmarked ? AppColors.systemOrange : textSecondary,
+              size: 22,
+            ),
           ),
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -203,25 +208,25 @@ class _QuestionSolveScreenState extends State<QuestionSolveScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF1E293B) : const Color(0xFFEFF6FF),
-                    borderRadius: BorderRadius.circular(6),
+                    color: AppColors.systemBlue.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     'Q ${_currentIndex + 1} of ${_questions.length}',
-                    style: AppTypography.monoNumber(AppColors.brandBlue, fontSize: 13),
+                    style: AppTypography.monoNumber(AppColors.systemBlue, fontSize: 13),
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
                     color: currentQ.difficulty == DifficultyLevel.easy
-                        ? AppColors.correctGreen.withValues(alpha: 0.15)
+                        ? AppColors.correctGreen.withValues(alpha: 0.14)
                         : (currentQ.difficulty == DifficultyLevel.hard
-                            ? AppColors.errorRed.withValues(alpha: 0.15)
-                            : AppColors.reviewAmber.withValues(alpha: 0.15)),
-                    borderRadius: BorderRadius.circular(6),
+                            ? AppColors.errorRed.withValues(alpha: 0.14)
+                            : AppColors.systemOrange.withValues(alpha: 0.14)),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     currentQ.difficulty.name.toUpperCase(),
@@ -230,23 +235,24 @@ class _QuestionSolveScreenState extends State<QuestionSolveScreen> {
                           ? AppColors.correctGreen
                           : (currentQ.difficulty == DifficultyLevel.hard
                               ? AppColors.errorRed
-                              : AppColors.reviewAmber),
+                              : AppColors.systemOrange),
                     ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 14),
 
-            // Question Text with KaTeX formulas
+            // Question Text with KaTeX formulas inside Apple HIG Squircle Card
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
                 color: isDark ? AppColors.darkCardSurface : AppColors.lightCardSurface,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(16),
                 border: Border.all(
                   color: isDark ? AppColors.darkCardStroke : AppColors.lightCardStroke,
+                  width: 0.5,
                 ),
               ),
               child: KaTeXMathView(
@@ -254,23 +260,34 @@ class _QuestionSolveScreenState extends State<QuestionSolveScreen> {
                 baseStyle: AppTypography.bodyLarge(textPrimary),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 18),
 
             // Options Section
             if (currentQ.questionType == QuestionType.numerical) ...[
               // Numerical Input Field
-              Text('Enter numerical answer:', style: AppTypography.labelLarge(textSecondary)),
-              const SizedBox(height: 8),
-              TextField(
-                controller: _numericalController,
-                keyboardType: TextInputType.number,
-                enabled: !_isSubmitted,
-                style: AppTypography.monoNumber(textPrimary, fontSize: 18),
-                decoration: InputDecoration(
-                  hintText: 'e.g. 42',
-                  filled: true,
-                  fillColor: isDark ? AppColors.darkCardSurface : AppColors.lightCardSurface,
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              Padding(
+                padding: const EdgeInsets.only(left: 4, bottom: 8),
+                child: Text('Enter numerical answer:', style: AppTypography.subhead(textSecondary)),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  color: isDark ? AppColors.darkCardSurface : AppColors.lightCardSurface,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: isDark ? AppColors.darkCardStroke : AppColors.lightCardStroke,
+                    width: 0.5,
+                  ),
+                ),
+                child: TextField(
+                  controller: _numericalController,
+                  keyboardType: TextInputType.number,
+                  enabled: !_isSubmitted,
+                  style: AppTypography.monoNumber(textPrimary, fontSize: 18),
+                  decoration: const InputDecoration(
+                    hintText: 'e.g. 42',
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  ),
                 ),
               ),
             ] else ...[
@@ -308,14 +325,15 @@ class _QuestionSolveScreenState extends State<QuestionSolveScreen> {
             if (_isSubmitted) ...[
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(18),
                 decoration: BoxDecoration(
                   color: isCorrect
                       ? (isDark ? AppColors.correctGreenSurfaceDark : AppColors.correctGreenSurfaceLight)
                       : (isDark ? AppColors.errorRedSurfaceDark : AppColors.errorRedSurfaceLight),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: isCorrect ? AppColors.correctGreen : AppColors.errorRed,
+                    color: (isCorrect ? AppColors.correctGreen : AppColors.errorRed).withValues(alpha: 0.4),
+                    width: 0.5,
                   ),
                 ),
                 child: Column(
@@ -324,20 +342,21 @@ class _QuestionSolveScreenState extends State<QuestionSolveScreen> {
                     Row(
                       children: [
                         Icon(
-                          isCorrect ? Icons.check_circle_rounded : Icons.cancel_rounded,
+                          isCorrect ? CupertinoIcons.checkmark_circle_fill : CupertinoIcons.xmark_circle_fill,
                           color: isCorrect ? AppColors.correctGreen : AppColors.errorRed,
+                          size: 22,
                         ),
                         const SizedBox(width: 8),
                         Text(
                           isCorrect ? 'Correct Answer!' : 'Incorrect Answer',
-                          style: AppTypography.titleMedium(
+                          style: AppTypography.headlineSmall(
                             isCorrect ? AppColors.correctGreen : AppColors.errorRed,
-                          ),
+                          ).copyWith(fontSize: 16),
                         ),
                       ],
                     ),
                     const SizedBox(height: 12),
-                    Text('Detailed Solution:', style: AppTypography.labelLarge(textPrimary)),
+                    Text('Detailed Solution:', style: AppTypography.subhead(textPrimary).copyWith(fontWeight: FontWeight.w600)),
                     const SizedBox(height: 6),
                     KaTeXMathView(
                       text: currentQ.solutionText,
@@ -345,20 +364,45 @@ class _QuestionSolveScreenState extends State<QuestionSolveScreen> {
                     ),
 
                     if (!isCorrect) ...[
-                      const Divider(height: 24),
-                      Text('Tag this mistake for revision:', style: AppTypography.labelSmall(textSecondary)),
+                      const SizedBox(height: 14),
+                      Divider(
+                        height: 1,
+                        color: isDark ? AppColors.darkHairline : AppColors.lightHairline,
+                      ),
+                      const SizedBox(height: 14),
+                      Text('Tag mistake for spaced repetition:', style: AppTypography.labelSmall(textSecondary)),
                       const SizedBox(height: 8),
                       Wrap(
                         spacing: 8,
+                        runSpacing: 8,
                         children: MistakeType.values.map((type) {
                           final isSelected = _selectedMistakeType == type;
-                          return ChoiceChip(
-                            label: Text(type.label),
-                            selected: isSelected,
-                            onSelected: (_) => _logMistake(currentQ.id, type),
-                            selectedColor: AppColors.errorRed.withValues(alpha: 0.2),
-                            labelStyle: AppTypography.labelSmall(
-                              isSelected ? AppColors.errorRed : textSecondary,
+                          return GestureDetector(
+                            onTap: () {
+                              HapticFeedback.lightImpact();
+                              _logMistake(currentQ.id, type);
+                            },
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 180),
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                              decoration: BoxDecoration(
+                                color: isSelected
+                                    ? AppColors.errorRed.withValues(alpha: 0.18)
+                                    : (isDark ? AppColors.darkCardSurface : AppColors.lightCardSurface),
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: isSelected
+                                      ? AppColors.errorRed
+                                      : (isDark ? AppColors.darkCardStroke : AppColors.lightCardStroke),
+                                  width: isSelected ? 1.0 : 0.5,
+                                ),
+                              ),
+                              child: Text(
+                                type.label,
+                                style: AppTypography.labelSmall(
+                                  isSelected ? AppColors.errorRed : textSecondary,
+                                ).copyWith(fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400),
+                              ),
                             ),
                           );
                         }).toList(),
@@ -373,35 +417,37 @@ class _QuestionSolveScreenState extends State<QuestionSolveScreen> {
             // Action Buttons Bar
             Row(
               children: [
-                if (_currentIndex > 0)
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: _prevQuestion,
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      ),
-                      child: const Text('Previous'),
+                if (_currentIndex > 0) ...[
+                  CupertinoButton(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    minimumSize: Size.zero,
+                    color: isDark ? AppColors.darkCardSurface : AppColors.lightCardSurface,
+                    borderRadius: BorderRadius.circular(14),
+                    onPressed: _prevQuestion,
+                    child: Icon(
+                      CupertinoIcons.chevron_left,
+                      color: textPrimary,
+                      size: 20,
                     ),
                   ),
-                if (_currentIndex > 0) const SizedBox(width: 12),
+                  const SizedBox(width: 10),
+                ],
                 Expanded(
-                  flex: 2,
-                  child: ElevatedButton(
+                  child: CupertinoButton.filled(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    borderRadius: BorderRadius.circular(14),
                     onPressed: _isSubmitted ? _nextQuestion : _submitAnswer,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.brandBlue,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    child: Text(
+                      _isSubmitted
+                          ? (_currentIndex < _questions.length - 1 ? 'Next Question' : 'Completed')
+                          : 'Check Answer',
+                      style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
                     ),
-                    child: Text(_isSubmitted
-                        ? (_currentIndex < _questions.length - 1 ? 'Next Question' : 'Completed')
-                        : 'Check Answer'),
                   ),
                 ),
               ],
             ),
+            const SizedBox(height: 24),
           ],
         ),
       ),

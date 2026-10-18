@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_typography.dart';
 import '../../../domain/entities/question_entity.dart';
@@ -75,6 +77,48 @@ class _QuestionFilterSheetState extends State<QuestionFilterSheet> {
     _filters = widget.initialFilters;
   }
 
+  Widget _buildFilterPill({
+    required String label,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textPrimary = isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
+    final textSecondary = isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary;
+
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.selectionClick();
+        onTap();
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 160),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? AppColors.systemBlue
+              : (isDark ? AppColors.darkGroupedBackground : AppColors.lightGroupedBackground),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: isSelected
+                ? AppColors.systemBlue
+                : (isDark ? AppColors.darkCardStroke : AppColors.lightCardStroke),
+            width: isSelected ? 1.0 : 0.5,
+          ),
+        ),
+        child: Text(
+          label,
+          style: AppTypography.subhead(
+            isSelected ? Colors.white : (isSelected ? textPrimary : textSecondary),
+          ).copyWith(
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+            fontSize: 13,
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -82,23 +126,23 @@ class _QuestionFilterSheetState extends State<QuestionFilterSheet> {
     final textSecondary = isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary;
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
       decoration: BoxDecoration(
         color: isDark ? AppColors.darkCardSurface : AppColors.lightCardSurface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(22)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Drag Handle
+          // iOS Drag Handle
           Center(
             child: Container(
-              width: 40,
-              height: 4,
+              width: 36,
+              height: 5,
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF334155) : const Color(0xFFCBD5E1),
-                borderRadius: BorderRadius.circular(2),
+                color: isDark ? const Color(0xFF3A3A3C) : const Color(0xFFD1D1D6),
+                borderRadius: BorderRadius.circular(2.5),
               ),
             ),
           ),
@@ -111,119 +155,113 @@ class _QuestionFilterSheetState extends State<QuestionFilterSheet> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Filter Questions', style: AppTypography.titleLarge(textPrimary)),
-                  Text('Refine PYQs by criteria', style: AppTypography.bodySmall(textSecondary)),
+                  Text('Filter Questions', style: AppTypography.headlineSmall(textPrimary)),
+                  Text('Refine PYQs by criteria', style: AppTypography.subhead(textSecondary)),
                 ],
               ),
-              TextButton(
+              CupertinoButton(
+                padding: EdgeInsets.zero,
+                minimumSize: Size.zero,
                 onPressed: () {
+                  HapticFeedback.lightImpact();
                   setState(() => _filters = const QuestionFilterOptions());
                 },
-                child: const Text('Reset', style: TextStyle(color: AppColors.errorRed)),
+                child: const Text('Reset', style: TextStyle(color: AppColors.errorRed, fontSize: 15)),
               ),
             ],
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 16),
 
           // 1. Difficulty Level Filter
-          Text('Difficulty Level', style: AppTypography.titleMedium(textPrimary)),
+          Text('Difficulty Level', style: AppTypography.subhead(textPrimary).copyWith(fontWeight: FontWeight.w600)),
           const SizedBox(height: 8),
           Wrap(
             spacing: 8,
+            runSpacing: 8,
             children: [
-              FilterChip(
-                label: const Text('All'),
-                selected: _filters.selectedDifficulty == null,
-                onSelected: (_) => setState(
-                    () => _filters = _filters.copyWith(clearDifficulty: true)),
-                selectedColor: AppColors.brandBlue.withValues(alpha: 0.18),
+              _buildFilterPill(
+                label: 'All',
+                isSelected: _filters.selectedDifficulty == null,
+                onTap: () => setState(() => _filters = _filters.copyWith(clearDifficulty: true)),
               ),
               ...DifficultyLevel.values.map((diff) {
                 final isSelected = _filters.selectedDifficulty == diff;
-                return FilterChip(
-                  label: Text(diff.name.toUpperCase()),
-                  selected: isSelected,
-                  onSelected: (val) {
-                    setState(() => _filters = val
-                        ? _filters.copyWith(selectedDifficulty: diff)
-                        : _filters.copyWith(clearDifficulty: true));
-                  },
-                  selectedColor: AppColors.brandBlue.withValues(alpha: 0.18),
+                return _buildFilterPill(
+                  label: diff.name.toUpperCase(),
+                  isSelected: isSelected,
+                  onTap: () => setState(() => _filters = isSelected
+                      ? _filters.copyWith(clearDifficulty: true)
+                      : _filters.copyWith(selectedDifficulty: diff)),
                 );
               }),
             ],
           ),
-          const SizedBox(height: 18),
+          const SizedBox(height: 16),
 
           // 2. Question Type Filter
-          Text('Question Type', style: AppTypography.titleMedium(textPrimary)),
+          Text('Question Type', style: AppTypography.subhead(textPrimary).copyWith(fontWeight: FontWeight.w600)),
           const SizedBox(height: 8),
           Wrap(
             spacing: 8,
+            runSpacing: 8,
             children: [
-              FilterChip(
-                label: const Text('All Types'),
-                selected: _filters.selectedType == null,
-                onSelected: (_) => setState(
-                    () => _filters = _filters.copyWith(clearType: true)),
-                selectedColor: AppColors.brandBlue.withValues(alpha: 0.18),
+              _buildFilterPill(
+                label: 'All Types',
+                isSelected: _filters.selectedType == null,
+                onTap: () => setState(() => _filters = _filters.copyWith(clearType: true)),
               ),
-              FilterChip(
-                label: const Text('Single Choice'),
-                selected: _filters.selectedType == QuestionType.singleChoice,
-                onSelected: (val) => setState(() => _filters = val
-                    ? _filters.copyWith(selectedType: QuestionType.singleChoice)
-                    : _filters.copyWith(clearType: true)),
-                selectedColor: AppColors.brandBlue.withValues(alpha: 0.18),
+              _buildFilterPill(
+                label: 'Single Choice',
+                isSelected: _filters.selectedType == QuestionType.singleChoice,
+                onTap: () => setState(() => _filters = _filters.selectedType == QuestionType.singleChoice
+                    ? _filters.copyWith(clearType: true)
+                    : _filters.copyWith(selectedType: QuestionType.singleChoice)),
               ),
-              FilterChip(
-                label: const Text('Numerical Integer'),
-                selected: _filters.selectedType == QuestionType.numerical,
-                onSelected: (val) => setState(() => _filters = val
-                    ? _filters.copyWith(selectedType: QuestionType.numerical)
-                    : _filters.copyWith(clearType: true)),
-                selectedColor: AppColors.brandBlue.withValues(alpha: 0.18),
+              _buildFilterPill(
+                label: 'Numerical',
+                isSelected: _filters.selectedType == QuestionType.numerical,
+                onTap: () => setState(() => _filters = _filters.selectedType == QuestionType.numerical
+                    ? _filters.copyWith(clearType: true)
+                    : _filters.copyWith(selectedType: QuestionType.numerical)),
               ),
             ],
           ),
-          const SizedBox(height: 18),
+          const SizedBox(height: 16),
 
           // 3. Exam Years Filter
-          Text('Exam Years', style: AppTypography.titleMedium(textPrimary)),
+          Text('Exam Years', style: AppTypography.subhead(textPrimary).copyWith(fontWeight: FontWeight.w600)),
           const SizedBox(height: 8),
           Wrap(
             spacing: 8,
+            runSpacing: 8,
             children: availableYears.map((yr) {
               final isSelected = _filters.selectedYears.contains(yr);
-              return FilterChip(
-                label: Text('$yr'),
-                selected: isSelected,
-                onSelected: (val) {
+              return _buildFilterPill(
+                label: '$yr',
+                isSelected: isSelected,
+                onTap: () {
                   final newYears = Set<int>.from(_filters.selectedYears);
-                  if (val) {
-                    newYears.add(yr);
-                  } else {
+                  if (isSelected) {
                     newYears.remove(yr);
+                  } else {
+                    newYears.add(yr);
                   }
                   setState(() => _filters = _filters.copyWith(selectedYears: newYears));
                 },
-                selectedColor: AppColors.brandBlue.withValues(alpha: 0.18),
               );
             }).toList(),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 22),
 
           // Apply Filter Button
           SizedBox(
             width: double.infinity,
             height: 50,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.brandBlue,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              ),
+            child: CupertinoButton.filled(
+              borderRadius: BorderRadius.circular(14),
+              padding: EdgeInsets.zero,
               onPressed: () {
+                HapticFeedback.lightImpact();
                 widget.onApply(_filters);
                 Navigator.pop(context);
               },

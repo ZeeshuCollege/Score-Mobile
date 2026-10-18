@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -15,30 +16,25 @@ class FormulaCardsScreen extends StatefulWidget {
   State<FormulaCardsScreen> createState() => _FormulaCardsScreenState();
 }
 
-class _FormulaCardsScreenState extends State<FormulaCardsScreen>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-  final TextEditingController _searchController = TextEditingController();
+class _FormulaCardsScreenState extends State<FormulaCardsScreen> {
   final Set<String> _masteredFormulaIds = {};
   String _searchQuery = '';
+  String _selectedSubject = 'all';
 
   final List<Map<String, String>> _subjects = [
     {'id': 'all', 'label': 'All'},
     {'id': 'physics', 'label': 'Physics'},
     {'id': 'chemistry', 'label': 'Chemistry'},
-    {'id': 'mathematics', 'label': 'Mathematics'},
+    {'id': 'mathematics', 'label': 'Math'},
     {'id': 'biology', 'label': 'Biology'},
   ];
 
   @override
   void initState() {
     super.initState();
-    int initialIdx = 0;
     if (widget.initialSubjectId != null) {
-      final found = _subjects.indexWhere((s) => s['id'] == widget.initialSubjectId);
-      if (found != -1) initialIdx = found;
+      _selectedSubject = widget.initialSubjectId!;
     }
-    _tabController = TabController(length: _subjects.length, vsync: this, initialIndex: initialIdx);
     _loadMasteredFormulas();
   }
 
@@ -63,16 +59,9 @@ class _FormulaCardsScreenState extends State<FormulaCardsScreen>
     await prefs.setStringList('mastered_formula_ids', _masteredFormulaIds.toList());
   }
 
-  @override
-  void dispose() {
-    _tabController.dispose();
-    _searchController.dispose();
-    super.dispose();
-  }
-
-  List<FormulaEntity> _getFilteredFormulas(String subjectId) {
+  List<FormulaEntity> _getFilteredFormulas() {
     return FormulaEntity.defaultFormulas.where((f) {
-      final matchesSubject = subjectId == 'all' || f.subjectId == subjectId;
+      final matchesSubject = _selectedSubject == 'all' || f.subjectId == _selectedSubject;
       final matchesSearch = _searchQuery.isEmpty ||
           f.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
           f.chapterName.toLowerCase().contains(_searchQuery.toLowerCase()) ||
@@ -86,56 +75,36 @@ class _FormulaCardsScreenState extends State<FormulaCardsScreen>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textPrimary = isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
     final textSecondary = isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary;
+    final list = _getFilteredFormulas();
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Formula Flashcards'),
-        bottom: TabBar(
-          controller: _tabController,
-          isScrollable: true,
-          labelColor: AppColors.brandBlue,
-          unselectedLabelColor: textSecondary,
-          indicatorColor: AppColors.brandBlue,
-          tabs: _subjects.map((s) => Tab(text: s['label'])).toList(),
-        ),
       ),
       body: Column(
         children: [
-          // Search & Summary Header
+          // iOS Search Bar & Mastery Counter
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
             child: Row(
               children: [
                 Expanded(
-                  child: TextField(
-                    controller: _searchController,
-                    decoration: InputDecoration(
-                      hintText: 'Search formula, chapter or rule...',
-                      prefixIcon: const Icon(Icons.search_rounded),
-                      suffixIcon: _searchQuery.isNotEmpty
-                          ? IconButton(
-                              icon: const Icon(Icons.clear_rounded),
-                              onPressed: () {
-                                _searchController.clear();
-                                setState(() => _searchQuery = '');
-                              },
-                            )
-                          : null,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    ),
+                  child: CupertinoSearchTextField(
+                    placeholder: 'Search formulas or concepts...',
+                    style: TextStyle(color: textPrimary, fontSize: 15),
                     onChanged: (val) => setState(() => _searchQuery = val),
                   ),
                 ),
                 const SizedBox(width: 10),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
                   decoration: BoxDecoration(
                     color: AppColors.correctGreen.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(10),
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.check_circle_rounded, color: AppColors.correctGreen, size: 18),
+                      const Icon(CupertinoIcons.checkmark_circle_fill, color: AppColors.correctGreen, size: 16),
                       const SizedBox(width: 4),
                       Text(
                         '${_masteredFormulaIds.length}',
@@ -148,29 +117,62 @@ class _FormulaCardsScreenState extends State<FormulaCardsScreen>
             ),
           ),
 
-          // Tab views
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: _subjects.map((s) {
-                final list = _getFilteredFormulas(s['id']!);
-                if (list.isEmpty) {
-                  return Center(
-                    child: Text('No formulas found matching criteria',
-                        style: AppTypography.bodyMedium(textSecondary)),
-                  );
-                }
-                return ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  itemCount: list.length,
-                  itemBuilder: (ctx, idx) {
-                    final item = list[idx];
-                    final isMastered = _masteredFormulaIds.contains(item.id);
-                    return _buildFormulaCard(item, isMastered, textPrimary, textSecondary, isDark);
-                  },
-                );
-              }).toList(),
+          // iOS Sliding Segmented Control
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+            child: SizedBox(
+              width: double.infinity,
+              child: CupertinoSlidingSegmentedControl<String>(
+                groupValue: _selectedSubject,
+                children: {
+                  for (final s in _subjects)
+                    s['id']!: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                      child: Text(
+                        s['label']!,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: _selectedSubject == s['id'] ? FontWeight.w600 : FontWeight.w400,
+                          color: _selectedSubject == s['id']
+                              ? (isDark ? Colors.white : Colors.black)
+                              : textSecondary,
+                        ),
+                      ),
+                    ),
+                },
+                onValueChanged: (val) {
+                  if (val != null) {
+                    HapticFeedback.selectionClick();
+                    setState(() => _selectedSubject = val);
+                  }
+                },
+              ),
             ),
+          ),
+          const SizedBox(height: 6),
+
+          // Cards List
+          Expanded(
+            child: list.isEmpty
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(CupertinoIcons.search, size: 48, color: textSecondary.withValues(alpha: 0.5)),
+                        const SizedBox(height: 12),
+                        Text('No formulas found matching criteria', style: AppTypography.bodyMedium(textSecondary)),
+                      ],
+                    ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 90),
+                    itemCount: list.length,
+                    itemBuilder: (ctx, idx) {
+                      final item = list[idx];
+                      final isMastered = _masteredFormulaIds.contains(item.id);
+                      return _buildFormulaCard(item, isMastered, textPrimary, textSecondary, isDark);
+                    },
+                  ),
           ),
         ],
       ),
@@ -184,19 +186,20 @@ class _FormulaCardsScreenState extends State<FormulaCardsScreen>
     Color textSecondary,
     bool isDark,
   ) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 16),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: isMastered
-            ? const BorderSide(color: AppColors.correctGreen, width: 1.5)
-            : BorderSide(
-                color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
-                width: 1,
-              ),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.darkCardSurface : AppColors.lightCardSurface,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: isMastered
+              ? AppColors.correctGreen.withValues(alpha: 0.5)
+              : (isDark ? AppColors.darkCardStroke : AppColors.lightCardStroke),
+          width: isMastered ? 1.5 : 0.5,
+        ),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(18),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -205,40 +208,41 @@ class _FormulaCardsScreenState extends State<FormulaCardsScreen>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
-                    color: AppColors.brandBlue.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(8),
+                    color: AppColors.systemBlue.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
                     '${item.subjectId.toUpperCase()} · ${item.chapterName}',
-                    style: AppTypography.labelSmall(AppColors.brandBlue),
+                    style: AppTypography.labelSmall(AppColors.systemBlue).copyWith(fontSize: 10),
                   ),
                 ),
-                InkWell(
-                  onTap: () => _toggleMastered(item.id),
-                  borderRadius: BorderRadius.circular(20),
+                CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  minimumSize: Size.zero,
+                  onPressed: () => _toggleMastered(item.id),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                     decoration: BoxDecoration(
                       color: isMastered
                           ? AppColors.correctGreen.withValues(alpha: 0.18)
-                          : (isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9)),
-                      borderRadius: BorderRadius.circular(20),
+                          : (isDark ? const Color(0xFF2C2C2E) : const Color(0xFFE5E5EA)),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
-                          isMastered ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded,
-                          size: 16,
+                          isMastered ? CupertinoIcons.checkmark_circle_fill : CupertinoIcons.circle,
+                          size: 14,
                           color: isMastered ? AppColors.correctGreen : textSecondary,
                         ),
                         const SizedBox(width: 4),
                         Text(
                           isMastered ? 'Mastered' : 'Mark Mastered',
                           style: TextStyle(
-                            fontSize: 12,
+                            fontSize: 11,
                             fontWeight: FontWeight.w600,
                             color: isMastered ? AppColors.correctGreen : textSecondary,
                           ),
@@ -249,50 +253,55 @@ class _FormulaCardsScreenState extends State<FormulaCardsScreen>
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
 
             // Title
-            Text(item.title, style: AppTypography.titleMedium(textPrimary)),
-            const SizedBox(height: 12),
+            Text(
+              item.title,
+              style: AppTypography.titleMedium(textPrimary).copyWith(fontSize: 16),
+            ),
+            const SizedBox(height: 10),
 
             // LaTeX Formula Display Container
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 14),
+              padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF0B132B) : const Color(0xFFF8FAFC),
-                borderRadius: BorderRadius.circular(12),
+                color: isDark ? const Color(0xFF14171F) : const Color(0xFFF8F9FA),
+                borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: isDark ? const Color(0xFF1E293B) : const Color(0xFFE2E8F0),
+                  color: isDark ? const Color(0xFF2C2C2E) : const Color(0xFFE5E5EA),
+                  width: 0.5,
                 ),
               ),
               child: Center(
                 child: KaTeXMathView(
                   text: item.latexExpression,
                   baseStyle: TextStyle(
-                    fontSize: 18,
+                    fontSize: 17,
                     fontWeight: FontWeight.w600,
                     color: textPrimary,
                   ),
                 ),
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
 
             // Description
             Text(item.description, style: AppTypography.bodySmall(textSecondary)),
-            const SizedBox(height: 8),
 
             // Variables Legend
             if (item.keyVariables.isNotEmpty) ...[
-              const Divider(height: 16),
-              for (final v in item.keyVariables) ...[
+              const SizedBox(height: 10),
+              Divider(height: 1, thickness: 0.5, color: isDark ? AppColors.darkCardStroke : AppColors.lightCardStroke),
+              const SizedBox(height: 8),
+              for (final v in item.keyVariables)
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 4),
+                  padding: const EdgeInsets.only(bottom: 3),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('• ', style: TextStyle(color: AppColors.brandBlue, fontWeight: FontWeight.bold)),
+                      Text('• ', style: TextStyle(color: AppColors.systemBlue, fontWeight: FontWeight.bold)),
                       Expanded(
                         child: KaTeXMathView(
                           text: v,
@@ -302,7 +311,6 @@ class _FormulaCardsScreenState extends State<FormulaCardsScreen>
                     ],
                   ),
                 ),
-              ],
             ],
           ],
         ),

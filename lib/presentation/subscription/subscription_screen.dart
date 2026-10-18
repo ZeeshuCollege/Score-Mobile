@@ -1,8 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../app/theme/app_colors.dart';
 import '../../app/theme/app_typography.dart';
+import '../common/ios_grouped_list.dart';
 
 class SubscriptionScreen extends StatefulWidget {
   const SubscriptionScreen({super.key});
@@ -54,8 +56,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   }
 
   Future<void> _handleSubscribe() async {
+    HapticFeedback.mediumImpact();
     setState(() => _isProcessing = true);
-    await Future.delayed(const Duration(milliseconds: 1200));
+    await Future.delayed(const Duration(milliseconds: 1000));
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('is_score_pro_subscriber', true);
@@ -66,45 +69,31 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     });
 
     if (mounted) {
-      showDialog(
+      HapticFeedback.heavyImpact();
+      showCupertinoDialog(
         context: context,
-        builder: (_) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        builder: (_) => CupertinoAlertDialog(
           title: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.verified_rounded, color: AppColors.correctGreen, size: 28),
+              const Icon(CupertinoIcons.checkmark_seal_fill, color: AppColors.correctGreen, size: 24),
               const SizedBox(width: 8),
               const Text('Welcome to PRO!'),
             ],
           ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'SCORE PRO Active',
-                style: GoogleFonts.outfit(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.brandBlue,
-                ),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'All shifts from 2010 to 2026, step-by-step video solutions, unlimited CBT mock tests, and smart mistake analytics have been unlocked.',
-              ),
-            ],
+          content: const Padding(
+            padding: EdgeInsets.only(top: 8.0),
+            child: Text(
+              'All shifts from 2010 to 2026, step-by-step video solutions, unlimited CBT mock tests, and smart mistake analytics have been unlocked.',
+            ),
           ),
           actions: [
-            ElevatedButton(
+            CupertinoDialogAction(
+              isDefaultAction: true,
               onPressed: () {
                 Navigator.pop(context);
                 Navigator.pop(context, true);
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.brandBlue,
-                foregroundColor: Colors.white,
-              ),
               child: const Text('Start Practicing'),
             ),
           ],
@@ -123,27 +112,27 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       appBar: AppBar(
         title: const Text('Score PRO'),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Pro Crown Banner
-            Container(
+      body: ListView(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        children: [
+          // iOS Hero Card
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(22),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [Color(0xFF0F172A), Color(0xFF1E3A8A), Color(0xFF2563EB)],
+                  colors: [Color(0xFF0F172A), Color(0xFF1E3A8A)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.brandBlue.withValues(alpha: 0.3),
-                    blurRadius: 18,
-                    offset: const Offset(0, 8),
+                    color: Colors.black.withValues(alpha: 0.15),
+                    blurRadius: 16,
+                    offset: const Offset(0, 6),
                   ),
                 ],
               ),
@@ -158,18 +147,17 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         decoration: BoxDecoration(
                           color: Colors.amber.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.amber.withValues(alpha: 0.5)),
+                          border: Border.all(color: Colors.amber.withValues(alpha: 0.4)),
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.star_rounded, color: Colors.amber, size: 18),
+                            const Icon(CupertinoIcons.star_fill, color: Colors.amber, size: 14),
                             const SizedBox(width: 4),
                             Text(
                               'SCORE PRO',
-                              style: GoogleFonts.outfit(
-                                color: Colors.white,
+                              style: AppTypography.labelSmall(Colors.white).copyWith(
                                 fontWeight: FontWeight.w800,
-                                fontSize: 13,
+                                letterSpacing: 0.5,
                               ),
                             ),
                           ],
@@ -177,67 +165,65 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       ),
                       if (_isPro)
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                           decoration: BoxDecoration(
                             color: AppColors.correctGreen,
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                          child: const Text('ACTIVE', style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
+                          child: const Text('ACTIVE', style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
                         ),
                     ],
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 14),
                   Text(
-                    'Supercharge Your JEE / NEET Rank',
-                    style: GoogleFonts.outfit(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.w800,
-                      height: 1.2,
-                    ),
+                    'Elevate Your JEE & NEET Rank',
+                    style: AppTypography.displayMedium(Colors.white).copyWith(fontSize: 22),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 6),
                   Text(
                     'Full access to all 15-year shifts, unlimited CBT simulations, video solutions, and formula flashcards.',
                     style: TextStyle(
                       color: Colors.white.withValues(alpha: 0.85),
-                      fontSize: 14,
+                      fontSize: 13,
                       height: 1.4,
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 24),
+          ),
+          const SizedBox(height: 16),
 
-            // Plan Selector Cards
-            Text('Choose Your Prep Plan', style: AppTypography.titleLarge(textPrimary)),
-            const SizedBox(height: 12),
-
-            Row(
+          // Plan Selector Cards
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
               children: List.generate(_plans.length, (idx) {
                 final plan = _plans[idx];
                 final isSelected = _selectedPlanIndex == idx;
 
                 return Expanded(
                   child: GestureDetector(
-                    onTap: () => setState(() => _selectedPlanIndex = idx),
+                    onTap: () {
+                      HapticFeedback.selectionClick();
+                      setState(() => _selectedPlanIndex = idx);
+                    },
                     child: Container(
                       margin: EdgeInsets.only(
                         left: idx == 0 ? 0 : 4,
                         right: idx == _plans.length - 1 ? 0 : 4,
                       ),
-                      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+                      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? AppColors.brandBlue.withValues(alpha: isDark ? 0.2 : 0.08)
+                            ? (isDark ? AppColors.systemBlueDark.withValues(alpha: 0.18) : AppColors.systemBlue.withValues(alpha: 0.08))
                             : (isDark ? AppColors.darkCardSurface : AppColors.lightCardSurface),
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(14),
                         border: Border.all(
                           color: isSelected
-                              ? AppColors.brandBlue
-                              : (isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0)),
-                          width: isSelected ? 2 : 1,
+                              ? (isDark ? AppColors.systemBlueDark : AppColors.systemBlue)
+                              : (isDark ? AppColors.darkCardStroke : AppColors.lightCardStroke),
+                          width: isSelected ? 2 : 0.5,
                         ),
                       ),
                       child: Column(
@@ -247,8 +233,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                               margin: const EdgeInsets.only(bottom: 6),
                               decoration: BoxDecoration(
-                                color: AppColors.brandBlue,
-                                borderRadius: BorderRadius.circular(6),
+                                color: isDark ? AppColors.systemBlueDark : AppColors.systemBlue,
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(
                                 plan['tag'],
@@ -260,15 +246,15 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                               ),
                             )
                           else
-                            const SizedBox(height: 18),
+                            const SizedBox(height: 16),
                           Text(
                             plan['title'],
                             style: AppTypography.bodySmall(textSecondary),
                           ),
-                          const SizedBox(height: 6),
+                          const SizedBox(height: 4),
                           Text(
                             plan['price'],
-                            style: AppTypography.titleLarge(textPrimary),
+                            style: AppTypography.titleLarge(textPrimary).copyWith(fontSize: 17),
                           ),
                           const SizedBox(height: 2),
                           Text(
@@ -276,11 +262,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                             style: AppTypography.labelSmall(textSecondary),
                           ),
                           if (plan['savings'] != null) ...[
-                            const SizedBox(height: 6),
+                            const SizedBox(height: 4),
                             Text(
                               plan['savings'],
-                              style: const TextStyle(
-                                color: AppColors.correctGreen,
+                              style: TextStyle(
+                                color: isDark ? AppColors.systemGreenDark : AppColors.correctGreen,
                                 fontSize: 10,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -293,93 +279,86 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 );
               }),
             ),
-            const SizedBox(height: 28),
+          ),
+          const SizedBox(height: 16),
 
-            // Feature Comparison Table
-            Text('Free vs. PRO Comparison', style: AppTypography.titleLarge(textPrimary)),
-            const SizedBox(height: 12),
+          // Feature Comparison Inset Section
+          IosGroupedSection(
+            header: 'Free vs. PRO Features',
+            footer: 'Legitimate subscription verified via standard In-App Purchases (Zero Piracy Guarantee)',
+            children: [
+              _iosComparisonRow('15+ Years Chapter PYQs (2010–2026)', free: '2020–2024 only', pro: 'All Shifts & Years'),
+              _iosComparisonRow('NTA-Style CBT Mock Simulator', free: '1 Test / week', pro: 'Unlimited Full Tests'),
+              _iosComparisonRow('Step-by-Step Video Solutions', free: 'Basic Text only', pro: 'All Questions'),
+              _iosComparisonRow('Spaced Repetition Mistake Notebook', free: 'Basic (50 items)', pro: 'Unlimited Sync'),
+              _iosComparisonRow('Formula & High-Yield Flashcards', free: 'Limited set', pro: 'All 4 Subjects'),
+              _iosComparisonRow('Distraction-Free Study Experience', free: 'Banner Ads', pro: '100% Ad-Free'),
+            ],
+          ),
 
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    _comparisonRow('15+ Years Chapter PYQs (2010-2026)', free: '2020-2024 only', pro: 'All Shifts & Years'),
-                    const Divider(height: 20),
-                    _comparisonRow('NTA-Style CBT Mock Simulator', free: '1 Test / week', pro: 'Unlimited Full Tests'),
-                    const Divider(height: 20),
-                    _comparisonRow('Step-by-Step Video Solutions', free: 'No', pro: 'All Questions'),
-                    const Divider(height: 20),
-                    _comparisonRow('Spaced Repetition Mistake Notebook', free: 'Basic (50 items)', pro: 'Unlimited Sync'),
-                    const Divider(height: 20),
-                    _comparisonRow('Formula & High-Yield Flashcards', free: 'Limited', pro: 'Full Physics/Chem/Math'),
-                    const Divider(height: 20),
-                    _comparisonRow('Ad-Free Clean Study Experience', free: 'Banner Ads', pro: '100% Ad-Free'),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 32),
-
-            // CTA Subscribe Button
-            SizedBox(
+          // Primary CTA Button
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: SizedBox(
               width: double.infinity,
-              height: 52,
-              child: ElevatedButton(
+              height: 50,
+              child: CupertinoButton.filled(
+                borderRadius: BorderRadius.circular(12),
+                padding: EdgeInsets.zero,
                 onPressed: _isProcessing ? null : _handleSubscribe,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.brandBlue,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                ),
                 child: _isProcessing
-                    ? const SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5),
-                      )
+                    ? const CupertinoActivityIndicator(color: Colors.white)
                     : Text(
                         _isPro
                             ? 'Subscription Active · Extend Plan'
-                            : 'Continue with ${_plans[_selectedPlanIndex]['title']} (${_plans[_selectedPlanIndex]['price']})',
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                            : 'Subscribe for ${_plans[_selectedPlanIndex]['price']} (${_plans[_selectedPlanIndex]['title']})',
+                        style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                       ),
               ),
             ),
-            const SizedBox(height: 12),
-            Center(
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Center(
               child: Text(
-                'Secured via In-App Billing · Cancel anytime in Google Play Store',
-                style: AppTypography.bodySmall(textSecondary),
+                'Secured via Apple App Store / In-App Purchases · Cancel anytime',
+                style: AppTypography.labelSmall(textSecondary),
+                textAlign: TextAlign.center,
               ),
             ),
-            const SizedBox(height: 20),
-          ],
-        ),
+          ),
+          const SizedBox(height: 80),
+        ],
       ),
     );
   }
 
-  Widget _comparisonRow(String feature, {required String free, required String pro}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(feature, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
-        const SizedBox(height: 4),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text('Free: $free', style: const TextStyle(color: Colors.grey, fontSize: 12)),
-            Row(
-              children: [
-                const Icon(Icons.check_circle_rounded, color: AppColors.correctGreen, size: 14),
-                const SizedBox(width: 4),
-                Text(pro, style: const TextStyle(color: AppColors.brandBlue, fontSize: 12, fontWeight: FontWeight.bold)),
-              ],
-            ),
-          ],
-        ),
-      ],
+  Widget _iosComparisonRow(String feature, {required String free, required String pro}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(feature, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14)),
+          const SizedBox(height: 4),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Free: $free', style: const TextStyle(color: Colors.grey, fontSize: 12)),
+              Row(
+                children: [
+                  const Icon(CupertinoIcons.checkmark_alt, color: AppColors.correctGreen, size: 14),
+                  const SizedBox(width: 4),
+                  Text(
+                    pro,
+                    style: const TextStyle(color: AppColors.systemBlue, fontSize: 12, fontWeight: FontWeight.w600),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

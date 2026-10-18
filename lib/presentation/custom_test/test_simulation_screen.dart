@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../app/theme/app_colors.dart';
@@ -111,6 +112,7 @@ class _TestSimulationScreenState extends State<TestSimulationScreen> {
   }
 
   void _saveAndNext() {
+    HapticFeedback.lightImpact();
     final currentQ = _testQuestions[_currentQuestionIndex];
     String? response = _responses[currentQ.id];
 
@@ -134,6 +136,7 @@ class _TestSimulationScreenState extends State<TestSimulationScreen> {
   }
 
   void _markForReviewAndNext() {
+    HapticFeedback.selectionClick();
     final currentQ = _testQuestions[_currentQuestionIndex];
     final hasAnswer = _responses[currentQ.id] != null;
 
@@ -147,11 +150,12 @@ class _TestSimulationScreenState extends State<TestSimulationScreen> {
   }
 
   void _clearResponse() {
+    HapticFeedback.lightImpact();
     final currentQ = _testQuestions[_currentQuestionIndex];
     setState(() {
       _responses.remove(currentQ.id);
-      _numericalController.clear();
       _statuses[currentQ.id] = QuestionStatus.notAnswered;
+      _numericalController.clear();
     });
   }
 
@@ -164,63 +168,67 @@ class _TestSimulationScreenState extends State<TestSimulationScreen> {
   void _jumpToQuestion(int index) {
     setState(() {
       _currentQuestionIndex = index;
-      final qId = _testQuestions[index].id;
-      if (_statuses[qId] == QuestionStatus.notVisited) {
-        _statuses[qId] = QuestionStatus.notAnswered;
+      final q = _testQuestions[index];
+      if (_statuses[q.id] == QuestionStatus.notVisited) {
+        _statuses[q.id] = QuestionStatus.notAnswered;
       }
-
-      final existingAns = _responses[qId];
-      if (_testQuestions[index].questionType == QuestionType.numerical) {
-        _numericalController.text = existingAns ?? '';
+      if (q.questionType == QuestionType.numerical) {
+        _numericalController.text = _responses[q.id] ?? '';
       }
     });
   }
 
   void _confirmSubmitDialog() {
-    final answeredCount = _statuses.values
-        .where((s) =>
-            s == QuestionStatus.answered ||
-            s == QuestionStatus.answeredAndMarkedForReview)
-        .length;
-    final markedCount = _statuses.values
-        .where((s) =>
-            s == QuestionStatus.markedForReview ||
-            s == QuestionStatus.answeredAndMarkedForReview)
-        .length;
-    final unvisitedCount = _statuses.values
-        .where((s) => s == QuestionStatus.notVisited || s == QuestionStatus.notAnswered)
-        .length;
+    HapticFeedback.mediumImpact();
+    int answeredCount = 0;
+    int markedCount = 0;
+    int unvisitedCount = 0;
 
-    showDialog(
+    for (final q in _testQuestions) {
+      final s = _statuses[q.id];
+      if (s == QuestionStatus.answered || s == QuestionStatus.answeredAndMarkedForReview) {
+        answeredCount++;
+      } else if (s == QuestionStatus.markedForReview) {
+        markedCount++;
+      } else {
+        unvisitedCount++;
+      }
+    }
+
+    showCupertinoDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Submit Mock Test?'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Time Remaining: ${_formatTime(_remainingSeconds)}'),
-            const SizedBox(height: 12),
-            Text('• Answered: $answeredCount',
-                style: const TextStyle(color: AppColors.correctGreen, fontWeight: FontWeight.bold)),
-            Text('• Marked for Review: $markedCount',
-                style: const TextStyle(color: AppColors.reviewAmber, fontWeight: FontWeight.bold)),
-            Text('• Unattempted: $unvisitedCount',
-                style: const TextStyle(color: AppColors.errorRed, fontWeight: FontWeight.bold)),
-          ],
+      builder: (ctx) => CupertinoAlertDialog(
+        title: const Text('Submit Test?'),
+        content: Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Time Remaining: ${_formatTime(_remainingSeconds)}'),
+              const SizedBox(height: 8),
+              Text('• Answered: $answeredCount',
+                  style: const TextStyle(color: AppColors.correctGreen, fontWeight: FontWeight.bold)),
+              Text('• Marked for Review: $markedCount',
+                  style: const TextStyle(color: AppColors.systemOrange, fontWeight: FontWeight.bold)),
+              Text('• Unattempted: $unvisitedCount',
+                  style: const TextStyle(color: AppColors.errorRed, fontWeight: FontWeight.bold)),
+            ],
+          ),
         ),
         actions: [
-          TextButton(
+          CupertinoDialogAction(
             onPressed: () => Navigator.pop(ctx),
             child: const Text('Cancel'),
           ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.brandBlue),
+          CupertinoDialogAction(
+            isDestructiveAction: false,
+            isDefaultAction: true,
             onPressed: () {
               Navigator.pop(ctx);
               _finishTest();
             },
-            child: const Text('Confirm Submit', style: TextStyle(color: Colors.white)),
+            child: const Text('Confirm Submit'),
           ),
         ],
       ),
@@ -228,9 +236,6 @@ class _TestSimulationScreenState extends State<TestSimulationScreen> {
   }
 
   void _autoSubmitTest() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Time expired! Auto-submitting test.')),
-    );
     _finishTest();
   }
 
@@ -238,7 +243,7 @@ class _TestSimulationScreenState extends State<TestSimulationScreen> {
     _timer?.cancel();
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(
+      CupertinoPageRoute(
         builder: (_) => TestResultAnalysisScreen(
           testTitle: widget.testTitle,
           questions: _testQuestions,
@@ -251,6 +256,7 @@ class _TestSimulationScreenState extends State<TestSimulationScreen> {
   }
 
   void _openQuestionPalette() {
+    HapticFeedback.lightImpact();
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -258,22 +264,37 @@ class _TestSimulationScreenState extends State<TestSimulationScreen> {
       builder: (_) {
         final isDark = Theme.of(context).brightness == Brightness.dark;
         return Container(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
           decoration: BoxDecoration(
             color: isDark ? AppColors.darkCardSurface : AppColors.lightCardSurface,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(22)),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // iOS Drag Handle
+              Center(
+                child: Container(
+                  width: 36,
+                  height: 5,
+                  decoration: BoxDecoration(
+                    color: isDark ? const Color(0xFF3A3A3C) : const Color(0xFFD1D1D6),
+                    borderRadius: BorderRadius.circular(2.5),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 14),
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Question Palette', style: AppTypography.titleLarge(isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary)),
-                  IconButton(
-                    icon: const Icon(Icons.close_rounded),
+                  Text('Question Palette', style: AppTypography.headlineSmall(isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary)),
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    minimumSize: Size.zero,
                     onPressed: () => Navigator.pop(context),
+                    child: Icon(CupertinoIcons.xmark_circle_fill, size: 24, color: isDark ? Colors.white38 : Colors.black26),
                   ),
                 ],
               ),
@@ -284,12 +305,15 @@ class _TestSimulationScreenState extends State<TestSimulationScreen> {
                 runSpacing: 8,
                 children: [
                   _legendItem(AppColors.correctGreen, 'Answered'),
-                  _legendItem(AppColors.reviewAmber, 'Review'),
+                  _legendItem(AppColors.systemOrange, 'Review'),
                   _legendItem(AppColors.errorRed, 'Not Answered'),
-                  _legendItem(Colors.grey, 'Not Visited'),
+                  _legendItem(isDark ? Colors.white38 : Colors.grey, 'Not Visited'),
                 ],
               ),
-              const Divider(height: 24),
+              const SizedBox(height: 14),
+              Divider(height: 1, color: isDark ? AppColors.darkHairline : AppColors.lightHairline),
+              const SizedBox(height: 14),
+
               // Grid of question buttons
               GridView.builder(
                 shrinkWrap: true,
@@ -312,31 +336,33 @@ class _TestSimulationScreenState extends State<TestSimulationScreen> {
                       bg = AppColors.correctGreen;
                       break;
                     case QuestionStatus.markedForReview:
-                      bg = AppColors.reviewAmber;
+                      bg = AppColors.systemOrange;
                       break;
                     case QuestionStatus.notAnswered:
                       bg = AppColors.errorRed;
                       break;
                     case QuestionStatus.notVisited:
-                      bg = isDark ? const Color(0xFF1E293B) : const Color(0xFFE2E8F0);
-                      textCol = isDark ? Colors.white : Colors.black;
+                      bg = isDark ? const Color(0xFF2C2C2E) : const Color(0xFFE5E5EA);
+                      textCol = isDark ? Colors.white : Colors.black87;
                       break;
                   }
 
                   final isCurrent = idx == _currentQuestionIndex;
 
-                  return InkWell(
+                  return GestureDetector(
                     onTap: () {
+                      HapticFeedback.selectionClick();
                       Navigator.pop(context);
                       _jumpToQuestion(idx);
                     },
-                    child: Container(
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 150),
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                         color: bg,
-                        shape: BoxShape.circle,
+                        borderRadius: BorderRadius.circular(12),
                         border: isCurrent
-                            ? Border.all(color: AppColors.brandBlue, width: 3)
+                            ? Border.all(color: AppColors.systemBlue, width: 2.5)
                             : null,
                       ),
                       child: Text(
@@ -347,7 +373,7 @@ class _TestSimulationScreenState extends State<TestSimulationScreen> {
                   );
                 },
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
             ],
           ),
         );
@@ -360,11 +386,11 @@ class _TestSimulationScreenState extends State<TestSimulationScreen> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          width: 12,
-          height: 12,
-          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+          width: 10,
+          height: 10,
+          decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(3)),
         ),
-        const SizedBox(width: 4),
+        const SizedBox(width: 5),
         Text(text, style: const TextStyle(fontSize: 12)),
       ],
     );
@@ -374,10 +400,11 @@ class _TestSimulationScreenState extends State<TestSimulationScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textPrimary = isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
+    final textSecondary = isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary;
 
     if (_isLoading) {
       return const Scaffold(
-        body: Center(child: CircularProgressIndicator(color: AppColors.brandBlue)),
+        body: Center(child: CupertinoActivityIndicator(radius: 14)),
       );
     }
 
@@ -398,14 +425,20 @@ class _TestSimulationScreenState extends State<TestSimulationScreen> {
         title: Row(
           children: [
             // Palette Button
-            IconButton(
-              icon: const Icon(Icons.grid_view_rounded),
+            CupertinoButton(
+              padding: EdgeInsets.zero,
+              minimumSize: Size.zero,
               onPressed: _openQuestionPalette,
+              child: Icon(
+                CupertinoIcons.square_grid_2x2,
+                color: AppColors.systemBlue,
+                size: 22,
+              ),
             ),
-            const SizedBox(width: 4),
+            const SizedBox(width: 10),
             Text(
               'Q ${_currentQuestionIndex + 1} / ${_testQuestions.length}',
-              style: AppTypography.titleMedium(textPrimary),
+              style: AppTypography.headlineSmall(textPrimary).copyWith(fontSize: 17),
             ),
           ],
         ),
@@ -415,59 +448,63 @@ class _TestSimulationScreenState extends State<TestSimulationScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
               color: isTimeRunningLow
-                  ? AppColors.errorRed.withValues(alpha: 0.15)
-                  : AppColors.brandBlue.withValues(alpha: 0.15),
+                  ? AppColors.errorRed.withValues(alpha: 0.14)
+                  : AppColors.systemBlue.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(8),
               border: isTimeRunningLow
-                  ? Border.all(color: AppColors.errorRed, width: 1.5)
+                  ? Border.all(color: AppColors.errorRed, width: 1.0)
                   : null,
             ),
             child: Row(
               children: [
                 Icon(
-                  Icons.timer_outlined,
-                  size: 16,
-                  color: isTimeRunningLow ? AppColors.errorRed : AppColors.brandBlue,
+                  CupertinoIcons.timer,
+                  size: 15,
+                  color: isTimeRunningLow ? AppColors.errorRed : AppColors.systemBlue,
                 ),
                 const SizedBox(width: 4),
                 Text(
                   _formatTime(_remainingSeconds),
-                  style: AppTypography.timer(
-                    isTimeRunningLow ? AppColors.errorRed : AppColors.brandBlue,
+                  style: AppTypography.monoNumber(
+                    isTimeRunningLow ? AppColors.errorRed : AppColors.systemBlue,
+                    fontSize: 13,
                   ),
                 ),
               ],
             ),
           ),
           const SizedBox(width: 8),
-          TextButton(
+          CupertinoButton(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            minimumSize: Size.zero,
             onPressed: _confirmSubmitDialog,
-            child: const Text('SUBMIT', style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.errorRed)),
+            child: const Text('SUBMIT', style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.errorRed, fontSize: 13)),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 6),
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Question Subject & Shift Header
             Text(
               '${currentQ.subjectId.toUpperCase()} · ${currentQ.year}',
-              style: AppTypography.labelSmall(AppColors.brandBlue),
+              style: AppTypography.labelSmall(AppColors.systemBlue),
             ),
             const SizedBox(height: 10),
 
             // Question Card with LaTeX math
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
                 color: isDark ? AppColors.darkCardSurface : AppColors.lightCardSurface,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(16),
                 border: Border.all(
                   color: isDark ? AppColors.darkCardStroke : AppColors.lightCardStroke,
+                  width: 0.5,
                 ),
               ),
               child: KaTeXMathView(
@@ -475,21 +512,32 @@ class _TestSimulationScreenState extends State<TestSimulationScreen> {
                 baseStyle: AppTypography.bodyLarge(textPrimary),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 18),
 
             // Options
             if (currentQ.questionType == QuestionType.numerical) ...[
-              Text('Enter Integer Answer:', style: AppTypography.labelLarge(textPrimary)),
-              const SizedBox(height: 8),
-              TextField(
-                controller: _numericalController,
-                keyboardType: TextInputType.number,
-                style: AppTypography.monoNumber(textPrimary, fontSize: 18),
-                decoration: InputDecoration(
-                  hintText: 'e.g. 4',
-                  filled: true,
-                  fillColor: isDark ? AppColors.darkCardSurface : AppColors.lightCardSurface,
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              Padding(
+                padding: const EdgeInsets.only(left: 4, bottom: 8),
+                child: Text('Enter Integer Answer:', style: AppTypography.subhead(textSecondary)),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  color: isDark ? AppColors.darkCardSurface : AppColors.lightCardSurface,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: isDark ? AppColors.darkCardStroke : AppColors.lightCardStroke,
+                    width: 0.5,
+                  ),
+                ),
+                child: TextField(
+                  controller: _numericalController,
+                  keyboardType: TextInputType.number,
+                  style: AppTypography.monoNumber(textPrimary, fontSize: 18),
+                  decoration: const InputDecoration(
+                    hintText: 'e.g. 4',
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  ),
                 ),
               ),
             ] else ...[
@@ -519,42 +567,41 @@ class _TestSimulationScreenState extends State<TestSimulationScreen> {
           color: isDark ? AppColors.darkCardSurface : AppColors.lightCardSurface,
           border: Border(
             top: BorderSide(
-              color: isDark ? AppColors.darkCardStroke : AppColors.lightCardStroke,
+              color: isDark ? AppColors.darkHairline : AppColors.lightHairline,
+              width: 0.5,
             ),
           ),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            OutlinedButton(
-              onPressed: _clearResponse,
-              style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        child: SafeArea(
+          top: false,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              CupertinoButton(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                minimumSize: Size.zero,
+                color: isDark ? AppColors.darkGroupedBackground : AppColors.lightGroupedBackground,
+                borderRadius: BorderRadius.circular(12),
+                onPressed: _clearResponse,
+                child: Text('Clear', style: TextStyle(color: textSecondary, fontSize: 14, fontWeight: FontWeight.w500)),
               ),
-              child: const Text('Clear'),
-            ),
-            OutlinedButton(
-              onPressed: _markForReviewAndNext,
-              style: OutlinedButton.styleFrom(
-                foregroundColor: AppColors.reviewAmber,
-                side: const BorderSide(color: AppColors.reviewAmber),
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              CupertinoButton(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                minimumSize: Size.zero,
+                color: AppColors.systemOrange.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(12),
+                onPressed: _markForReviewAndNext,
+                child: const Text('Mark & Next', style: TextStyle(color: AppColors.systemOrange, fontSize: 14, fontWeight: FontWeight.w600)),
               ),
-              child: const Text('Mark & Next'),
-            ),
-            ElevatedButton(
-              onPressed: _saveAndNext,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.brandBlue,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              CupertinoButton.filled(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                minimumSize: Size.zero,
+                borderRadius: BorderRadius.circular(12),
+                onPressed: _saveAndNext,
+                child: const Text('Save & Next', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
               ),
-              child: const Text('Save & Next'),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

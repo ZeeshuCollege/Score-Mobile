@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../app/theme/app_colors.dart';
 import '../../app/theme/app_typography.dart';
 import '../../data/local/app_database.dart';
@@ -33,6 +34,7 @@ class _TestResultAnalysisScreenState extends State<TestResultAnalysisScreen> {
   int _unattemptedCount = 0;
   double _totalScore = 0;
   int _totalTimeSeconds = 0;
+  final Set<String> _taggedMistakes = {};
 
   @override
   void initState() {
@@ -88,6 +90,7 @@ class _TestResultAnalysisScreenState extends State<TestResultAnalysisScreen> {
   }
 
   Future<void> _logMistake(String questionId, MistakeType type) async {
+    HapticFeedback.lightImpact();
     final mistake = MistakeEntity(
       id: 'm_${DateTime.now().millisecondsSinceEpoch}',
       questionId: questionId,
@@ -98,10 +101,9 @@ class _TestResultAnalysisScreenState extends State<TestResultAnalysisScreen> {
       createdAt: DateTime.now(),
     );
     await AppDatabase.instance.logMistake(mistake);
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Added to Mistake Notebook (${type.label})')),
-    );
+    setState(() {
+      _taggedMistakes.add(questionId);
+    });
   }
 
   @override
@@ -118,59 +120,73 @@ class _TestResultAnalysisScreenState extends State<TestResultAnalysisScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Test Analysis Report'),
+        title: Text('Test Analysis Report', style: AppTypography.headlineSmall(textPrimary).copyWith(fontSize: 17)),
         automaticallyImplyLeading: true,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Scorecard Banner
+            // Apple Hero Scorecard Banner
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(22),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: _totalScore >= 0
-                      ? [const Color(0xFF1E3A8A), AppColors.brandBlue]
-                      : [const Color(0xFF7F1D1D), AppColors.errorRed],
+                      ? [const Color(0xFF007AFF), const Color(0xFF0A84FF)]
+                      : [const Color(0xFFFF3B30), const Color(0xFFFF453A)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(18),
+                boxShadow: [
+                  BoxShadow(
+                    color: (_totalScore >= 0 ? AppColors.systemBlue : AppColors.errorRed).withValues(alpha: 0.25),
+                    blurRadius: 16,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
               ),
               child: Column(
                 children: [
                   Text(
                     widget.testTitle,
-                    style: const TextStyle(color: Colors.white70, fontSize: 14),
+                    style: const TextStyle(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w500),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     '${_totalScore.toInt()} / ${totalQuestions * 4}',
-                    style: AppTypography.displayLarge(Colors.white),
+                    style: AppTypography.displayLarge(Colors.white).copyWith(fontSize: 38),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Accuracy: $accuracy%',
-                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                  const SizedBox(height: 6),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      'Accuracy: $accuracy%',
+                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 13),
+                    ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
 
             // Performance Metrics Grid
             Row(
               children: [
-                _metricTile('Correct', '+$_correctCount', AppColors.correctGreen),
+                _metricTile('Correct', '+$_correctCount', AppColors.correctGreen, isDark),
                 const SizedBox(width: 8),
-                _metricTile('Incorrect', '-$_incorrectCount', AppColors.errorRed),
+                _metricTile('Incorrect', '-$_incorrectCount', AppColors.errorRed, isDark),
                 const SizedBox(width: 8),
-                _metricTile('Skipped', '$_unattemptedCount', Colors.grey),
+                _metricTile('Skipped', '$_unattemptedCount', textSecondary, isDark),
                 const SizedBox(width: 8),
-                _metricTile('Time', '${_totalTimeSeconds ~/ 60}m ${_totalTimeSeconds % 60}s', AppColors.brandBlue),
+                _metricTile('Time', '${_totalTimeSeconds ~/ 60}m', AppColors.systemBlue, isDark),
               ],
             ),
             const SizedBox(height: 24),
@@ -179,38 +195,47 @@ class _TestResultAnalysisScreenState extends State<TestResultAnalysisScreen> {
             Text('Question Review & Solutions', style: AppTypography.titleLarge(textPrimary)),
             const SizedBox(height: 4),
             Text('Review answers and tag mistakes for spaced repetition',
-                style: AppTypography.bodySmall(textSecondary)),
+                style: AppTypography.subhead(textSecondary)),
             const SizedBox(height: 14),
 
             // Question Review List
             for (int i = 0; i < widget.questions.length; i++) ...[
               _buildQuestionReviewCard(widget.questions[i], i, textPrimary, textSecondary, isDark),
-              const SizedBox(height: 12),
+              const SizedBox(height: 14),
             ],
+            const SizedBox(height: 24),
           ],
         ),
       ),
     );
   }
 
-  Widget _metricTile(String label, String value, Color color) {
+  Widget _metricTile(String label, String value, Color color, bool isDark) {
     return Expanded(
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
-          child: Column(
-            children: [
-              Text(
-                value,
-                style: AppTypography.titleLarge(color),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                label,
-                style: AppTypography.labelSmall(AppColors.lightTextSecondary),
-              ),
-            ],
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 6),
+        decoration: BoxDecoration(
+          color: isDark ? AppColors.darkCardSurface : AppColors.lightCardSurface,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: isDark ? AppColors.darkCardStroke : AppColors.lightCardStroke,
+            width: 0.5,
           ),
+        ),
+        child: Column(
+          children: [
+            Text(
+              value,
+              style: AppTypography.headlineSmall(color).copyWith(fontSize: 18),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: AppTypography.labelSmall(isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
         ),
       ),
     );
@@ -226,12 +251,13 @@ class _TestResultAnalysisScreenState extends State<TestResultAnalysisScreen> {
     final userAns = widget.responses[q.id];
     final isAttempted = userAns != null && userAns.isNotEmpty;
     final isCorrect = isAttempted && (userAns.trim().toUpperCase() == q.correctAnswer.trim().toUpperCase());
+    final isMistakeTagged = _taggedMistakes.contains(q.id);
 
     Color badgeColor;
     String statusText;
 
     if (!isAttempted) {
-      badgeColor = Colors.grey;
+      badgeColor = textSecondary;
       statusText = 'Unattempted (0)';
     } else if (isCorrect) {
       badgeColor = AppColors.correctGreen;
@@ -241,91 +267,125 @@ class _TestResultAnalysisScreenState extends State<TestResultAnalysisScreen> {
       statusText = 'Incorrect (-1)';
     }
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Status Header
-            Row(
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.darkCardSurface : AppColors.lightCardSurface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isDark ? AppColors.darkCardStroke : AppColors.lightCardStroke,
+          width: 0.5,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Status Header
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Q ${index + 1}', style: AppTypography.monoNumber(textPrimary, fontSize: 14)),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: badgeColor.withValues(alpha: 0.14),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  statusText,
+                  style: AppTypography.labelSmall(badgeColor).copyWith(fontWeight: FontWeight.w600),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+
+          // Question text
+          KaTeXMathView(
+            text: q.questionText,
+            baseStyle: AppTypography.bodyMedium(textPrimary),
+          ),
+          const SizedBox(height: 12),
+
+          // User Answer vs Correct Answer
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            decoration: BoxDecoration(
+              color: isDark ? AppColors.darkGroupedBackground : AppColors.lightGroupedBackground,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Q ${index + 1}', style: AppTypography.monoNumber(textPrimary, fontSize: 14)),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                  decoration: BoxDecoration(
-                    color: badgeColor.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(6),
+                Text(
+                  'Your Answer: ${userAns ?? "None"}',
+                  style: TextStyle(
+                    color: isCorrect ? AppColors.correctGreen : (isAttempted ? AppColors.errorRed : textSecondary),
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13,
                   ),
-                  child: Text(
-                    statusText,
-                    style: AppTypography.labelSmall(badgeColor),
+                ),
+                Text(
+                  'Correct: ${q.correctAnswer}',
+                  style: const TextStyle(
+                    color: AppColors.correctGreen,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13,
                   ),
                 ),
               ],
             ),
+          ),
+          const SizedBox(height: 12),
+
+          // Detailed Solution
+          Text('Solution:', style: AppTypography.subhead(textPrimary).copyWith(fontWeight: FontWeight.w600)),
+          const SizedBox(height: 4),
+          KaTeXMathView(
+            text: q.solutionText,
+            baseStyle: AppTypography.bodySmall(textSecondary),
+          ),
+
+          // Mistake Tagging Actions for incorrect questions
+          if (!isCorrect) ...[
+            const SizedBox(height: 12),
+            Divider(height: 1, color: isDark ? AppColors.darkHairline : AppColors.lightHairline),
             const SizedBox(height: 10),
-
-            // Question text
-            KaTeXMathView(
-              text: q.questionText,
-              baseStyle: AppTypography.bodyMedium(textPrimary),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  isMistakeTagged ? '✓ Tagged to Mistake Notebook' : 'Tag Mistake to Notebook:',
+                  style: AppTypography.labelSmall(isMistakeTagged ? AppColors.correctGreen : textSecondary),
+                ),
+              ],
             ),
-            const SizedBox(height: 12),
-
-            // User Answer vs Correct Answer
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Your Answer: ${userAns ?? "None"}',
-                      style: TextStyle(
-                        color: isCorrect ? AppColors.correctGreen : (isAttempted ? AppColors.errorRed : textSecondary),
-                        fontWeight: FontWeight.bold,
-                      )),
-                  Text('Correct: ${q.correctAnswer}',
-                      style: const TextStyle(
-                        color: AppColors.correctGreen,
-                        fontWeight: FontWeight.bold,
-                      )),
-                ],
-              ),
-            ),
-            const SizedBox(height: 12),
-
-            // Detailed Solution
-            Text('Solution:', style: AppTypography.labelLarge(textPrimary)),
-            const SizedBox(height: 4),
-            KaTeXMathView(
-              text: q.solutionText,
-              baseStyle: AppTypography.bodySmall(textSecondary),
-            ),
-
-            // Mistake Tagging Actions for incorrect questions
-            if (!isCorrect) ...[
-              const Divider(height: 20),
-              Text('Tag Mistake to Notebook:', style: AppTypography.labelSmall(textSecondary)),
+            if (!isMistakeTagged) ...[
               const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
+                runSpacing: 8,
                 children: MistakeType.values.map((type) {
-                  return ActionChip(
-                    label: Text(type.label),
-                    labelStyle: AppTypography.labelSmall(AppColors.errorRed),
-                    backgroundColor: AppColors.errorRed.withValues(alpha: 0.1),
-                    onPressed: () => _logMistake(q.id, type),
+                  return GestureDetector(
+                    onTap: () => _logMistake(q.id, type),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: AppColors.errorRed.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: AppColors.errorRed.withValues(alpha: 0.3), width: 0.5),
+                      ),
+                      child: Text(
+                        type.label,
+                        style: AppTypography.labelSmall(AppColors.errorRed).copyWith(fontWeight: FontWeight.w600),
+                      ),
+                    ),
                   );
                 }).toList(),
               ),
             ],
           ],
-        ),
+        ],
       ),
     );
   }

@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../app/theme/app_colors.dart';
 import '../../app/theme/app_typography.dart';
 import '../../data/local/app_database.dart';
@@ -78,15 +80,18 @@ class _QuestionListScreenState extends State<QuestionListScreen> {
   }
 
   void _showFilterModal() {
+    HapticFeedback.lightImpact();
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => QuestionFilterSheet(
+      builder: (ctx) => QuestionFilterSheet(
         initialFilters: _filters,
         onApply: (newFilters) {
-          setState(() => _filters = newFilters);
-          _applyFilters();
+          setState(() {
+            _filters = newFilters;
+            _applyFilters();
+          });
         },
       ),
     );
@@ -102,98 +107,81 @@ class _QuestionListScreenState extends State<QuestionListScreen> {
       appBar: AppBar(
         title: Text(widget.title),
         actions: [
-          IconButton(
-            icon: Stack(
+          CupertinoButton(
+            padding: const EdgeInsets.only(right: 12),
+            onPressed: _showFilterModal,
+            child: Stack(
+              alignment: Alignment.topRight,
               children: [
-                const Icon(Icons.tune_rounded),
+                Icon(
+                  CupertinoIcons.slider_horizontal_3,
+                  size: 20,
+                  color: isDark ? AppColors.systemBlueDark : AppColors.systemBlue,
+                ),
                 if (_filters.hasActiveFilters)
-                  Positioned(
-                    right: 0,
-                    top: 0,
-                    child: Container(
-                      width: 8,
-                      height: 8,
-                      decoration: const BoxDecoration(
-                        color: AppColors.brandBlue,
-                        shape: BoxShape.circle,
-                      ),
+                  Container(
+                    width: 7,
+                    height: 7,
+                    decoration: const BoxDecoration(
+                      color: AppColors.errorRed,
+                      shape: BoxShape.circle,
                     ),
                   ),
               ],
             ),
-            onPressed: _showFilterModal,
           ),
         ],
       ),
       body: Column(
         children: [
-          // Search & Filter Summary Bar
+          // iOS Search Bar
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-            child: TextField(
+            child: CupertinoSearchTextField(
+              placeholder: 'Search questions or formulas...',
+              style: TextStyle(color: textPrimary, fontSize: 15),
               onChanged: (val) {
                 _searchQuery = val;
                 _applyFilters();
               },
-              decoration: InputDecoration(
-                hintText: 'Search questions, formulas...',
-                prefixIcon: const Icon(Icons.search_rounded, size: 20),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-                filled: true,
-                fillColor: isDark ? AppColors.darkCardSurface : AppColors.lightCardSurface,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(
-                    color: isDark ? AppColors.darkCardStroke : AppColors.lightCardStroke,
-                  ),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(
-                    color: isDark ? AppColors.darkCardStroke : AppColors.lightCardStroke,
-                  ),
-                ),
-              ),
             ),
           ),
 
           // Active Filter Chips
           if (_filters.hasActiveFilters)
             Container(
-              height: 38,
+              height: 34,
               padding: const EdgeInsets.symmetric(horizontal: 16),
+              margin: const EdgeInsets.only(bottom: 6),
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: [
                   if (_filters.selectedDifficulty != null)
-                    Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: Chip(
-                        label: Text('Diff: ${_filters.selectedDifficulty!.name.toUpperCase()}'),
-                        onDeleted: () {
-                          setState(() => _filters = _filters.copyWith(clearDifficulty: true));
-                          _applyFilters();
-                        },
-                      ),
+                    _iosPill(
+                      label: 'Diff: ${_filters.selectedDifficulty!.name.toUpperCase()}',
+                      onDelete: () {
+                        setState(() => _filters = _filters.copyWith(clearDifficulty: true));
+                        _applyFilters();
+                      },
+                      isDark: isDark,
                     ),
                   if (_filters.selectedType != null)
-                    Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: Chip(
-                        label: Text('Type: ${_filters.selectedType!.name}'),
-                        onDeleted: () {
-                          setState(() => _filters = _filters.copyWith(clearType: true));
-                          _applyFilters();
-                        },
-                      ),
+                    _iosPill(
+                      label: 'Type: ${_filters.selectedType!.name}',
+                      onDelete: () {
+                        setState(() => _filters = _filters.copyWith(clearType: true));
+                        _applyFilters();
+                      },
+                      isDark: isDark,
                     ),
                   if (_filters.selectedYears.isNotEmpty)
-                    Chip(
-                      label: Text('Years: ${_filters.selectedYears.join(", ")}'),
-                      onDeleted: () {
+                    _iosPill(
+                      label: 'Years: ${_filters.selectedYears.join(", ")}',
+                      onDelete: () {
                         setState(() => _filters = _filters.copyWith(selectedYears: {}));
                         _applyFilters();
                       },
+                      isDark: isDark,
                     ),
                 ],
               ),
@@ -202,43 +190,52 @@ class _QuestionListScreenState extends State<QuestionListScreen> {
           // Question Listing
           Expanded(
             child: _isLoading
-                ? const Center(child: CircularProgressIndicator(color: AppColors.brandBlue))
+                ? const Center(child: CupertinoActivityIndicator())
                 : _filteredQuestions.isEmpty
                     ? Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(Icons.filter_alt_off_rounded, size: 56, color: Colors.grey),
+                            Icon(CupertinoIcons.search, size: 48, color: textSecondary.withValues(alpha: 0.5)),
                             const SizedBox(height: 12),
                             Text('No questions match your filter criteria',
                                 style: AppTypography.titleMedium(textPrimary)),
                             const SizedBox(height: 6),
-                            TextButton(
+                            CupertinoButton(
                               onPressed: () {
                                 setState(() {
                                   _filters = const QuestionFilterOptions();
                                   _searchQuery = '';
+                                  _applyFilters();
                                 });
-                                _applyFilters();
                               },
-                              child: const Text('Reset All Filters'),
+                              child: const Text('Reset Filters'),
                             ),
                           ],
                         ),
                       )
                     : ListView.builder(
-                        padding: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.fromLTRB(16, 8, 16, 80),
                         itemCount: _filteredQuestions.length,
                         itemBuilder: (context, index) {
                           final q = _filteredQuestions[index];
-                          return Card(
+                          return Container(
                             margin: const EdgeInsets.only(bottom: 12),
-                            child: InkWell(
-                              borderRadius: BorderRadius.circular(12),
-                              onTap: () {
+                            decoration: BoxDecoration(
+                              color: isDark ? AppColors.darkCardSurface : AppColors.lightCardSurface,
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(
+                                color: isDark ? AppColors.darkCardStroke : AppColors.lightCardStroke,
+                                width: 0.5,
+                              ),
+                            ),
+                            child: CupertinoButton(
+                              padding: const EdgeInsets.all(16),
+                              onPressed: () {
+                                HapticFeedback.lightImpact();
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(
+                                  CupertinoPageRoute(
                                     builder: (_) => QuestionSolveScreen(
                                       title: widget.title,
                                       examId: widget.examId,
@@ -248,84 +245,114 @@ class _QuestionListScreenState extends State<QuestionListScreen> {
                                   ),
                                 );
                               },
-                              child: Padding(
-                                padding: const EdgeInsets.all(16),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // Header: Year, Shift, Difficulty
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                                          decoration: BoxDecoration(
-                                            color: AppColors.brandBlue.withValues(alpha: 0.12),
-                                            borderRadius: BorderRadius.circular(6),
-                                          ),
-                                          child: Text(
-                                            '${q.year} · ${q.shift}',
-                                            style: AppTypography.labelSmall(AppColors.brandBlue),
-                                          ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // Header: Year, Shift, Difficulty
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                        decoration: BoxDecoration(
+                                          color: (isDark ? AppColors.systemBlueDark : AppColors.systemBlue).withValues(alpha: 0.12),
+                                          borderRadius: BorderRadius.circular(6),
                                         ),
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                                          decoration: BoxDecoration(
-                                            color: q.difficulty == DifficultyLevel.easy
-                                                ? AppColors.correctGreen.withValues(alpha: 0.15)
+                                        child: Text(
+                                          '${q.year} · ${q.shift}',
+                                          style: AppTypography.labelSmall(isDark ? AppColors.systemBlueDark : AppColors.systemBlue),
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                        decoration: BoxDecoration(
+                                          color: q.difficulty == DifficultyLevel.easy
+                                              ? AppColors.correctGreen.withValues(alpha: 0.15)
+                                              : (q.difficulty == DifficultyLevel.hard
+                                                  ? AppColors.errorRed.withValues(alpha: 0.15)
+                                                  : AppColors.reviewAmber.withValues(alpha: 0.15)),
+                                          borderRadius: BorderRadius.circular(6),
+                                        ),
+                                        child: Text(
+                                          q.difficulty.name.toUpperCase(),
+                                          style: AppTypography.labelSmall(
+                                            q.difficulty == DifficultyLevel.easy
+                                                ? AppColors.correctGreen
                                                 : (q.difficulty == DifficultyLevel.hard
-                                                    ? AppColors.errorRed.withValues(alpha: 0.15)
-                                                    : AppColors.reviewAmber.withValues(alpha: 0.15)),
-                                            borderRadius: BorderRadius.circular(6),
-                                          ),
-                                          child: Text(
-                                            q.difficulty.name.toUpperCase(),
-                                            style: AppTypography.labelSmall(
-                                              q.difficulty == DifficultyLevel.easy
-                                                  ? AppColors.correctGreen
-                                                  : (q.difficulty == DifficultyLevel.hard
-                                                      ? AppColors.errorRed
-                                                      : AppColors.reviewAmber),
+                                                    ? AppColors.errorRed
+                                                    : AppColors.reviewAmber),
+                                          ).copyWith(fontSize: 10),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 10),
+
+                                  // Question preview with KaTeX
+                                  KaTeXMathView(
+                                    text: q.questionText,
+                                    baseStyle: AppTypography.bodyMedium(textPrimary).copyWith(fontSize: 15),
+                                  ),
+                                  const SizedBox(height: 12),
+
+                                  // Footer
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        q.questionType == QuestionType.numerical
+                                            ? 'Numerical Value'
+                                            : '${q.options.length} Options',
+                                        style: AppTypography.labelSmall(textSecondary),
+                                      ),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'Solve',
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w600,
+                                              color: isDark ? AppColors.systemBlueDark : AppColors.systemBlue,
                                             ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 12),
-
-                                    // Question text preview (with KaTeX)
-                                    KaTeXMathView(
-                                      text: q.questionText,
-                                      baseStyle: AppTypography.bodyMedium(textPrimary),
-                                    ),
-                                    const SizedBox(height: 12),
-
-                                    // Footer: Options count & Action link
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          q.questionType == QuestionType.numerical
-                                              ? 'Numerical Answer'
-                                              : '${q.options.length} Options',
-                                          style: AppTypography.labelSmall(textSecondary),
-                                        ),
-                                        Row(
-                                          children: [
-                                            Text('Solve', style: AppTypography.labelSmall(AppColors.brandBlue)),
-                                            const SizedBox(width: 4),
-                                            const Icon(Icons.arrow_forward_ios_rounded, size: 12, color: AppColors.brandBlue),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
+                                          const SizedBox(width: 4),
+                                          Icon(
+                                            CupertinoIcons.chevron_right,
+                                            size: 12,
+                                            color: isDark ? AppColors.systemBlueDark : AppColors.systemBlue,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
                             ),
                           );
                         },
                       ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _iosPill({required String label, required VoidCallback onDelete, required bool isDark}) {
+    return Container(
+      margin: const EdgeInsets.only(right: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF2C2C2E) : const Color(0xFFE5E5EA),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(label, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
+          const SizedBox(width: 4),
+          GestureDetector(
+            onTap: onDelete,
+            child: const Icon(CupertinoIcons.xmark_circle_fill, size: 14, color: Colors.grey),
           ),
         ],
       ),
