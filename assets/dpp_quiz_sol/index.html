@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><!-- Meta-tags -->
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="../bootstrap-5.0.1-dist/css/bootstrap.min.css"/>
+    <!-- Local styles -->
+    <link href="./style.css" rel="stylesheet"/><!-- SF Pro Display Font -->
+    <link href="https://fonts.cdnfonts.com/css/sf-pro-display" rel="stylesheet"/>
+    <!-- KaTeX CSS & JS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+</head>
+<body><!-- Actual App Content (initially hidden by skeleton) -->
+<div class="app-content" id="appContent" style="opacity: 0; pointer-events:none;">
+    <section class="container-fluid">
+        <section class="row"><p id="questionText"></p></section>
+        <section id="optionsBox"></section>
+    </section>
+</div><!-- Bootstrap - 5.0.1 -->
+<script src="../bootstrap-5.0.1-dist/js/bootstrap.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        defer></script><!-- MathJax (fallback, now v3) -->
+<!-- Upgraded to MathJax v3 for better performance and future-proofing. -->
+<script id="mathjax" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+        style="display:none"></script><!-- Local script -->
+
+<script src="../polyfill.min.js"></script>
+<script src="./index.js"></script>
+<script src="./cv.js"></script>
+
+<script>
+    function updateFontSize(newFont) {
+      document.body.style.fontSize = newFont + 'px';
+    }
+</script>
+</body>
+</html>

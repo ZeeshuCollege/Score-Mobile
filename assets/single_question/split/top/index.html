@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Meta-tags -->
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Bootstrap - 5.0.1 -->
+  <script src="../../../bootstrap-5.0.1-dist/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="../../../bootstrap-5.0.1-dist/css/bootstrap.min.css" />
+
+  <!-- Local styles -->
+  <link href="./style.css" rel="stylesheet" />
+
+  <!-- SF Pro Display Font -->
+  <link href="http://fonts.cdnfonts.com/css/sf-pro-display" rel="stylesheet" />
+
+  <!-- MathJax -->
+  <script type="text/javascript"
+          src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+  <!-- MathJax Config -->
+  <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"], ['\{tex\}', '\{/tex\}'] ],
+          processEscapes: true
+        }, CommonHTML: {
+         linebreaks: { automatic: false },
+       },
+      });
+    </script>
+</head>
+
+<body>
+<!-- Overall app container -->
+<section class="container-fluid">
+  <!-- Container for question text -->
+  <section class="row">
+    <p id="questionText"></p>
+  </section>
+
+  <!-- Container for labels -->
+  <section id="labelBox" class="row">
+    <!-- Left-side-actions -->
+    <div class="labels-left col-md-6 col-12"></div>
+
+    <!-- Right-side-actions -->
+    <div class="labels-right col-md-6 col-12 justify-content-end">
+      <div id="action-show-solutions" class="label-text">Show Solutions</div>
+    </div>
+  </section>
+
+  <!-- Container for options -->
+  <section id="optionsBox"></section>
+
+  <!-- Container for solutions -->
+  <section id="solutionBox">
+    <div class="row">
+      <p class="solution-header" style="font-family: 'SF Pro Display'">Solution:</p>
+    </div>
+
+    <div class="row">
+      <p class="solution-text text-white"></p>
+    </div>
+  </section>
+
+  <!-- Container for report-error -->
+  <section id="error" class="row mb-6">
+    <div class="error-container">
+      <object class="error-icon" data="../../../assets/svg/Vector.svg" width="20" height="20"></object>
+
+      <span class="error-text"> Report Error </span>
+    </div>
+  </section>
+
+  <div class="solution-consent">
+    <!-- Create checkbox -->
+    <div class="form-group form-check">
+      <input type="checkbox" class="form-check-input" id="solutionConsent" />
+      <label class="form-check-label" for="solutionConsent">Do not automatically show solution for subjective
+        question</label>
+    </div>
+  </div>
+</section>
+
+<button id="nextQbutton">Next >>></button>
+
+<!-- Local script -->
+<script src="../../../polyfill.min.js"></script>
+<script src="./index.js"></script>
+<script src="./compatible_version.js"></script>
+
+</body>
+
+</html>

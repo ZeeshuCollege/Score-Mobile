@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Meta-tags -->
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Bootstrap - 5.0.1 -->
+    <script src="../../bootstrap-5.0.1-dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="../../bootstrap-5.0.1-dist/css/bootstrap.min.css" />
+
+    <!-- Local styles -->
+    <link href="./style.css" rel="stylesheet" />
+
+    <!-- SF Pro Display Font -->
+    <link href="http://fonts.cdnfonts.com/css/sf-pro-display" rel="stylesheet" />
+
+    <!-- MathJax 3 Config (must come before v3 script) -->
+    <script type="text/javascript">
+        window.MathJax = {
+          tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)'], ['{tex}', '{/tex}']],
+            processEscapes: true
+          },
+          options: { renderActions: { addMenu: [] } },
+          svg: { fontCache: 'global' }
+        };
+        window.mathjaxVersionLoaded = null;
+    </script>
+
+    <!-- MathJax loader: try v3, fallback to v2.7.7 if needed -->
+    <script type="text/javascript">
+        (function() {
+          function loadScript(src, callback) {
+            var s = document.createElement('script');
+            s.src = src;
+            s.onload = callback;
+            document.head.appendChild(s);
+          }
+          // Try v3
+          loadScript('https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js', function() {
+            if (window.MathJax && MathJax.version && MathJax.version.startsWith('3')) {
+              window.mathjaxVersionLoaded = 3;
+            } else {
+              loadScript('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML', function() {
+                window.mathjaxVersionLoaded = 2;
+              });
+            }
+          });
+        })();
+    </script>
+
+    <!-- MathJax 2 Config (fallback, only if v3 fails) -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"], ['\\{tex\\}', '\\{/tex\\}'] ],
+          processEscapes: true
+        },
+        CommonHTML: { linebreaks: { automatic: false } },
+        messageStyle: 'none',
+      });
+    </script>
+    <!-- Removed old v2 script link: was here -->
+    <!-- MathJax Config -->
+    <!-- No additional config needed -->
+
+</head>
+
+<body>
+<!-- Overall app container -->
+<section class="container-fluid">
+
+    <!-- Container for report-error -->
+    <section id="error" class="row mb-6">
+        <div class="error-container">
+            <object class="error-icon" data="../../assets/svg/Vector.svg" width="20" height="20"></object>
+
+            <span class="error-text"> Report Error </span>
+        </div>
+    </section>
+
+    <div class="solution-consent">
+        <!-- Create checkbox -->
+        <div class="form-group form-check">
+            <input type="checkbox" class="form-check-input" id="solutionConsent" />
+            <label class="form-check-label" for="solutionConsent">Do not automatically show solution for subjective
+                question</label>
+        </div>
+    </div>
+</section>
+
+
+<!--try-->
+<!-- Local script -->
+<script src="../../polyfill.min.js"></script>
+<script src="./index.js"></script>
+<script src="./compatible_version.js"></script>
+
+<script>
+    function updateFontSize(newFont) {
+      document.body.style.fontSize = newFont + 'px';
+    }
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Meta-tags -->
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Bootstrap - 5.0.1 -->
+  <script src="../../bootstrap-5.0.1-dist/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="../../bootstrap-5.0.1-dist/css/bootstrap.min.css" />
+
+  <!-- Local styles -->
+  <link href="./style.css" rel="stylesheet" />
+
+  <!-- SF Pro Display Font -->
+  <link href="http://fonts.cdnfonts.com/css/sf-pro-display" rel="stylesheet" />
+
+  <!-- MathJax -->
+  <script type="text/javascript"
+    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+  <!-- MathJax Config -->
+  <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"], ['\{tex\}', '\{/tex\}'] ],
+          processEscapes: true
+        }, CommonHTML: {
+         linebreaks: { automatic: false },
+       },
+      });
+    </script>
+</head>
+
+<body>
+  <div id="root"></div>
+
+  <!-- Local script -->
+<!--  <script src="../../../polyfill.min.js"></script>-->
+  <script src="./index.js"></script>
+  <script src="./cv.js"></script>
+
+</body>
+
+</html>

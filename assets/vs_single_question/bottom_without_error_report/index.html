@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head><!-- Meta-tags -->
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <link rel="stylesheet" href="../bootstrap-5.0.1-dist/css/bootstrap.min.css"/>
+    <link href="./style.css" rel="stylesheet"/>
+    <link href="https://fonts.cdnfonts.com/css/sf-pro-display" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+</head>
+
+<body>
+
+<section class="container-fluid">
+    <div class="solution-consent">
+        <div class="form-group form-check">
+            <input type="checkbox" class="form-check-input" id="solutionConsent" />
+            <label class="form-check-label" for="solutionConsent">
+                Do not automatically show solution for subjective question
+            </label>
+        </div>
+    </div>
+</section>
+
+<script>
+    function updateFontSize(newFont) {
+      document.body.style.fontSize = newFont + 'px';
+    }
+</script>
+
+<script src="../bootstrap-5.0.1-dist/js/bootstrap.min.js" defer></script>
+
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" defer></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/extensions/mml2jax.js"></script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      jax: ["input/TeX","input/MathML","input/AsciiMath","output/CommonHTML"],
+      extensions: [
+        "tex2jax.js",
+        "asciimath2jax.js",
+        "mml2jax.js",
+        "MathMenu.js",
+        "MathZoom.js"
+      ],
+      messageStyle: "none",
+
+      tex2jax: {
+        inlineMath: [['\\(','\\)'], ['$', '$']],
+        displayMath: [['$$','$$'], ['\\[','\\]']],
+        processEscapes: true,
+        ignoreClass: "asciimath katex-rendered",
+        skipTags: ["script","noscript","style","textarea","pre","code"]
+      },
+
+      asciimath2jax: {
+        delimiters: [['`','`']],
+        ignoreClass: "tex katex-rendered",
+        skipTags: ["script","noscript","style","textarea","pre","code"]
+      },
+
+      mml2jax: { preview: "none" },
+
+      TeX: {
+        extensions: ["AMSmath.js","AMSsymbols.js"]
+      },
+
+      CommonHTML: {
+        linebreaks: { automatic: false }
+      }
+    });
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=default" defer></script>
+
+<script src="../polyfill.min.js" defer></script>
+<script src="./index.js" defer></script>
+<script src="./compatible_version.js" defer></script>
+
+<script>
+    (function () {
+      window.addEventListener('load', function () {
+        const app = document.getElementById('appContent');
+
+        if (window.renderMathInElement && app) {
+          try {
+            window.renderMathInElement(app, {
+              delimiters: [
+                {left: "$$", right: "$$", display: true},
+                {left: "$",  right: "$",  display: false},
+                {left: "\\(", right: "\\)", display: false},
+                {left: "\\[", right: "\\]", display: true}
+              ],
+              ignoredTags: ["script","noscript","style","textarea","pre","code"]
+            });
+
+            app.classList.add('katex-rendered');
+          } catch (e) {
+            console.warn('KaTeX failed, MathJax fallback:', e);
+          }
+        }
+
+        setTimeout(() => {
+          if (app) {
+            app.style.opacity = '';
+            app.style.pointerEvents = '';
+          }
+        }, 50);
+      });
+    })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta-tags -->
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <link rel="stylesheet" href="../bootstrap-5.0.1-dist/css/bootstrap.min.css"/>
+    <link href="./style.css" rel="stylesheet"/>
+
+    <!-- SF Pro Display -->
+    <link href="https://fonts.cdnfonts.com/css/sf-pro-display" rel="stylesheet"/>
+
+    <!-- KaTeX (FAST TeX renderer) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+</head>
+
+<body>
+<!-- Skeleton Loader -->
+<div id="skeleton-loader">
+    <div class="skeleton shimmer"></div>
+    <div class="skeleton shimmer"></div>
+    <div class="skeleton shimmer"></div>
+    <div class="skeleton shimmer"></div>
+    <div class="skeleton shimmer"></div>
+    <div class="skeleton shimmer"></div>
+    <div class="skeleton shimmer"></div>
+    <div class="skeleton shimmer"></div>
+</div>
+
+<!-- Real Content -->
+<div id="root" style="display:none; opacity:0; pointer-events:none;"></div>
+
+<!-- Bootstrap -->
+<script src="../bootstrap-5.0.1-dist/js/bootstrap.min.js" defer></script>
+
+<!-- KaTeX -->
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" defer></script>
+
+<!-- MathJax v3 (FAST + supports MathML natively) -->
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [["$", "$"], ["\\(", "\\)"]],
+    displayMath: [["$$", "$$"], ["\\[", "\\]"]],
+    processEscapes: true
+  },
+  options: {
+    ignoreHtmlClass: "katex-rendered",
+    processHtmlClass: "mathjax-process"
+  },
+  loader: {
+    load: ["input/tex", "input/mml", "input/asciimath", "output/chtml"]
+  }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js" defer></script>
+
+<!-- Local scripts -->
+<script src="../polyfill.min.js" defer></script>
+<script src="./index.js" defer></script>
+<script src="./cv.js" defer></script>
+
+<!-- Combined renderer + auto-typeset -->
+<script>
+    window.addEventListener("load", () => {
+
+        function getRoot() {
+            return document.getElementById("root") || document.getElementById("appContent") || document.body;
+        }
+
+        function runKaTeX(el) {
+            if (!window.renderMathInElement) return;
+            try {
+                renderMathInElement(el, {
+                    delimiters: [
+                        { left: "$$", right: "$$", display: true },
+                        { left: "$", right: "$", display: false },
+                        { left: "\\(", right: "\\)", display: false },
+                        { left: "\\[", right: "\\]", display: true }
+                    ],
+                    throwOnError: false
+                });
+            } catch (_) {}
+        }
+
+        async function runMathJax(el) {
+            if (window.MathJax?.typesetPromise) {
+                await MathJax.typesetPromise([el]);
+            }
+        }
+
+        async function renderAll(el) {
+            runKaTeX(el);
+            await runMathJax(el);
+
+            // reveal content (remove flicker)
+            el.style.opacity = "";
+            el.style.pointerEvents = "";
+        }
+        window.typesetMath = async function(el) {
+            el = el || getRoot();
+            await renderAll(el);
+        };
+
+        const root = getRoot();
+        renderAll(root);
+
+        const observer = new MutationObserver(() => {
+            const el = getRoot();
+            runKaTeX(el);          // instant
+            runMathJax(el);        // async fallback
+        });
+
+        observer.observe(document.body, { childList: true, subtree: true });
+
+    });
+</script>
+</body>
+</html>

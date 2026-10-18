@@ -1,0 +1,55 @@
+/*
+################
+              Initial Setup
+################
+*/
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.row > * {
+  padding-left: 0;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+body {
+  background: transparent;
+}
+
+/*
+################
+              Hint Text Section
+################
+*/
+.hint-container {
+  font-size: 14px;
+  color: #1B2027;
+  background: transparent;
+  font-weight: 400;
+  line-height: 20px;
+  font-family: "Inter";
+  width: 100vw;
+}
+
+
+/*
+################
+              MathJax Styling
+################
+*/
+.mjx-chtml {
+  font-size: 1em;
+}
+
+.mjx-chtml .mjx-math {
+  font-size: 1em;
+}
+

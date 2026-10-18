@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <script src="../bootstrap-5.0.1-dist/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="../bootstrap-5.0.1-dist/css/bootstrap.min.css" />
+
+  <link href="./style.css" rel="stylesheet" />
+
+  <link href="http://fonts.cdnfonts.com/css/sf-pro-display" rel="stylesheet" />
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+  <script id="mathjax-loader">
+    (function() {
+      // Configure v3 before loading
+      window.MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)'], ['{tex}', '{/tex}']],
+          processEscapes: true,
+        },
+        options: {
+          renderActions: { addMenu: [] }
+        }
+      };
+
+      var v3 = document.createElement('script');
+      v3.type = 'text/javascript';
+      v3.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+
+      v3.onload = function() {
+        window.mathjaxVersion = 3;
+      };
+      v3.onerror = function() {
+        // v3 failed, load v2
+        var v2 = document.createElement('script');
+        v2.type = 'text/javascript';
+        v2.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML';
+        v2.onload = function() { window.mathjaxVersion = 2; };
+        document.head.appendChild(v2);
+
+        // Config for v2
+        var config = document.createElement('script');
+        config.type = 'text/x-mathjax-config';
+        config.text = `
+          MathJax.Hub.Config({
+            tex2jax: {
+              inlineMath: [ ['$','$'], ["\\\\(","\\\\)"], ['\\\\{tex\\\\}', '\\\\{/tex\\\\}'] ],
+              processEscapes: true
+            },
+            CommonHTML: { linebreaks: { automatic: false } }
+          });
+        `;
+        document.head.appendChild(config);
+      };
+      document.head.appendChild(v3);
+    })();
+  </script>
+
+
+</head>
+<body>
+<div id="root"></div>
+
+<!-- Local script -->
+<script src="../polyfill.min.js"></script>
+<script src="./index.js"></script>
+<script src="./compatible_version.js"></script>
+
+</body>
+</html>

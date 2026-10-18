@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../bootstrap-5.0.1-dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="./style.css" />
+  <link href="https://fonts.cdnfonts.com/css/sf-pro-display" rel="stylesheet" />
+
+  <!-- KaTeX - much faster than MathJax -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css"
+        integrity="sha384-GvrOXuhMATgEsSwCs4smul74iXGOixntxDMMtPXqRRxuLtwAFTxOsDXj1XUXTkRr"
+        crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"
+          integrity="sha384-cpW21h6RZv/phavutF+AuVYrr+dA8xD9zs6FwLpaCct6O9ctzYFfFr4dgmgccOTx"
+          crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"
+          integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05"
+          crossorigin="anonymous"></script>
+
+  <!-- KaTeX Config -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const katexOptions = {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '$', right: '$', display: false},
+          {left: '\\(', right: '\\)', display: false},
+          {left: '\\[', right: '\\]', display: true},
+          {left: '{tex}', right: '{/tex}', display: false}
+        ],
+        throwOnError: false,
+        strict: false,
+        trust: true,
+        macros: {
+          "\\mathrm": "\\text"
+        }
+      };
+      
+      // Preload KaTeX for better performance
+      const preloader = document.createElement('div');
+      preloader.style.visibility = 'hidden';
+      preloader.style.position = 'absolute';
+      preloader.style.top = '-9999px';
+      preloader.textContent = '$x^2$';
+      document.body.appendChild(preloader);
+
+      // Global function to render all math on the page
+      window.renderMath = function() {
+        if (typeof renderMathInElement === 'function') {
+          renderMathInElement(document.body, katexOptions);
+        }
+      };
+    });
+  </script>
+</head>
+
+<body>
+<section class="container-fluid">
+  <section class="row">
+    <p id="questionText"></p>
+  </section>
+
+  <section id="labelBox" class="row">
+    <div class="labels-left col-md-6 col-12"></div>
+    <div class="labels-right col-md-6 col-12 justify-content-end">
+      <div id="action-show-solutions" class="label-text">Show Solutions</div>
+    </div>
+  </section>
+
+  <section id="optionsBox"></section>
+
+  <section id="solutionBox">
+    <div class="row">
+      <p class="solution-header" style="font-family: 'SF Pro Display'">Solution:</p>
+    </div>
+    <div class="row">
+      <p class="solution-text"></p>
+    </div>
+  </section>
+
+  <section id="error" class="row mb-6">
+    <div class="error-container">
+      <img src="../assets/svg/Vector.svg" width="20" height="20" class="error-icon">
+      <span class="error-text">Report Error</span>
+    </div>
+  </section>
+</section>
+
+<script src="../polyfill.min.js"></script>
+<script src="./index.js"></script>
+<script src="./compatible_version.js"></script>
+<script>
+  // Initial math rendering after all content is loaded
+  window.addEventListener('load', function() {
+    if (window.renderMath) window.renderMath();
+  });
+</script>
+</body>
+</html>

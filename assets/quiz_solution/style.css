@@ -1,0 +1,363 @@
+/*
+################
+              Initial Setup
+################
+*/
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #ffffff;
+  font-family: "Times New Roman";
+  line-height: 1.25;
+  padding: 10px 0px;
+}
+
+.row > * {
+  padding-left: 0;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"]:disabled,
+input[type="text"]:disabled {
+  background: #fff;
+  outline: none;
+}
+
+img {
+  height: auto;
+  width: 100%;
+}
+
+/*
+################
+              Question Text Section
+################
+*/
+#questionText {
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  color: #1B2027;
+  margin-bottom: 1rem;
+  font-family: "Times New Roman";
+}
+
+/*
+################
+              Labels Section
+################
+*/
+.labels-left,
+.labels-right {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.label-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 5px 8px;
+  background: #e8f3fd;
+  border-radius: 5px;
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+  margin-top: 10px;
+  margin-right: 12px;
+}
+
+.label-text {
+  font-style: normal;
+  font-weight: normal;
+  font-family: "SF Pro Display";
+  font-size: 12px;
+  line-height: 1.5;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: #1589ee;
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+  margin: 0px 10px;
+}
+
+.labels-right {
+  margin-top: 20px;
+}
+
+#action-show-solutions {
+  position: absolute;
+  margin-bottom: 1.5rem;
+  right: 2%;
+  cursor: pointer;
+  padding: 8px 22px;
+  background: #31d99c;
+  box-shadow: 0px 2px 4px rgba(21, 21, 41, 0.2);
+  border-radius: 7px;
+  color: #ffffff;
+  font-family: "SF Pro Display";
+  font-style: normal;
+  font-weight: bold;
+  line-height: 1.5;
+  font-size: 16px;
+}
+
+/*
+################
+              Options Section
+################
+*/
+#optionsBox {
+  margin-left: 1px;
+  margin-right: 1px;
+  margin-top: 4rem;
+}
+
+.option {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #dcdde2;
+  border-radius: 12px;
+  padding: 20px 20px;
+  margin-top: 2rem;
+  gap: 4%;
+}
+
+.option-container {
+  position: relative;
+}
+
+.option-badge {
+  z-index: 9;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 0px 3px;
+  background: #ffffff;
+  border-radius: 2px;
+  width: fit-content;
+  right: 3%;
+  top: 20%;
+  display: none;
+  position: absolute;
+}
+
+.option-badge-text {
+  font-style: normal;
+  font-weight: 500;
+  font-family: "SF Pro Display";
+  font-size: 12px;
+  line-height: 1.5;
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+  margin: 0px 10px;
+  width: 100%;
+}
+
+.option-icon {
+  width: 30px;
+  height: 30px;
+}
+
+.option-text {
+  font-style: normal;
+  font-weight: 500;
+  font-family: "Times New Roman";
+  font-size: 14px;
+  line-height: 1.5;
+  color: #1B2027;
+  margin-left: 20px;
+}
+
+.numerical-input {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 18px;
+  line-height: 156%;
+  color: #989aa6;
+  border: none;
+  box-shadow: none;
+  outline: none;
+}
+
+.numerical-input:focus {
+  border: none;
+  box-shadow: none;
+  outline: none;
+}
+
+.option_state_selected {
+  border: 1px solid #1589ee;
+}
+
+.option-icon,
+.option-text {
+  pointer-events: none;
+}
+/*
+@media only screen and (max-width: 300px) {
+  .option-icon {
+    width: 12vw;
+    height: 12vw;
+  }
+} */
+
+/*
+################
+              Solution Section
+################
+*/
+#solutionBox {
+  margin-top: 2rem;
+  display: none;
+}
+
+.solution-header {
+  font-style: normal;
+  font-weight: 500;
+  font-family: "SF Pro Display";
+  font-size: 14px;
+  line-height: 1.5;
+  color: #989aa6;
+}
+
+.solution-text {
+  font-style: normal;
+  font-weight: 500;
+  font-family: "Times New Roman";
+  font-size: 16px;
+  line-height: 1.5;
+  color: #1B2027;
+}
+
+.answer-text {
+  font-style: normal;
+  font-weight: 500;
+  font-family: "Times New Roman";
+  font-size: 16px;
+  line-height: 1.5;
+  color: #1B2027;
+}
+
+.correct-answer {
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  color: #31d99c;
+  border: 1px solid #31d99c;
+}
+
+.incorrect-answer {
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  color: #ff5858;
+  border: 1px solid #ff5858;
+}
+
+/*
+################
+              Error Section
+################
+*/
+#error {
+  margin-top: 10px;
+  display: none;
+}
+
+.error-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.error-icon {
+  color: #bdbfc9;
+  font-weight: 560;
+}
+
+.error-text {
+  margin-left: 10px;
+  font-style: normal;
+  font-weight: 500;
+  font-family: "SF Pro Display";
+  font-size: 12px;
+  line-height: 129%;
+  color: #989aa6;
+}
+
+table {
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+table img {
+  height: 30%;
+  width: 30%;
+}
+
+img {
+  width: 100vw;
+}
+
+/*
+################
+              Dark Mode [overwrite classes]
+################
+*/
+.dark_mode,
+.dark_mode .option,
+.dark_mode #inputAns {
+  background: #1B2027;
+}
+
+.dark_mode #questionText,
+.dark_mode .option-text,
+.dark_mode .answer-text,
+.dark_mode .solution-text,
+.dark_mode .numerical-input:focus {
+  color: #fff;
+}
+
+.dark_mode .label-container {
+  background: #b9dcfa;
+}
+
+.dark_mode .option {
+  border: 1px solid #333347;
+}
+
+.dark_mode .option_state_selected {
+  border: 1px solid #73b8f5;
+}
+
+.dark_mode #questionText img {
+  filter: invert(100%);
+}
+.dark_mode .option-text img {
+  filter: invert(100%);
+}
+.dark_mode .solution-text img {
+  filter: invert(100%);
+}

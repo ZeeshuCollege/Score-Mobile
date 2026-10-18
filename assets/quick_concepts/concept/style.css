@@ -1,0 +1,204 @@
+/*
+################
+              Initial Setup
+################
+*/
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.table {
+  max-width: 100dvw;
+  text-wrap: nowrap;
+  overflow-x: auto;
+  color: currentColor !important;
+}
+.table::-webkit-scrollbar {
+  height: 5px;
+  border-radius: 15px;
+}
+.table::-webkit-scrollbar-thumb {
+  background: var(--bs-secondary);
+}
+table > tbody > tr > td {
+  padding-left: 8px !important;
+}
+body {
+  background-color: #fff;
+}
+
+.row > * {
+  padding-left: 0;
+}
+/* accordion */
+.accordion {
+  border-bottom: 1px solid #ccc;
+  overflow: hidden;
+}
+
+.accordion-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 16px;
+  padding: 16px;
+  max-height: 56px;
+  /* overflow: hidden; */
+  background-color: inherit;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.accordion-header:hover {
+  background-color: #ecf2fe;
+}
+
+.accordion-index {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  min-height: 20px;
+  border: 1px solid #151a23;
+  border-radius: 100%;
+  background-color: #151a23;
+  color: #fff;
+
+  font-size: 10px;
+}
+
+.accordion-header-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  /* number of lines to show */
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+  font-family: "SF Pro Display";
+  font-weight: 500;
+  font-size: 14px;
+  padding-right: 18px;
+  /* line-height: 32px; */
+  text-align: left;
+}
+
+.accordion-arrow {
+  position: absolute;
+  right: 14px;
+  color: inherit;
+}
+.m-16 {
+  margin: 16px;
+}
+.accordion-content {
+  transition: max-height 0.3s ease;
+  font-family: "SF Pro Display";
+  opacity: 0;
+  max-height: 0;
+  font-size: 16px;
+  overflow-x: auto;
+  text-align: justify;
+  letter-spacing: 0.1px;
+}
+.accordion-content::-webkit-scrollbar {
+  height: 5px;
+  border-radius: 5px;
+}
+
+.accordion-content::-webkit-scrollbar-thumb {
+  background: var(--bs-secondary);
+}
+/* html image container */
+.img_view_box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.img_container {
+  border: 1px solid gainsboro;
+  background-color: rgb(255, 255, 255);
+  min-height: 150px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.img_container img {
+  height: auto;
+  width: 100%;
+  max-width: 400px;
+}
+/*
+  ################
+ Opne Accordion [overwrite classes]
+  ################
+  */
+.open .accordion-header {
+  background-color: #ecf2fe;
+}
+
+.open .accordion-header:hover {
+  background-color: #ecf2fe;
+}
+
+.open .accordion-content {
+  opacity: 1;
+  max-height: fit-content;
+  /* Adjust as needed */
+}
+
+.open .accordion-arrow {
+  transform: rotate(180deg);
+  color: #2073e5;
+}
+
+.open .accordion-index {
+  border: 1px solid #2073e5;
+  background-color: #2073e5;
+}
+
+/*
+  ################
+                Dark Mode [overwrite classes]
+  ################
+  */
+.dark_mode {
+  color: #fff;
+  background: #1B2027;
+}
+
+.dark_mode .accordion {
+  border-bottom: 1px solid #2a3446;
+}
+.dark_mode .open .accordion-header {
+  background-color: #192d48;
+}
+.dark_mode .accordion-header:hover {
+  background-color: #192d48;
+}
+
+.dark_mode .open .accordion-header:hover {
+  background-color: #192d48;
+}
+
+.dark_mode .accordion-index {
+  border: 1px solid #ffffff;
+  background-color: #ffffff;
+  color: #1b222e;
+}
+.dark_mode .open .accordion-index {
+  border: 1px solid #6ca3f3;
+  background-color: #6ca3f3;
+}
+
+.dark_mode .open .accordion-arrow {
+  color: #6ca3f3;
+}

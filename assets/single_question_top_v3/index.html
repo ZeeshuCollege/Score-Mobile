@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <link rel="stylesheet" href="../bootstrap-5.0.1-dist/css/bootstrap.min.css"/>
+    <link href="./style.css" rel="stylesheet"/>
+    <link href="https://fonts.cdnfonts.com/css/sf-pro-display" rel="stylesheet"/>
+
+    <!-- KaTeX (fast TeX renderer) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+</head>
+
+<body>
+<div id="appContent" class="app-content" style="opacity:0; pointer-events:none;">
+    <section class="container-fluid">
+        <section class="row"><p id="questionText"></p></section>
+        <section id="optionsBox"></section>
+    </section>
+</div>
+
+<!-- Bootstrap -->
+<script src="../bootstrap-5.0.1-dist/js/bootstrap.min.js" defer></script>
+
+<!-- KaTeX -->
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        defer></script>
+
+<!-- MathJax v3 (FAST, supports MathML) -->
+<script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [["$", "$"], ["\\(", "\\)"]],
+        displayMath: [["$$", "$$"], ["\\[", "\\]"]],
+        processEscapes: true
+      },
+      options: {
+        ignoreHtmlClass: "katex-rendered",
+        processHtmlClass: "mathjax-process"
+      },
+      loader: {
+        load: ["input/tex", "input/mml", "input/asciimath", "output/chtml"]
+      }
+    };
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js" defer></script>
+
+<!-- Your Scripts -->
+<script src="../polyfill.min.js" defer></script>
+<script src="./index.js" defer></script>
+<script src="./cv.js" defer></script>
+
+<!-- Combined Render Pass -->
+<script>
+    window.addEventListener("load", () => {
+      const app = document.getElementById("appContent");
+
+      /* 1. Run KaTeX first (fast) */
+      if (window.renderMathInElement) {
+        try {
+          renderMathInElement(app, {
+            delimiters: [
+              {left: "$$", right: "$$", display: true},
+              {left: "$", right: "$", display: false},
+              {left: "\\(", right: "\\)", display: false},
+              {left: "\\[", right: "\\]", display: true}
+            ],
+            throwOnError: false,
+          });
+          app.classList.add("katex-rendered");
+        } catch (_) {}
+      }
+
+      /* 2. Let MathJax v3 finish MathML + TeX fallback */
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise([app]).finally(() => {
+          app.style.opacity = "";
+          app.style.pointerEvents = "";
+        });
+      } else {
+        app.style.opacity = "";
+        app.style.pointerEvents = "";
+      }
+    });
+</script>
+
+</body>
+</html>
+
+
+

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>KaTeX Render</title>
+    <link rel="stylesheet" href="katex/katex.min.css">
+    <script defer src="katex/katex.min.js"></script>
+    <script defer src="katex/auto-render.min.js"></script>
+    <style>
+        body { padding: 8px; font-size:16px; line-height:1.5; }
+        img  { max-width:100%; height:auto; }
+    </style>
+</head>
+<body>
+<div id="content"><!-- INJECT HERE --></div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$",  right: "$",  display: false}
+        ],
+        throwOnError: false
+      });
+    });
+</script>
+</body>
+</html>

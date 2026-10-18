@@ -1,0 +1,151 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #fff;
+  font-family: "Times New Roman";
+  line-height: 1.25;
+  overflow: hidden;
+  overflow-y: scroll;
+  padding: 0px;
+}
+
+.row > * {
+  padding-left: 0;
+}
+
+p {
+  margin-bottom: 0.1rem;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"]:disabled,
+input[type="text"]:disabled {
+  background: #fff;
+}
+
+.question {
+  font-family: "Times New Roman";
+  max-height: 1.2rem;
+  overflow: hidden;
+  text-overflow: clip;
+}
+
+.question-row {
+  font-family: "Times New Roman";
+  border-bottom: 1px solid #dcdde2;
+  display: flex;
+  font-size: 14px;
+  padding: 12px 12px 12px 12px;
+  min-height: 60px;
+  height: fit-content;
+  overflow: hidden;
+}
+
+.opacity-75 {
+  opacity: 0.4;
+}
+
+.question-row:last-child {
+  border-bottom: none;
+}
+
+.question-number {
+  width: 24px;
+  min-width: 16px;
+  font-family: "SF Pro Display";
+  font-style: normal;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 130%; /* 15.6px */
+
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+
+  color: #989aa6;
+}
+
+.question-body {
+  display: flex;
+  margin-left: 10px;
+}
+
+.question-title {
+  color: #101319;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  /* number of lines to show */
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+
+  font-family: "Times New Roman";
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px;
+  margin-bottom: 0px;
+  font-family: "Times New Roman";
+  font-size: 14px;
+}
+
+table {
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+img {
+  display: inline-block;
+  width: 50%;
+  height: auto;
+}
+
+/* Dark Mode */
+.dark_mode {
+  background: #222830;
+}
+
+.dark_mode .question-title {
+  color: #fff;
+}
+
+.dark_mode p {
+  color: #fff;
+}
+
+.dark_mode .question-title::after {
+  background-image: linear-gradient(
+    to bottom,
+    rgba(21, 21, 41, 0),
+    rgba(21, 21, 41, 1) 90%
+  );
+}
+
+.dark_mode .question-row {
+  border-bottom: 1px solid #333347;
+}
+
+.dark_mode .question-title img {
+  filter: invert(100%);
+}
+
+.dark_mode .option-text img {
+  filter: invert(100%);
+}
+
+.dark_mode .solution-text img {
+  filter: invert(100%);
+}

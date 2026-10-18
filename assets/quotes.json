@@ -1,0 +1,1832 @@
+[
+  {
+    "day": 1,
+    "quote": "Success favors the well-prepared.",
+    "author": "Louis Pasteur"
+  },
+  {
+    "day": 2,
+    "quote": "Believe in your capabilities.",
+    "author": "Benjamin Franklin"
+  },
+  {
+    "day": 3,
+    "quote": "Effort transforms potential into success.",
+    "author": "Zig Ziglar"
+  },
+  {
+    "day": 4,
+    "quote": "Strive for excellence every day.",
+    "author": "Albert Einstein"
+  },
+  {
+    "day": 5,
+    "quote": "Purpose fuels passion.",
+    "author": "Tony Robbins"
+  },
+  {
+    "day": 6,
+    "quote": "Chase dreams, not grades.",
+    "author": "Steve Jobs"
+  },
+  {
+    "day": 7,
+    "quote": "Study smart, not just hard.",
+    "author": "Warren Buffett"
+  },
+  {
+    "day": 8,
+    "quote": "Consistency breeds mastery.",
+    "author": "Robin Sharma"
+  },
+  {
+    "day": 9,
+    "quote": "Embrace challenges, conquer fears.",
+    "author": "Ralph Waldo Emerson"
+  },
+  {
+    "day": 10,
+    "quote": "Focus on progress, not perfection.",
+    "author": "John C. Maxwell"
+  },
+  {
+    "day": 11,
+    "quote": "Knowledge is your greatest asset.",
+    "author": "E.O. Wilson"
+  },
+  {
+    "day": 12,
+    "quote": "Doubt kills more dreams than failure.",
+    "author": "Suzy Kassem"
+  },
+  {
+    "day": 13,
+    "quote": "Your effort is your contribution.",
+    "author": "Andrew Carnegie"
+  },
+  {
+    "day": 14,
+    "quote": "Be resilient, not just brilliant.",
+    "author": "Angela Duckworth"
+  },
+  {
+    "day": 15,
+    "quote": "Success demands sacrifices.",
+    "author": "Simon Sinek"
+  },
+  {
+    "day": 16,
+    "quote": "Small steps, big dreams.",
+    "author": "Mary Kay Ash"
+  },
+  {
+    "day": 17,
+    "quote": "Stay positive, stay fighting.",
+    "author": "Dalai Lama"
+  },
+  {
+    "day": 18,
+    "quote": "Struggle today, success tomorrow.",
+    "author": "Elon Musk"
+  },
+  {
+    "day": 19,
+    "quote": "Tomorrow's success starts today.",
+    "author": "Mark Cuban"
+  },
+  {
+    "day": 20,
+    "quote": "Mindset is everything.",
+    "author": "Carol S. Dweck"
+  },
+  {
+    "day": 21,
+    "quote": "Success is earned, not given.",
+    "author": "LeBron James"
+  },
+  {
+    "day": 22,
+    "quote": "Hard work outshines brilliance.",
+    "author": "Tim Notke"
+  },
+  {
+    "day": 23,
+    "quote": "Push beyond your comfort.",
+    "author": "Brian Tracy"
+  },
+  {
+    "day": 24,
+    "quote": "Think, believe, achieve.",
+    "author": "Norman Vincent Peale"
+  },
+  {
+    "day": 25,
+    "quote": "Turn your can'ts into cans.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 26,
+    "quote": "Adapt, overcome, achieve.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 27,
+    "quote": "Dare to dream, dare to act.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 28,
+    "quote": "Rise above the challenges.",
+    "author": "Swami Vivekananda"
+  },
+  {
+    "day": 29,
+    "quote": "Courage: it's a decision.",
+    "author": "Winston Churchill"
+  },
+  {
+    "day": 30,
+    "quote": "Passion powers perseverance.",
+    "author": "Michael Jordan"
+  },
+  {
+    "day": 31,
+    "quote": "Stay hungry, stay foolish.",
+    "author": "Steve Jobs"
+  },
+  {
+    "day": 32,
+    "quote": "Strive for greatness.",
+    "author": "Barack Obama"
+  },
+  {
+    "day": 33,
+    "quote": "Success is a mindset.",
+    "author": "Robert Kiyosaki"
+  },
+  {
+    "day": 34,
+    "quote": "You have the power to change your story.",
+    "author": "J.K. Rowling"
+  },
+  {
+    "day": 35,
+    "quote": "Work hard, dream big.",
+    "author": "Conrad Hilton"
+  },
+  {
+    "day": 36,
+    "quote": "Do more things that make you forget to check your phone.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 37,
+    "quote": "Success is the best revenge.",
+    "author": "Kanye West"
+  },
+  {
+    "day": 38,
+    "quote": "Make your dreams come true.",
+    "author": "Roy T. Bennett"
+  },
+  {
+    "day": 39,
+    "quote": "Study with purpose, not just for a purpose.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 40,
+    "quote": "Dare to dream big dreams.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 41,
+    "quote": "Perseverance leads to success.",
+    "author": "Anna Sewell"
+  },
+  {
+    "day": 42,
+    "quote": "Dreams require action.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 43,
+    "quote": "Success is a journey, not a destination.",
+    "author": "Zig Ziglar"
+  },
+  {
+    "day": 44,
+    "quote": "Hard work beats talent when talent doesn't work hard.",
+    "author": "Tim Notke"
+  },
+  {
+    "day": 45,
+    "quote": "Set goals, crush them.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 46,
+    "quote": "The only limit is the one you set for yourself.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 47,
+    "quote": "Think like a proton: always positive.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 48,
+    "quote": "Turn your dreams into goals.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 49,
+    "quote": "Success is no accident.",
+    "author": "Pelé"
+  },
+  {
+    "day": 50,
+    "quote": "Every day is a second chance.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 51,
+    "quote": "Do something today that your future self will thank you for.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 52,
+    "quote": "Great things never come from comfort zones.",
+    "author": "Neil Strauss"
+  },
+  {
+    "day": 53,
+    "quote": "Learn from yesterday, live for today, hope for tomorrow.",
+    "author": "Albert Einstein"
+  },
+  {
+    "day": 54,
+    "quote": "Your attitude determines your direction.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 55,
+    "quote": "Believe in your potential.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 56,
+    "quote": "Stay focused, stay positive.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 57,
+    "quote": "Dream it, wish it, do it.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 58,
+    "quote": "Success begins with a single step.",
+    "author": "John C. Maxwell"
+  },
+  {
+    "day": 59,
+    "quote": "Your journey, your success.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 60,
+    "quote": "Make each day your masterpiece.",
+    "author": "John Wooden"
+  },
+  {
+    "day": 61,
+    "quote": "Success is the sum of small efforts.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 62,
+    "quote": "Dream big, work hard.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 63,
+    "quote": "Success favors the well-prepared.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 64,
+    "quote": "Believe in your capabilities.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 65,
+    "quote": "Effort transforms potential into success.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 66,
+    "quote": "Strive for excellence every day.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 67,
+    "quote": "Purpose fuels passion.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 68,
+    "quote": "Chase dreams, not grades.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 69,
+    "quote": "Study smart, not just hard.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 70,
+    "quote": "Consistency breeds mastery.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 71,
+    "quote": "Embrace challenges, conquer fears.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 72,
+    "quote": "Focus on progress, not perfection.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 73,
+    "quote": "Knowledge is your greatest asset.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 74,
+    "quote": "Doubt kills more dreams than failure.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 75,
+    "quote": "Your effort is your contribution.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 76,
+    "quote": "Be resilient, not just brilliant.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 77,
+    "quote": "Success demands sacrifices.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 78,
+    "quote": "Learn from every setback.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 79,
+    "quote": "Discipline beats talent.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 80,
+    "quote": "Small steps, big dreams.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 81,
+    "quote": "Stay positive, stay fighting.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 82,
+    "quote": "Effort conquers all.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 83,
+    "quote": "Ambition knows no limits.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 84,
+    "quote": "Struggle today, success tomorrow.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 85,
+    "quote": "Tomorrow's success starts today.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 86,
+    "quote": "Mindset is everything.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 87,
+    "quote": "Success is earned, not given.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 88,
+    "quote": "Hard work outshines brilliance.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 89,
+    "quote": "Push beyond your comfort.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 90,
+    "quote": "Think, believe, achieve.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 91,
+    "quote": "Turn your can'ts into cans.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 92,
+    "quote": "Adapt, overcome, achieve.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 93,
+    "quote": "Dare to dream, dare to act.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 94,
+    "quote": "Rise above the challenges.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 95,
+    "quote": "Courage: it's a decision.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 96,
+    "quote": "Passion powers perseverance.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 97,
+    "quote": "Stay hungry, stay foolish.",
+    "author": "Steve Jobs"
+  },
+  {
+    "day": 98,
+    "quote": "Strive for progress, not perfection.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 99,
+    "quote": "Effort today, success tomorrow.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 100,
+    "quote": "You are stronger than you think.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 101,
+    "quote": "Fuel your focus with purpose.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 102,
+    "quote": "Excellence is a habit.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 103,
+    "quote": "Challenge yourself, it's worth it.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 104,
+    "quote": "Success is a journey, not a destination.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 105,
+    "quote": "Determination conquers all.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 106,
+    "quote": "Believe in your abilities.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 107,
+    "quote": "Knowledge is power.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 108,
+    "quote": "Stay committed, not interested.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 109,
+    "quote": "Do it with passion or not at all.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 110,
+    "quote": "Conquer your fears, achieve your dreams.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 111,
+    "quote": "Success is in your hands.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 112,
+    "quote": "Your future is created by what you do today.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 113,
+    "quote": "Impossible is an opinion.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 114,
+    "quote": "The harder you work, the luckier you get.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 115,
+    "quote": "Keep calm and study on.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 116,
+    "quote": "Success is the sum of small efforts.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 117,
+    "quote": "Make it happen.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 118,
+    "quote": "Prove them wrong.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 119,
+    "quote": "Don't stop until you're proud.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 120,
+    "quote": "Dream, believe, achieve.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 121,
+    "quote": "Study like there's no tomorrow.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 122,
+    "quote": "Stay focused, stay fierce.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 123,
+    "quote": "Success starts with self-discipline.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 124,
+    "quote": "Don't wish for it, work for it.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 125,
+    "quote": "Your effort today, your success tomorrow.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 126,
+    "quote": "Stay positive, work hard, make it happen.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 127,
+    "quote": "Strive for greatness.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 128,
+    "quote": "Success is a mindset.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 129,
+    "quote": "Believe you can and you're halfway there.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 130,
+    "quote": "You have the power to change your story.",
+    "author": "Theodore Roosevelt"
+  },
+  {
+    "day": 131,
+    "quote": "Work hard, dream big.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 132,
+    "quote": "Do more things that make you forget to check your phone.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 133,
+    "quote": "Success is the best revenge.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 134,
+    "quote": "Make your dreams come true.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 135,
+    "quote": "Study with purpose, not just for a purpose.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 136,
+    "quote": "Dare to dream big dreams.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 137,
+    "quote": "Perseverance leads to success.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 138,
+    "quote": "Dreams require action.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 139,
+    "quote": "Hard work beats talent when talent doesn't work hard.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 140,
+    "quote": "Set goals, crush them.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 141,
+    "quote": "The only limit is the one you set for yourself.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 142,
+    "quote": "Turn your dreams into goals.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 143,
+    "quote": "Success is no accident.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 144,
+    "quote": "Every day is a second chance.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 145,
+    "quote": "Do something today that your future self will thank you for.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 146,
+    "quote": "Great things never come from comfort zones.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 147,
+    "quote": "Your attitude determines your direction.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 148,
+    "quote": "Believe in your potential.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 149,
+    "quote": "Stay focused, stay positive.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 150,
+    "quote": "Dream it, wish it, do it.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 151,
+    "quote": "Success begins with a single step.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 152,
+    "quote": "Your journey, your success.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 153,
+    "quote": "Don't watch the clock; do what it does. Keep going.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 154,
+    "quote": "You are capable of amazing things.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 155,
+    "quote": "Hard work pays off.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 156,
+    "quote": "Your dedication defines your destination.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 157,
+    "quote": "Dreams don't work unless you do.",
+    "author": "John Wooden"
+  },
+  {
+    "day": 158,
+    "quote": "Unlock your potential, unleash success.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 159,
+    "quote": "Knowledge is the key to victory.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 160,
+    "quote": "Conquer fear, embrace courage.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 161,
+    "quote": "Persistence unlocks possibilities.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 162,
+    "quote": "Success begins with self-discipline.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 163,
+    "quote": "The future belongs to the curious.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 164,
+    "quote": "Dare to be different.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 165,
+    "quote": "Invest in your dreams daily.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 166,
+    "quote": "Chase your passion, not perfection.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 167,
+    "quote": "Success is a journey of a thousand steps.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 168,
+    "quote": "Work hard in silence, let success be your noise.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 169,
+    "quote": "Every setback is a setup for a comeback.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 170,
+    "quote": "Create your own opportunities.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 171,
+    "quote": "Think big, study bigger.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 172,
+    "quote": "Stay positive, stay persistent.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 173,
+    "quote": "Aim for the stars, not the ceiling.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 174,
+    "quote": "The best is yet to come.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 175,
+    "quote": "Believe in the magic within you.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 176,
+    "quote": "Your journey, your rules.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 177,
+    "quote": "Dream, hustle, achieve.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 178,
+    "quote": "Opportunities don't happen, you create them.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 179,
+    "quote": "Your effort, your legacy.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 180,
+    "quote": "Future leaders are today's hard workers.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 181,
+    "quote": "Make sacrifices, not excuses.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 182,
+    "quote": "Work hard, stay humble.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 183,
+    "quote": "Turn your obstacles into stepping stones.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 184,
+    "quote": "Success is a choice, not a chance.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 185,
+    "quote": "Dream it, achieve it.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 186,
+    "quote": "Your passion determines your success.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 187,
+    "quote": "Success: a series of small wins.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 188,
+    "quote": "Perseverance conquers all.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 189,
+    "quote": "Believe in your journey.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 190,
+    "quote": "Turn challenges into stepping stones.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 191,
+    "quote": "Stay focused, stay strong.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 192,
+    "quote": "Strive for greatness every day.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 193,
+    "quote": "Success is an inside job.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 194,
+    "quote": "Dream big, act bigger.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 195,
+    "quote": "Let your effort be your loudest cheer.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 196,
+    "quote": "Study hard, dream big.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 197,
+    "quote": "The journey is the reward.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 198,
+    "quote": "Dare to outwork the competition.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 199,
+    "quote": "Your effort today shapes your tomorrow.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 200,
+    "quote": "Seeds of hard work bear fruits of success.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 201,
+    "quote": "Create your own sunshine.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 202,
+    "quote": "Aspire to inspire before you expire.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 203,
+    "quote": "Success is not a destination but a journey.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 204,
+    "quote": "Dream it, work for it, achieve it.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 205,
+    "quote": "Chase the vision, not the money.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 206,
+    "quote": "Your dreams are your reality in the making.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 207,
+    "quote": "Do it for the future you.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 208,
+    "quote": "Tomorrow's success begins with today's effort.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 209,
+    "quote": "Hard work, no shortcuts.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 210,
+    "quote": "Success: where preparation meets opportunity.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 211,
+    "quote": "Every expert was once a beginner.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 212,
+    "quote": "Success: a result of dedication and determination.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 213,
+    "quote": "Dreams fuel determination.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 214,
+    "quote": "Your effort, your victory.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 215,
+    "quote": "Stay committed, not just interested.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 216,
+    "quote": "Focus on the step in front of you.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 217,
+    "quote": "Dream big, start small, act now.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 218,
+    "quote": "Be the game-changer.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 219,
+    "quote": "Make your passion your paycheck.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 220,
+    "quote": "Conquer today, conquer tomorrow.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 221,
+    "quote": "Great minds think and work alike.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 222,
+    "quote": "Success is the child of audacity.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 223,
+    "quote": "Your potential is limitless.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 224,
+    "quote": "Your journey is unique, embrace it.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 225,
+    "quote": "Dreams require hustle.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 226,
+    "quote": "Action conquers fear.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 227,
+    "quote": "Dream it, plan it, achieve it.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 228,
+    "quote": "Ignite your passion, fuel your success.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 229,
+    "quote": "Effort paves the path to excellence.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 230,
+    "quote": "Believe in yourself, conquer your fears.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 231,
+    "quote": "Knowledge empowers, dreams inspire.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 232,
+    "quote": "Dedication breeds mastery, focus leads to victory.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 233,
+    "quote": "Struggles refine, successes define.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 234,
+    "quote": "Passion ignites progress, resilience conquers obstacles.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 235,
+    "quote": "Challenges shape brilliance, determination fuels perseverance.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 236,
+    "quote": "Focus on the present, shape the future.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 237,
+    "quote": "Believe, you can achieve greatness.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 238,
+    "quote": "Dreams require action, not just wishes.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 239,
+    "quote": "Focus on the journey, not just the destination.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 240,
+    "quote": "Hard work and talent make a winning combination.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 241,
+    "quote": "Goals lead to direction, dreams provide motivation.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 242,
+    "quote": "Every day is an opportunity to learn and grow.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 243,
+    "quote": "Prepare, perform, succeed.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 244,
+    "quote": "Believe in your capabilities, achieve your potential.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 245,
+    "quote": "Strive for excellence, never settle for mediocrity.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 246,
+    "quote": "Purpose fuels passion, passion drives success.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 247,
+    "quote": "Chase dreams, not grades, dreams lead to fulfillment.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 248,
+    "quote": "Study smart, study hard, and study consistently.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 249,
+    "quote": "Mastery is achieved through consistent effort.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 250,
+    "quote": "Embrace challenges, they make you stronger.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 251,
+    "quote": "Focus on progress, not perfection, perfection is an illusion.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 252,
+    "quote": "Knowledge is your greatest asset, invest in it wisely.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 253,
+    "quote": "Doubt kills more dreams than failure, believe in yourself.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 254,
+    "quote": "Your effort is your contribution, make it count.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 255,
+    "quote": "Be resilient, bounce back from setbacks.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 256,
+    "quote": "Success demands sacrifices, embrace them.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 257,
+    "quote": "Small steps taken consistently lead to big dreams.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 258,
+    "quote": "Stay positive, stay motivated, stay focused.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 259,
+    "quote": "Struggles today lead to success tomorrow.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 260,
+    "quote": "Tomorrow's success starts with today's actions.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 261,
+    "quote": "Mindset is everything, it determines your outcomes.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 262,
+    "quote": "Success is earned, not given, it requires hard work.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 263,
+    "quote": "Hard work outshines brilliance when brilliance is lazy.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 264,
+    "quote": "Push beyond your comfort zone, that's where growth happens.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 265,
+    "quote": "Think, believe, achieve, make your dreams a reality.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 266,
+    "quote": "Turn your can'ts into cans, change your mindset.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 267,
+    "quote": "Adapt, overcome, achieve, challenges are opportunities.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 268,
+    "quote": "Dare to dream, dare to take action, make it happen.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 269,
+    "quote": "Rise above the challenges, don't let them hold you back.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 270,
+    "quote": "Courage is not the absence of fear, it's the willingness to act.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 271,
+    "quote": "Passion powers perseverance, it keeps you going.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 272,
+    "quote": "Stay hungry, stay foolish, never lose your curiosity.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 273,
+    "quote": "Strive for greatness, never settle for less than your best.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 274,
+    "quote": "Success is a mindset, believe you can achieve it.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 275,
+    "quote": "You have the power to change your story, write it well.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 276,
+    "quote": "Work hard, dream big, make your dreams come true.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 277,
+    "quote": "Do things that make you forget to check your phone.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 278,
+    "quote": "Success is the best revenge, prove them wrong.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 279,
+    "quote": "Make your dreams come true, don't let them be just dreams.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 280,
+    "quote": "Study with purpose, not just for a grade, but for knowledge.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 281,
+    "quote": "Dare to dream big dreams, set your sights high.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 282,
+    "quote": "Perseverance leads to success, don't give up.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 283,
+    "quote": "Dreams require action, turn your dreams into goals.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 284,
+    "quote": "Set goals, crush them, achieve more than you thought possible.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 285,
+    "quote": "Think like a proton, always positive and optimistic.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 286,
+    "quote": "Turn your dreams into goals, make them tangible.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 287,
+    "quote": "Success is no accident, it's the result of hard work.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 288,
+    "quote": "Every day is a second chance to start anew.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 289,
+    "quote": "Do something today that your future self will thank you.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 290,
+    "quote": "Embrace the journey, savor the learning.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 291,
+    "quote": "Resilience is the key, it conquers every hurdle.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 292,
+    "quote": "Believe in your potential, it's the foundation of success.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 293,
+    "quote": "Hard work and perseverance, the winning formula.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 294,
+    "quote": "Setbacks are stepping stones, learn from them and grow.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 295,
+    "quote": "Discipline is the bridge between dreams and reality.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 296,
+    "quote": "Consistency is the key, it turns effort into excellence.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 297,
+    "quote": "Challenge your limits, push beyond your comfort zone.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 298,
+    "quote": "Embrace the struggle, it shapes you into a champion.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 299,
+    "quote": "Turn your fears into fuel, ignite your passion.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 300,
+    "quote": "Believe in your dreams, make them your guiding light.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 301,
+    "quote": "Every step forward is a victory, celebrate your progress.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 302,
+    "quote": "Learn from mistakes, turn them into lessons for growth.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 303,
+    "quote": "Embrace the Anonymous, it's where innovation happens.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 304,
+    "quote": "Stay focused, stay motivated, stay on track.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 305,
+    "quote": "Believe in yourself, you have the power to achieve.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 306,
+    "quote": "Success is not a destination, it's a continuous journey.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 307,
+    "quote": "Embrace challenges, they make you stronger and wiser.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 308,
+    "quote": "Learn from every experience, it's the path to mastery.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 309,
+    "quote": "Turn your doubts into determination, let it fuel your drive.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 310,
+    "quote": "Believe in your abilities, you are capable of greatness.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 311,
+    "quote": "Knowledge is power, arm yourself with it to succeed.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 312,
+    "quote": "Stay committed, stay passionate, stay persistent.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 313,
+    "quote": "Do it with enthusiasm or not at all, passion matters.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 314,
+    "quote": "Conquer your fears, they are holding you back from your goals.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 315,
+    "quote": "Success is within your grasp, reach out and seize it.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 316,
+    "quote": "Your future is in your hands, shape it with your actions.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 317,
+    "quote": "Impossible is just an opinion, challenge it and prove it wrong.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 318,
+    "quote": "The harder you work, the more prepared you'll be.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 319,
+    "quote": "Keep calm and study on, you'll conquer the exam.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 320,
+    "quote": "Success is the sum of small efforts, done consistently.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 321,
+    "quote": "Make it happen, turn your dreams into reality.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 322,
+    "quote": "Prove them wrong, show them what you're capable of.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 323,
+    "quote": "Don't stop until you're proud, you've got this!",
+    "author": "Anonymous"
+  },
+  {
+    "day": 324,
+    "quote": "Ignite the spark within, unleash your brilliance.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 325,
+    "quote": "Effort is the fuel, success is the destination.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 326,
+    "quote": "Embrace the challenge, conquer the exam.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 327,
+    "quote": "Knowledge is the key, unlock your potential.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 328,
+    "quote": "Dedicate yourself, mastery awaits you.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 329,
+    "quote": "Struggles refine, setbacks strengthen.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 330,
+    "quote": "Passion ignites progress, determination conquers obstacles.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 331,
+    "quote": "Challenges shape resilience, perseverance builds character.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 332,
+    "quote": "Focus on the present, mold the future.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 333,
+    "quote": "Effort today, success tomorrow, and the day after.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 334,
+    "quote": "Believe, achieve, excel, surpass your own expectations.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 335,
+    "quote": "Dreams require action, turn your aspirations into reality.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 336,
+    "quote": "Focus on the journey, savor the learning, cherish the experience.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 337,
+    "quote": "Hard work and talent, an unbeatable combination.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 338,
+    "quote": "Goals provide direction, dreams fuel motivation.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 339,
+    "quote": "Every day is a chance to learn, grow, and improve.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 340,
+    "quote": "Prepare, perform, succeed, three steps to victory.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 341,
+    "quote": "Believe in your capabilities, unleash your inner potential.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 342,
+    "quote": "Effort transforms potential into success, no magic required.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 343,
+    "quote": "Strive for excellence, never settle for mediocrity, aim for greatness.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 344,
+    "quote": "Purpose fuels passion, passion drives success, a winning cycle.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 345,
+    "quote": "Ignite the passion, fuel the fire, achieve success.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 346,
+    "quote": "Effort paves the path, success lights the way.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 347,
+    "quote": "Believe in yourself, conquer every fear.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 348,
+    "quote": "Focus on the journey, savor the experience.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 349,
+    "quote": "Hard work and talent, a winning combination.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 350,
+    "quote": "Every day is a chance to grow, embrace the learning.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 351,
+    "quote": "Prepare, perform, succeed, a recipe for excellence.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 352,
+    "quote": "Believe in your capabilities, unleash your potential.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 353,
+    "quote": "Effort transforms potential into success, make it happen.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 354,
+    "quote": "Strive for excellence, mediocrity is not an option.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 355,
+    "quote": "Chase dreams, not grades, grades are just a means.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 356,
+    "quote": "Study smart, study hard, and study consistently, a winning formula.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 357,
+    "quote": "Mastery is achieved through consistent practice, never give up.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 358,
+    "quote": "Embrace challenges, they make you stronger, wiser, and more prepared.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 359,
+    "quote": "Focus on progress, not perfection, enjoy the journey.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 360,
+    "quote": "Knowledge is your greatest treasure, invest in it wisely.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 361,
+    "quote": "Doubt is a dream killer, believe in yourself, you have it in you.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 362,
+    "quote": "Your effort is your contribution, make it count, give your all.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 363,
+    "quote": "Knowledge empowers, dreams inspire.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 364,
+    "quote": "Dedication breeds mastery, focus leads to victory.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 365,
+    "quote": "Struggles refine, successes define.",
+    "author": "Anonymous"
+  },
+  {
+    "day": 366,
+    "quote": "Passion ignites progress, resilience conquers obstacles.",
+    "author": "Anonymous"
+  }
+]

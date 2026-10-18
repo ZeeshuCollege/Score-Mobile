@@ -1,0 +1,954 @@
+/*
+################
+             Initial Setup
+################
+*/
+
+.app-content {
+  opacity: 0;
+  pointer-events: none;
+  /* We'll also use a slight upward offset for animation */
+  transform: translateY(-10px);
+  will-change: opacity, transform;
+
+  /*transition: opacity 0.24s cubic-bezier(0.4, 0, 0.2, 1),
+  transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);*/
+}
+
+.app-content.visible {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  transform: translateY(0) !important;
+
+  animation: fadeSlideDown 0.45s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+@keyframes fadeSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+
+* {
+ margin: 0;
+ padding: 0;
+ box-sizing: border-box;
+}
+
+
+.row > * {
+ padding-left: 0;
+}
+
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+ -webkit-appearance: none;
+ margin: 0;
+}
+
+
+input[type="number"]:disabled,
+input[type="text"]:disabled {
+ background: #fff;
+}
+
+
+/*
+################
+             Question Text Section
+################
+*/
+
+body {
+  font-size: 14px;
+}
+
+#questionText {
+ font-size: 1rem;
+ color: #282E39;
+ background-color: white;
+ font-weight: normal;
+ line-height: 1.5;
+ font-family: "Times New Roman";
+ width: 100vw;
+ padding: 0px 16px 0px 16px;
+ /* border-bottom: 1px solid #eaedf1; */
+
+ opacity: 0;
+   transform: translateY(-10px); /* animate from top */
+   transition: opacity 0.4s cubic-bezier(0.23, 1, 0.32, 1),
+   transform 0.4s cubic-bezier(0.23,1,0.32,1);
+}
+
+.app-content.visible #questionText {
+  opacity: 1;
+  transform: translateY(0);
+  /*transition-delay: 0.01s;*/ /* appears just before options if you want a stagger */
+}
+
+#questionText img {
+ max-width: 100%;
+ height: auto;
+}
+
+
+#questionSectionContainer {
+ background-color: #fff;
+}
+.dark_mode #questionSectionContainer {
+ background-color: #16191D;
+}
+#questionLabelsContainer {
+ margin-bottom: 1rem;
+ display: flex;
+ flex-wrap: wrap;
+ gap: 0.5rem;
+ padding: 1px 16px;
+ background-color: #fff;
+}
+
+.question-label-tag {
+ display: inline-block;
+ padding: 1px 4px;
+ background-color: #F2F5FB;
+ border-radius: 4px;
+ font-size: 10px;
+ font-weight: 400;
+ color: #16191D;
+ line-height: 1.4;
+}
+
+.dark_mode #questionLabelsContainer {
+ background-color: #16191D;
+}
+
+
+/*
+################
+             Labels Section
+################
+*/
+#labelBox {
+ display: flex;
+ align-items: center;
+ justify-content: space-between;
+ margin-top: 1rem;
+}
+.labels-left,
+.labels-right {
+ font-size: 14px;
+ font-style: normal;
+ font-weight: 400;
+ line-height: 24px; /* 150% */
+ color: #16191D;
+ padding: 0 16px;
+ display: flex;
+ flex-grow: 1;
+ flex-wrap: wrap;
+}
+.dark_mode .labels-left {
+ color: #16191D;
+}
+
+
+#showCorrectAnswerBtn {
+ display: flex;
+ min-height: 28px;
+ padding: 0px 8px;
+ margin: 0px 16px;
+ justify-content: center;
+ align-items: center;
+ gap: 4px;
+ flex: 1 0 0;
+
+
+ border-radius: 36px;
+ border: 1px solid #007af6;
+ background: #daecfe;
+
+
+ color: #0065de;
+ text-align: right;
+ font-size: 14px;
+ font-style: normal;
+ font-weight: 500;
+ line-height: 18px; /* 128.571% */
+}
+.label-container {
+ display: flex;
+ flex-direction: row;
+ justify-content: center;
+ align-items: center;
+ padding: 5px 8px;
+ background: #e8f3fd;
+ border-radius: 5px;
+ flex: none;
+ order: 0;
+ flex-grow: 0;
+ margin-top: 10px;
+ margin-right: 12px;
+}
+
+
+.label-text {
+ font-style: normal;
+ font-weight: normal;
+ font-family: "SF Pro Display";
+ font-size: 12px;
+ line-height: 1.5;
+ display: flex;
+ align-items: center;
+ text-align: center;
+ color: #1589ee;
+ flex: none;
+ order: 0;
+ flex-grow: 0;
+}
+
+
+.labels-right {
+ flex-direction: row-reverse;
+ margin-top: 20px;
+}
+
+
+#action-show-solutions {
+ cursor: pointer;
+ display: none;
+ flex-direction: row;
+ justify-content: center;
+ align-items: center;
+ padding: 8px 22px;
+ background: #31d99c;
+ box-shadow: 0px 2px 4px rgba(21, 21, 41, 0.2);
+ border-radius: 7px;
+ color: #fff;
+ font-family: "SF Pro Display";
+ font-style: normal;
+ font-weight: bold;
+ line-height: 1.5;
+ font-size: 16px;
+}
+#action-show-vs-solutions {
+ cursor: pointer;
+ display: none;
+ flex-direction: row;
+ justify-content: center;
+ align-items: center;
+ padding: 8px 22px;
+ background: #16a249;
+ box-shadow: 0px 2px 4px rgba(21, 21, 41, 0.2);
+ border-radius: 7px;
+ color: #fff;
+ font-family: "SF Pro Display";
+ font-style: normal;
+ font-weight: bold;
+ line-height: 1.5;
+ font-size: 16px;
+}
+/*
+################
+             Options Section
+################
+*/
+#optionsBox {
+ margin: 1rem 1px;
+ padding: 0 16px;
+ display: flex;
+ flex-direction: column;
+}
+
+
+#optionsBox div.option-container:last-child {
+ padding-bottom: 15px;
+}
+
+
+.option {
+ display: flex;
+ flex-direction: row;
+ align-items: center;
+ background: #fff;
+ border: 1px solid #d1d8e0;
+ border-radius: 12px;
+ padding: 21px;
+ gap: 4%;
+}
+.answered .option {
+ border: 1px dashed #d1d8e0;
+}
+.dark_mode .answered .option {
+ border: 1px dashed #3e5574;
+}
+
+.option-container {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.4s, transform 0.4s;
+  /* Each child (option) can fade in after app-content is visible */
+}
+
+#option-container {
+background-color: #16191D;
+}
+
+.app-content.visible .option-container {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.4s, transform 0.4s;
+}
+
+/* Remove staggered delays */
+.app-content.visible .option-container:nth-child(1) { /* transition-delay: 0.12s; */ }
+.app-content.visible .option-container:nth-child(2) { /* transition-delay: 0.18s; */ }
+.app-content.visible .option-container:nth-child(3) { /* transition-delay: 0.24s; */ }
+.app-content.visible .option-container:nth-child(4) { /* transition-delay: 0.30s; */ }
+
+#singleDefaultIcon {
+ width: 30px;
+ height: 30px;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ background-color: #fff;
+ border: 1px solid #eaedf1;
+ border-radius: 100%;
+ font-size: 12px;
+}
+.dark_mode #singleDefaultIcon {
+ background-color: #16191D;
+ border-color: #30435a;
+ color: #f0fdf4;
+}
+#multipleDefaultIcon {
+ width: 30px;
+ height: 30px;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ background-color: #fff;
+ border: 1px solid #eaedf1;
+ border-radius: 4px;
+ font-size: 12px;
+}
+
+
+.dark_mode #multipleDefaultIcon {
+ background-color: #16191D;
+ border-color: #30435a;
+ color: #f0fdf4;
+}
+
+
+#singleCorrectIcon {
+ width: 30px;
+ height: 30px;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ background-color: #86efac;
+ border-radius: 100%;
+ font-size: 12px;
+}
+.dark_mode #singleCorrectIcon {
+ background-color: #15803d;
+ color: #f0fdf4;
+}
+#multipleCorrectIcon {
+ width: 30px;
+ height: 30px;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ background-color: #86efac;
+ border-radius: 4px;
+ font-size: 12px;
+}
+.dark_mode #multipleCorrectIcon {
+ background-color: #15803d;
+ color: #f0fdf4;
+}
+#singleIncorrectIcon {
+ width: 30px;
+ height: 30px;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ background-color: #fca5a5;
+ border-radius: 100%;
+ font-size: 12px;
+}
+.dark_mode #singleIncorrectIcon {
+ background-color: #b91c1c;
+ color: #f0fdf4;
+}
+#multipleIncorrectIcon {
+ width: 30px;
+ height: 30px;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ background-color: #fca5a5;
+ border-radius: 4px;
+ font-size: 12px;
+}
+.dark_mode #multipleIncorrectIcon {
+ background-color: #b91c1c;
+ color: #f0fdf4;
+}
+.option-container {
+ position: relative;
+ padding-bottom: 1rem;
+}
+
+
+.option-badge {
+ z-index: 9;
+ display: flex;
+ flex-direction: row;
+ justify-content: center;
+ align-items: center;
+ background: #fff;
+ border-radius: 18px;
+ height: 20px;
+ width: fit-content;
+ right: calc(14px + 20px); /* adding 20px for icon */
+ top: -9px;
+ display: none;
+ position: absolute;
+}
+
+
+.bottom-badge {
+ z-index: 19;
+ display: flex;
+ flex-direction: row;
+ justify-content: center;
+ align-items: center;
+ background: #fff;
+ border-radius: 18px;
+ height: 20px;
+ width: fit-content;
+ right: calc(14px + 20px); /* adding 20px for icon */
+ bottom: 9px;
+ display: none;
+ position: absolute;
+}
+
+
+.dark_mode .option-badge {
+ background-color: #16191D;
+}
+
+
+.dark_mode .bottom-badge {
+ background-color: #16191D;
+}
+
+
+.option-badge-text {
+ font-style: normal;
+ font-weight: 500;
+ font-family: "SF Pro Display";
+ font-size: 12px;
+ line-height: 1.5;
+ flex: none;
+ order: 0;
+ flex-grow: 0;
+ margin: 0px 10px;
+ width: 100%;
+}
+
+
+.bottom-badge-text {
+ font-style: normal;
+ font-weight: 500;
+ font-family: "SF Pro Display";
+ font-size: 12px;
+ line-height: 1.5;
+ flex: none;
+ order: 0;
+ flex-grow: 0;
+ margin: 0px 10px;
+ width: 100%;
+}
+.display-bottom-badge-text {
+ display: flex;
+ text-align: center;
+ align-items: center;
+ justify-content: center;
+ color: #101319;
+}
+
+
+.dark_mode .display-bottom-badge-text {
+ color: #fff;
+}
+
+
+.bottom-label {
+ display: flex;
+ align-items: center;
+ font-size: 16px;
+ font-style: normal;
+ font-weight: 500;
+ line-height: 24px;
+}
+
+
+.bottom-label #correct-label-text {
+ color: #007f42;
+}
+
+
+.bottom-label #label-answer {
+ color: #101319;
+}
+
+
+.dark_mode .bottom-label #correct-label-text {
+ color: #56eeb0;
+}
+
+
+.dark_mode .bottom-label #label-answer {
+ color: #fff;
+}
+
+
+.option-icon {
+ width: 30px;
+ height: 30px;
+}
+
+
+.option-text {
+ font-style: normal;
+ font-weight: 500;
+ font-family: "Times New Roman";
+ font-size: 1rem;
+ line-height: 1.5;
+ color: #282E39;
+ margin-left: 20px;
+}
+.option-text img {
+ max-width: 100%;
+ height: auto;
+}
+.option-text > span {
+ /* line-height: 1; Numerator and denominator getting collapsed in mathematical Equations because of this */
+ text-wrap: wrap;
+}
+
+
+.numerical-input {
+ font-style: normal;
+ font-weight: normal;
+ font-size: 18px;
+ line-height: 156%;
+ color: #101319;
+ border: none;
+ box-shadow: none;
+}
+
+
+.dark_mode .numerical-input {
+ color: #fff;
+}
+
+
+.numerical-input:focus {
+ border: none;
+ box-shadow: none;
+ outline: none;
+}
+
+
+.option_state_selected {
+ border: 2px solid #1589ee;
+ padding: 20px;
+}
+
+
+.option-icon,
+.option-text {
+ pointer-events: none;
+}
+
+
+/*
+################
+             Solution Section
+################
+*/
+#solutionBox {
+ margin-top: 2rem;
+ display: none;
+}
+
+
+.solution-header {
+ font-style: normal;
+ font-weight: 500;
+ font-family: "SF Pro Display";
+ font-size: 14px;
+ line-height: 1.5;
+ color: #16191D;
+}
+
+
+.solution-text {
+ font-style: normal;
+ font-weight: 500;
+ font-family: "Times New Roman";
+ font-size: 1rem;
+ line-height: 1.5;
+ color: #282E39;
+}
+
+
+.answer-text {
+ font-style: normal;
+ font-weight: 500;
+ font-family: "Times New Roman";
+ font-size: 1rem;
+ line-height: 1.5;
+ color: #282E39;
+}
+
+
+.correct-answer {
+ display: flex;
+ text-align: center;
+ align-items: center;
+ justify-content: center;
+ color: #31d99c;
+}
+
+
+.correct-answer > span {
+ position: absolute;
+ right: 0;
+ translate: -35% 0;
+ display: block;
+ height: 20px;
+ width: 20px;
+ background-image: url("../assets/images/correct-white-2x.webp");
+ background-size: contain; /* Adjust the icon size */
+ background-repeat: no-repeat; /* Prevents the icon from repeating */
+ background-position: center; /* Centers the icon */
+}
+
+
+.incorrect-answer {
+ display: flex;
+ text-align: center;
+ align-items: center;
+ justify-content: center;
+ color: #ff5858;
+}
+.incorrect-answer > span {
+ position: absolute;
+ right: 0;
+ translate: -35% 0;
+ display: block;
+ height: 20px;
+ width: 20px;
+ background-image: url("../assets/images/incorrect-white-2x.webp");
+ background-size: contain; /* Adjust the icon size */
+ background-repeat: no-repeat; /* Prevents the icon from repeating */
+ background-position: center; /* Centers the icon */
+}
+
+
+/*
+################
+             Error Section
+################
+*/
+#error {
+ margin-top: 10px;
+ display: none;
+ cursor: pointer;
+ width: 40vw;
+}
+#vs-error {
+ cursor: pointer;
+ width: fit-content;
+}
+
+
+.error-container {
+ display: flex;
+ flex-direction: row;
+ align-items: center;
+}
+
+
+.error-icon {
+ color: #bdbfc9;
+ font-weight: 500;
+}
+
+
+.error-text {
+ margin-left: 10px;
+ font-style: normal;
+ font-weight: 500;
+ font-family: "SF Pro Display";
+ font-size: 12px;
+ line-height: 129%;
+ color: #606D81;
+}
+table {
+ display: block;
+ overflow-x: auto;
+ white-space: nowrap;
+}
+
+
+table img {
+ height: 50%;
+ width: 50%;
+}
+
+
+.mjx-table {
+ display: block !important;
+ max-width: calc(95dvw - 16px - 16px) !important;
+ text-wrap: nowrap;
+ overflow-x: auto;
+ color: currentColor !important;
+}
+.mjx-table::-webkit-scrollbar {
+ height: 5px;
+ border-radius: 15px;
+}
+.mjx-table::-webkit-scrollbar-thumb {
+ background: var(--bs-secondary);
+}
+/*
+################
+             Dark Mode [cleaned and consolidated]
+################
+*/
+
+
+.dark_mode {
+ background: #16191D;
+}
+
+.dark_mode #optionsBox,
+.dark_mode #questionSectionContainer,
+.dark_mode #questionLabelsContainer,
+.dark_mode #questionText,
+.dark_mode .container-fluid {
+    background: #16191D;
+}
+
+.dark_mode #inputAns {
+ border: none;
+ background: inherit;
+}
+
+
+.dark_mode #questionText,
+.dark_mode .option-text,
+.dark_mode .answer-text,
+.dark_mode .solution-text,
+.dark_mode .numerical-input:focus {
+ color: #fff;
+ outline: none;
+}
+
+
+.dark-text {
+ color: #fff;
+}
+
+
+.dark_mode .label-container {
+ background: #16191D;
+}
+
+
+.dark_mode .option {
+ border: 1px solid #3e5574;
+ background: #16191D;
+}
+
+
+.dark_mode .option_state_selected {
+ border: 2px solid #73b8f5;
+ padding: 20px;
+}
+
+
+.dark_mode .solution-consent {
+ color: #fff;
+}
+
+
+.dark_mode .solution-text {
+ color: #fff !important;
+}
+
+
+.dark_mode #questionText {
+ background-color: #16191D;
+ /* border-bottom: 1px solid #30435a; */
+}
+
+
+.dark_mode .question-label-tag {
+ background-color: #16191D;
+ color: #98A1AF;
+}
+
+.dark_mode #questionText img,
+.dark_mode .option-text img,
+.dark_mode .solution-text img {
+ filter: invert(100%);
+}
+
+
+.solution-consent {
+ /* Position to bottom 5% */
+ position: fixed;
+ bottom: 1%;
+ left: 50%;
+ transform: translateX(-50%);
+ width: 100%;
+ font-style: normal;
+ font-weight: 500;
+ font-size: 14px;
+ line-height: 18px;
+ background-color: rgba(21, 137, 238, 0.5);
+ padding: 5px 10px;
+ border-radius: 12px;
+ color: #fff;
+}
+
+
+.solution-consent div {
+ display: flex;
+ align-items: center;
+}
+
+
+.solution-consent div input {
+ margin-right: 0.7rem;
+}
+
+
+.mb-6 {
+ margin-bottom: 4rem;
+}
+/* The Modal (background) */
+.modal {
+ display: none;
+ position: fixed;
+ z-index: 5000;
+ padding-top: 100px;
+ left: 0;
+ top: 0;
+ width: 100%;
+ height: 100%;
+ overflow: auto;
+ background-color: rgba(0, 0, 0, 0.65);
+}
+
+
+/* Modal Content */
+.modal-content {
+ background-color: #16191D;
+ margin: auto;
+ max-width: 100%;
+ padding: 0 16px;
+}
+
+
+.modal-content > figure > img {
+ width: 100%;
+}
+
+
+.modal-content > p {
+ text-align: center;
+ color: #fff;
+}
+/* Image content*/
+#questionImg {
+ margin-bottom: 8px;
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ justify-content: center;
+}
+
+
+#qImage {
+ max-width: 300px;
+ height: fit-content;
+ z-index: 1500;
+}
+
+
+.instructionModal {
+ inset: 0;
+ position: fixed;
+ z-index: 1400;
+ width: 100%;
+ height: 100%;
+ background: rgba(0, 0, 0, 0.5);
+ backdrop-filter: blur(4px);
+ -webkit-backdrop-filter: blur(4px);
+}
+
+
+.showInstruction {
+ color: #282E39;
+ margin-top: 5px;
+ padding: 2px;
+ border-radius: 8px;
+ z-index: 1500;
+}
+
+
+/* The Close Button */
+.close {
+ position: absolute;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ background-color: #fefefe;
+ height: 30px;
+ width: 30px;
+ border-radius: 8px;
+ top: -65px;
+ right: 10px;
+ color: #aaaaaa;
+ font-weight: bold;
+}
+
+
+.dark_mode .close {
+ background-color: #aaaaaa;
+ color: #fefefe;
+}
+
+
+.close:hover,
+.close:focus {
+ color: #000;
+ text-decoration: none;
+ cursor: pointer;
+}
