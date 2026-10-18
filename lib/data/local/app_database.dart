@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 import '../../domain/entities/question_entity.dart';
 import '../../domain/entities/mistake_entity.dart';
 
@@ -18,6 +20,15 @@ class AppDatabase {
   }
 
   Future<Database> _initDB(String filePath) async {
+    if (kIsWeb) {
+      databaseFactory = databaseFactoryFfiWeb;
+      return await openDatabase(
+        filePath,
+        version: 1,
+        onCreate: _createDB,
+      );
+    }
+
     final docsDir = await getApplicationDocumentsDirectory();
     final path = p.join(docsDir.path, filePath);
 
