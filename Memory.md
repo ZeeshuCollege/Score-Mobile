@@ -103,6 +103,7 @@
 - **Action 26**: Built unified [`MainNavScreen`](file:///d:/CodeSupa/Score/lib/presentation/main_nav_screen.dart) providing bottom navigation between Home, DPP, Tests, Formulas, and Mistakes.
 - **Action 27**: Ran full `flutter analyze` with 0 errors and 0 warnings.
 - **Action 28**: Recompiled debug binary and updated [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) (208 MB) at the root of the workspace.
+- **Action 29**: Installed and configured the **Apple Design Skill** ([`apple-design`](file:///d:/CodeSupa/Score/.agents/skills/apple-design/SKILL.md)) across workspace roots and global config (`C:\Users\pinja\.gemini\config\skills\apple-design`), enabling deep Human Interface Guidelines (HIG) compliance audits, accessibility reviews, tactile haptics, and fluid motion design.
 
 ---
 
