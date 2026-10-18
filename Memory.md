@@ -79,9 +79,21 @@
 - **Action 6**: Successfully compiled initial debug build and published [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) (150 MB) at the project root with the automated continuous build script [`build_score_apk.ps1`](file:///d:/CodeSupa/Score/build_score_apk.ps1).
 - **Action 7**: Initialized Git repository, configured remote [`https://github.com/ZeeshuCollege/Score-Mobile.git`](https://github.com/ZeeshuCollege/Score-Mobile.git), committed all core specifications, source files, and reverse-engineered assets, and pushed branch `main`.
 
+### Phase 1 & Phase 2: Core Architecture, SQLite Database & KaTeX Engine (Completed)
+- **Action 8**: Added core reactive dependencies (`flutter_riverpod`, `flutter_math_fork`, `google_fonts`, `sqflite`, `flutter_svg`, `shared_preferences`).
+- **Action 9**: Implemented design tokens & theme system in [`lib/app/theme/`](file:///d:/CodeSupa/Score/lib/app/theme/) (`app_colors.dart`, `app_typography.dart`, `app_theme.dart`).
+- **Action 10**: Created Domain entities for questions, exams, chapters, and mistakes in [`lib/domain/entities/`](file:///d:/CodeSupa/Score/lib/domain/entities/).
+- **Action 11**: Implemented local SQLite database manager [`lib/data/local/app_database.dart`](file:///d:/CodeSupa/Score/lib/data/local/app_database.dart) with tables for `questions`, `bookmarks`, `mistakes`, and `test_attempts`, pre-populated with starter PYQ questions containing real LaTeX math equations.
+- **Action 12**: Built the high-performance [`KaTeXMathView`](file:///d:/CodeSupa/Score/lib/presentation/common/katex_math_view.dart) widget parsing inline/block LaTeX formulas ($$...$$ and $...$).
+- **Action 13**: Built the squircle [`OptionCard`](file:///d:/CodeSupa/Score/lib/presentation/common/option_card.dart) component with tactile haptic feedback, adaptive states (default, selected, correct, incorrect), and embedded KaTeX formula rendering.
+- **Action 14**: Implemented interactive [`QuestionSolveScreen`](file:///d:/CodeSupa/Score/lib/presentation/cpyq/question_solve_screen.dart) supporting Practice Mode instant answer check, step-by-step KaTeX solutions, bookmarking, and mistake categorization (*Silly Mistake*, *Conceptual Gap*, *Calculation Error*).
+- **Action 15**: Built the [`CustomTestScreen`](file:///d:/CodeSupa/Score/lib/presentation/custom_test/custom_test_screen.dart) exam generator, [`ChapterListScreen`](file:///d:/CodeSupa/Score/lib/presentation/cpyq/chapter_list_screen.dart), [`MistakeNotebookScreen`](file:///d:/CodeSupa/Score/lib/presentation/mistakes/mistake_notebook_screen.dart), and [`HomeScreen`](file:///d:/CodeSupa/Score/lib/presentation/home/home_screen.dart).
+- **Action 16**: Resolved Windows multi-drive Kotlin compilation constraints via `android/gradle.properties` (`kotlin.incremental=false`), ran `flutter analyze` (0 issues), and passed `flutter test` test suite.
+- **Action 17**: Recompiled and published updated [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) (173 MB), synced changes to Git, and pushed to origin `main` (commit `762f45c`).
+
 ---
 
 ## 5. Next Immediate Actions
-1. Begin **Phase 1 & Phase 2**: Implement the local Drift/SQLite database schema (`QuestionDao`, `TestAttemptDao`, `MistakeDao`) and the `KaTeXMathView` equation renderer.
-2. Build the interactive `OptionCard` component (Single/Multiple/Numeric choice evaluation).
-3. Re-run [`build_score_apk.ps1`](file:///d:/CodeSupa/Score/build_score_apk.ps1) after code changes to keep [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) synchronized.
+1. **Phase 3 & Phase 4**: Expand the Chapter-wise PYQ multi-filter drawer (filtering by years 2010–2026, shifts, and difficulty level).
+2. Implement full-screen Mock Test simulation mode with live countdown timer and question palette bottom sheet.
+3. Keep [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) refreshed after subsequent commits.
