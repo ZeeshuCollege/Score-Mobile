@@ -24,10 +24,10 @@ Phase 7: Paywall & Store Release
 
 - **Milestones**:
   - [x] Initial reverse-engineering analysis using REA on `com.scoremarks.marks_2.0.8.xapk`.
-  - [ ] Initialize clean Flutter project in `Score/` with Android SDK 21-35 and iOS deployment targets.
-  - [ ] Configure `drift` SQLite database with `questions`, `test_attempts`, `bookmarks`, and `mistake_notebook` tables.
-  - [ ] Set up `flutter_riverpod` state management providers and `GoRouter` declarative navigation.
-  - [ ] Configure basic light and dark theme tokens defined in `Design.md`.
+  - [x] Initialize clean Flutter project in `Score/` with Android SDK 21-35 and iOS deployment targets.
+  - [x] Configure SQLite database with `questions`, `test_attempts`, `bookmarks`, and `mistakes` tables.
+  - [x] Set up `flutter_riverpod` state management architecture.
+  - [x] Configure complete light and dark theme tokens defined in `Design.md`.
 - **Verification**: Database migrations run successfully, sample entity CRUD operations pass unit tests.
 
 ---
@@ -36,10 +36,10 @@ Phase 7: Paywall & Store Release
 **Objective**: Build the core high-performance equation renderer and interactive question answering components.
 
 - **Milestones**:
-  - [ ] Build `KaTeXMathView` supporting complex inline and block LaTeX ($$ \LaTeX $$).
-  - [ ] Implement `OptionCard` with squircle geometry supporting Single Choice (Radio) and Multiple Choice (Checkbox) states.
-  - [ ] Build Integer / Numerical keypad input interface for numerical answer questions.
-  - [ ] Implement instant answer evaluation in Practice Mode (correct, incorrect, show detailed solution).
+  - [x] Build `KaTeXMathView` supporting complex inline and block LaTeX ($$ \LaTeX $$).
+  - [x] Implement `OptionCard` with squircle geometry supporting Single Choice (Radio) and Multiple Choice (Checkbox) states.
+  - [x] Build Integer / Numerical keypad input interface for numerical answer questions.
+  - [x] Implement instant answer evaluation in Practice Mode (correct, incorrect, show detailed step-by-step solution).
 - **Verification**: Mathematical equations (integrals, matrices, chemical bonds) render smoothly under 50ms with zero UI stutter.
 
 ---
