@@ -3,14 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../app/theme/app_colors.dart';
 import '../../app/theme/app_typography.dart';
+import '../../data/services/daily_quote_service.dart';
 import '../../domain/entities/exam_entity.dart';
+import '../buckets/pyq_buckets_screen.dart';
 import '../common/ios_grouped_list.dart';
+import '../concepts/quick_concepts_screen.dart';
 import '../cpyq/chapter_list_screen.dart';
 import '../custom_test/custom_test_screen.dart';
-import '../mistakes/mistake_notebook_screen.dart';
 import '../dpp/dpp_screen.dart';
 import '../formula_cards/formula_cards_screen.dart';
+import '../mistakes/mistake_notebook_screen.dart';
+import '../ncert/ncert_toolbox_screen.dart';
+import '../shorts/shorts_poll_screen.dart';
 import '../subscription/subscription_screen.dart';
+import '../top500/top500_screen.dart';
+import '../tracker/prep_tracker_screen.dart';
+import '../video_solutions/video_solutions_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -21,6 +29,20 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String _selectedExamId = 'jee_main';
+  QuoteEntity? _todayQuote;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDailyQuote();
+  }
+
+  Future<void> _loadDailyQuote() async {
+    final quote = await DailyQuoteService.getTodayQuote();
+    if (mounted) {
+      setState(() => _todayQuote = quote);
+    }
+  }
 
   ExamEntity get _currentExam => ExamEntity.defaultExams.firstWhere(
         (e) => e.id == _selectedExamId,
@@ -108,16 +130,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
-                    color: AppColors.reviewAmber.withValues(alpha: 0.15),
+                    color: AppColors.systemOrange.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Row(
                     children: [
-                      const Icon(CupertinoIcons.flame_fill, color: AppColors.reviewAmber, size: 16),
+                      const Icon(CupertinoIcons.flame_fill, color: AppColors.systemOrange, size: 16),
                       const SizedBox(width: 4),
                       Text(
                         '12d',
-                        style: AppTypography.monoNumber(AppColors.reviewAmber, fontSize: 13),
+                        style: AppTypography.monoNumber(AppColors.systemOrange, fontSize: 13),
                       ),
                     ],
                   ),
@@ -150,13 +172,72 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
 
-          // Main Body Content in Inset Grouped Sections
+          // Main Body Content
           SliverToBoxAdapter(
             child: Column(
               children: [
                 const SizedBox(height: 8),
 
-                // 1. Daily Practice Target
+                // 1. Daily Motivational Quote Banner
+                if (_todayQuote != null)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: isDark ? AppColors.darkCardSurface : AppColors.lightCardSurface,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: isDark ? AppColors.darkCardStroke : AppColors.lightCardStroke,
+                          width: 0.5,
+                        ),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: AppColors.systemOrange.withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: const Icon(CupertinoIcons.quote_bubble_fill, color: AppColors.systemOrange, size: 18),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '"${_todayQuote!.quote}"',
+                                  style: AppTypography.subhead(textPrimary).copyWith(
+                                    fontStyle: FontStyle.italic,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      '— ${_todayQuote!.author}',
+                                      style: AppTypography.labelSmall(textSecondary).copyWith(fontWeight: FontWeight.w600),
+                                    ),
+                                    Text(
+                                      'Day ${_todayQuote!.day}',
+                                      style: AppTypography.monoNumber(AppColors.systemOrange, fontSize: 11),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                // 2. Today's Practice Target Card
                 IosGroupedSection(
                   header: 'Today\'s Practice Goal',
                   children: [
@@ -220,13 +301,118 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
 
-                // 2. Quick Actions Inset Group
+                // 3. Featured Power Modes Inset Group
                 IosGroupedSection(
-                  header: 'Quick Practice & Tools',
+                  header: 'Featured Modes & Collections',
+                  children: [
+                    IosGroupedTile(
+                      icon: CupertinoIcons.rosette,
+                      iconBackgroundColor: AppColors.systemPurple,
+                      title: 'Top 500 Questions',
+                      subtitle: 'Curated high-yield rank deciders with milestone tiers',
+                      badge: 'TOP 500',
+                      badgeColor: AppColors.systemPurple,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          CupertinoPageRoute(builder: (_) => Top500Screen(examId: _selectedExamId)),
+                        );
+                      },
+                    ),
+                    IosGroupedTile(
+                      icon: CupertinoIcons.bolt_fill,
+                      iconBackgroundColor: AppColors.systemOrange,
+                      title: 'Marks Shorts & Quick Polls',
+                      subtitle: 'Fast 45-second vertical swipe feed with live stats',
+                      badge: 'NEW',
+                      badgeColor: AppColors.systemOrange,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          CupertinoPageRoute(builder: (_) => ShortsPollScreen(examId: _selectedExamId)),
+                        );
+                      },
+                    ),
+                    IosGroupedTile(
+                      icon: CupertinoIcons.square_stack_3d_up_fill,
+                      iconBackgroundColor: AppColors.systemBlue,
+                      title: 'PYQ Buckets',
+                      subtitle: 'Most repeated, tricky, speed boosters & recent trends',
+                      badge: '5 Buckets',
+                      badgeColor: AppColors.systemBlue,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          CupertinoPageRoute(builder: (_) => PyqBucketsScreen(examId: _selectedExamId)),
+                        );
+                      },
+                    ),
+                    IosGroupedTile(
+                      icon: CupertinoIcons.book_fill,
+                      iconBackgroundColor: AppColors.correctGreen,
+                      title: 'NCERT Line-by-Line (LBLQ)',
+                      subtitle: 'Class 11 & 12 textbook questions with page numbers',
+                      badge: 'NCERT',
+                      badgeColor: AppColors.correctGreen,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          CupertinoPageRoute(builder: (_) => const NcertToolboxScreen()),
+                        );
+                      },
+                    ),
+                    IosGroupedTile(
+                      icon: CupertinoIcons.lightbulb_fill,
+                      iconBackgroundColor: AppColors.systemTeal,
+                      title: 'Quick Concepts & Formulas',
+                      subtitle: 'Micro-theory notes, definitions & exam trap warnings',
+                      badge: 'REVISION',
+                      badgeColor: AppColors.systemTeal,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          CupertinoPageRoute(builder: (_) => const QuickConceptsScreen()),
+                        );
+                      },
+                    ),
+                    IosGroupedTile(
+                      icon: CupertinoIcons.play_circle_fill,
+                      iconBackgroundColor: AppColors.systemIndigo,
+                      title: 'Video Solutions Hub',
+                      subtitle: 'Detailed video walkthroughs with timestamps',
+                      badge: 'HD VIDEO',
+                      badgeColor: AppColors.systemIndigo,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          CupertinoPageRoute(builder: (_) => const VideoSolutionsScreen()),
+                        );
+                      },
+                    ),
+                    IosGroupedTile(
+                      icon: CupertinoIcons.chart_pie_fill,
+                      iconBackgroundColor: const Color(0xFF2563EB),
+                      title: 'Preparation Tracker & Report Card',
+                      subtitle: 'Readiness score, accuracy matrix & predicted rank',
+                      badge: 'REPORT',
+                      badgeColor: const Color(0xFF2563EB),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          CupertinoPageRoute(builder: (_) => const PrepTrackerScreen()),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+
+                // 4. Standard Practice Tools Inset Group
+                IosGroupedSection(
+                  header: 'Standard Practice & Testing',
                   children: [
                     IosGroupedTile(
                       icon: CupertinoIcons.flame_fill,
-                      iconBgColor: AppColors.reviewAmber,
+                      iconBackgroundColor: AppColors.systemOrange,
                       title: 'Daily Practice Problems (DPP)',
                       subtitle: '10 curated questions & streak rewards',
                       onTap: () {
@@ -238,7 +424,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     IosGroupedTile(
                       icon: CupertinoIcons.timer_fill,
-                      iconBgColor: AppColors.systemBlue,
+                      iconBackgroundColor: AppColors.systemBlue,
                       title: 'Custom Mock Test Generator',
                       subtitle: 'Full NTA-style CBT test environment',
                       onTap: () {
@@ -250,7 +436,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     IosGroupedTile(
                       icon: CupertinoIcons.function,
-                      iconBgColor: AppColors.correctGreen,
+                      iconBackgroundColor: AppColors.correctGreen,
                       title: 'High-Yield Formula Cards',
                       subtitle: 'KaTeX equations with mastery tracking',
                       onTap: () {
@@ -262,7 +448,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     IosGroupedTile(
                       icon: CupertinoIcons.bookmark_fill,
-                      iconBgColor: AppColors.errorRed,
+                      iconBackgroundColor: AppColors.errorRed,
                       title: 'Smart Mistake Notebook',
                       subtitle: 'Spaced repetition revision queue',
                       onTap: () {
@@ -275,7 +461,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
 
-                // 3. Chapter-wise PYQ Bank Inset Group
+                // 5. Chapter-wise PYQ Bank Inset Group
                 IosGroupedSection(
                   header: 'Chapter-wise PYQ Bank (15+ Years)',
                   footer: 'Comprehensive past year question bank categorized by unit and difficulty',
@@ -283,9 +469,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     for (final subId in _currentExam.subjects)
                       IosGroupedTile(
                         icon: _getSubjectIcon(subId),
-                        iconBgColor: _getSubjectColor(subId),
+                        iconBackgroundColor: _getSubjectColor(subId),
                         title: subId[0].toUpperCase() + subId.substring(1),
-                        trailingText: '${ChapterListScreen.sampleChapters[subId]?.length ?? 4} Chapters',
+                        badge: '${ChapterListScreen.sampleChapters[subId]?.length ?? 4} Chapters',
+                        badgeColor: _getSubjectColor(subId),
                         onTap: () {
                           Navigator.push(
                             context,
@@ -302,7 +489,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
 
-                // 4. Score PRO Upgrade Banner
+                // 6. Score PRO Upgrade Banner
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: Container(
@@ -376,7 +563,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 80), // Room for bottom tab bar
+                const SizedBox(height: 90),
               ],
             ),
           ),
@@ -411,7 +598,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 'biology':
         return AppColors.systemTeal;
       default:
-        return AppColors.reviewAmber;
+        return AppColors.systemOrange;
     }
   }
 }

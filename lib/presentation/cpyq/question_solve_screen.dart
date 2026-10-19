@@ -36,7 +36,9 @@ class _QuestionSolveScreenState extends State<QuestionSolveScreen> {
   String? _selectedOption; // 'A', 'B', 'C', 'D' or numerical text
   bool _isSubmitted = false;
   bool _isBookmarked = false;
+  String? _currentNote;
   MistakeType? _selectedMistakeType;
+  int _solutionTab = 0; // 0 = Official, 1 = Community Shortcut
 
   final TextEditingController _numericalController = TextEditingController();
 
@@ -67,13 +69,17 @@ class _QuestionSolveScreenState extends State<QuestionSolveScreen> {
     });
 
     if (qs.isNotEmpty) {
-      _checkBookmark(qs.first.id);
+      _checkBookmarkAndNote(qs.first.id);
     }
   }
 
-  Future<void> _checkBookmark(String questionId) async {
+  Future<void> _checkBookmarkAndNote(String questionId) async {
     final bookmarked = await AppDatabase.instance.isBookmarked(questionId);
-    setState(() => _isBookmarked = bookmarked);
+    final note = await AppDatabase.instance.getQuestionNote(questionId);
+    setState(() {
+      _isBookmarked = bookmarked;
+      _currentNote = note;
+    });
   }
 
   void _resetQuestionState() {
@@ -81,10 +87,11 @@ class _QuestionSolveScreenState extends State<QuestionSolveScreen> {
       _selectedOption = null;
       _isSubmitted = false;
       _selectedMistakeType = null;
+      _solutionTab = 0;
       _numericalController.clear();
     });
     if (_questions.isNotEmpty) {
-      _checkBookmark(_questions[_currentIndex].id);
+      _checkBookmarkAndNote(_questions[_currentIndex].id);
     }
   }
 
@@ -136,6 +143,89 @@ class _QuestionSolveScreenState extends State<QuestionSolveScreen> {
     }
   }
 
+  void _openNoteSheet(QuestionEntity q) {
+    HapticFeedback.lightImpact();
+    final controller = TextEditingController(text: _currentNote ?? '');
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return Padding(
+          padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
+          child: Container(
+            padding: const EdgeInsets.fromLTRB(20, 14, 20, 24),
+            decoration: BoxDecoration(
+              color: isDark ? AppColors.darkCardSurface : AppColors.lightCardSurface,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(22)),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 36,
+                    height: 5,
+                    decoration: BoxDecoration(
+                      color: isDark ? const Color(0xFF3A3A3C) : const Color(0xFFD1D1D6),
+                      borderRadius: BorderRadius.circular(2.5),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 14),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Revision Note', style: AppTypography.headlineSmall(isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary)),
+                    CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      minimumSize: Size.zero,
+                      onPressed: () async {
+                        HapticFeedback.lightImpact();
+                        await AppDatabase.instance.saveQuestionNote(q.id, controller.text);
+                        final updated = await AppDatabase.instance.getQuestionNote(q.id);
+                        if (mounted) {
+                          setState(() => _currentNote = updated);
+                        }
+                        if (ctx.mounted) {
+                          Navigator.pop(ctx);
+                        }
+                      },
+                      child: const Text('Save', style: TextStyle(color: AppColors.systemBlue, fontWeight: FontWeight.bold, fontSize: 16)),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text('Add custom hints, caveats, or shortcuts for this question.', style: AppTypography.subhead(isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary)),
+                const SizedBox(height: 14),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: isDark ? AppColors.darkGroupedBackground : AppColors.lightGroupedBackground,
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: TextField(
+                    controller: controller,
+                    maxLines: 4,
+                    autofocus: true,
+                    style: AppTypography.bodyMedium(isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary),
+                    decoration: const InputDecoration(
+                      hintText: 'e.g. Remember to check temperature in Kelvin! Use L\'Hopital for limit 0/0 form.',
+                      border: InputBorder.none,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -182,13 +272,40 @@ class _QuestionSolveScreenState extends State<QuestionSolveScreen> {
           ],
         ),
         actions: [
+          // Revision Note Action
+          CupertinoButton(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            minimumSize: Size.zero,
+            onPressed: () => _openNoteSheet(currentQ),
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Icon(
+                  CupertinoIcons.pencil_ellipsis_rectangle,
+                  color: _currentNote != null && _currentNote!.isNotEmpty ? AppColors.systemBlue : textSecondary,
+                  size: 22,
+                ),
+                if (_currentNote != null && _currentNote!.isNotEmpty)
+                  Positioned(
+                    top: -2,
+                    right: -2,
+                    child: Container(
+                      width: 8,
+                      height: 8,
+                      decoration: const BoxDecoration(color: AppColors.systemBlue, shape: BoxShape.circle),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          // Bookmark Action
           CupertinoButton(
             padding: const EdgeInsets.symmetric(horizontal: 14),
             minimumSize: Size.zero,
             onPressed: () async {
               HapticFeedback.lightImpact();
               await AppDatabase.instance.toggleBookmark(currentQ.id);
-              _checkBookmark(currentQ.id);
+              _checkBookmarkAndNote(currentQ.id);
             },
             child: Icon(
               _isBookmarked ? CupertinoIcons.bookmark_fill : CupertinoIcons.bookmark,
@@ -262,9 +379,39 @@ class _QuestionSolveScreenState extends State<QuestionSolveScreen> {
             ),
             const SizedBox(height: 18),
 
+            // Custom Note Banner (if present)
+            if (_currentNote != null && _currentNote!.isNotEmpty) ...[
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppColors.systemBlue.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppColors.systemBlue.withValues(alpha: 0.3), width: 0.5),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Icon(CupertinoIcons.pin_fill, size: 16, color: AppColors.systemBlue),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('YOUR REVISION NOTE:', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.systemBlue)),
+                          const SizedBox(height: 2),
+                          Text(_currentNote!, style: AppTypography.bodySmall(textPrimary)),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 14),
+            ],
+
             // Options Section
             if (currentQ.questionType == QuestionType.numerical) ...[
-              // Numerical Input Field
               Padding(
                 padding: const EdgeInsets.only(left: 4, bottom: 8),
                 child: Text('Enter numerical answer:', style: AppTypography.subhead(textSecondary)),
@@ -291,10 +438,9 @@ class _QuestionSolveScreenState extends State<QuestionSolveScreen> {
                 ),
               ),
             ] else ...[
-              // Multiple Choice Option Cards (A, B, C, D)
               for (int i = 0; i < currentQ.options.length; i++) ...[
                 Builder(builder: (context) {
-                  final label = String.fromCharCode(65 + i); // 'A', 'B', 'C', 'D'
+                  final label = String.fromCharCode(65 + i);
                   OptionState cardState = OptionState.defaultState;
 
                   if (_isSubmitted) {
@@ -356,12 +502,78 @@ class _QuestionSolveScreenState extends State<QuestionSolveScreen> {
                       ],
                     ),
                     const SizedBox(height: 12),
-                    Text('Detailed Solution:', style: AppTypography.subhead(textPrimary).copyWith(fontWeight: FontWeight.w600)),
-                    const SizedBox(height: 6),
-                    KaTeXMathView(
-                      text: currentQ.solutionText,
-                      baseStyle: AppTypography.bodyMedium(textPrimary),
+
+                    // Solution Toggle: Official vs Community Shortcuts
+                    SizedBox(
+                      width: double.infinity,
+                      child: CupertinoSlidingSegmentedControl<int>(
+                        groupValue: _solutionTab,
+                        children: {
+                          0: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 6),
+                            child: Text('Official Solution', style: AppTypography.subhead(textPrimary).copyWith(fontSize: 12, fontWeight: FontWeight.bold)),
+                          ),
+                          1: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 6),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(CupertinoIcons.sparkles, size: 14, color: AppColors.systemOrange),
+                                const SizedBox(width: 4),
+                                Text('Community Shortcut', style: AppTypography.subhead(textPrimary).copyWith(fontSize: 12, fontWeight: FontWeight.bold)),
+                              ],
+                            ),
+                          ),
+                        },
+                        onValueChanged: (val) {
+                          if (val != null) {
+                            HapticFeedback.selectionClick();
+                            setState(() => _solutionTab = val);
+                          }
+                        },
+                      ),
                     ),
+                    const SizedBox(height: 12),
+
+                    if (_solutionTab == 0) ...[
+                      KaTeXMathView(
+                        text: currentQ.solutionText,
+                        baseStyle: AppTypography.bodyMedium(textPrimary),
+                      ),
+                    ] else ...[
+                      // Community Shortcut Card
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: isDark ? AppColors.darkGroupedBackground : AppColors.lightGroupedBackground,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('Alternative 20-Second Method', style: AppTypography.labelLarge(AppColors.systemOrange)),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.correctGreen.withValues(alpha: 0.15),
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: const Text('▲ 842 Upvotes', style: TextStyle(color: AppColors.correctGreen, fontSize: 11, fontWeight: FontWeight.bold)),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              'Shortcut: Use Dimensional Analysis. Only Option ${currentQ.correctAnswer} has correct units of [ML²T⁻²]. No need to integrate the full equation!',
+                              style: AppTypography.bodySmall(textPrimary),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
 
                     if (!isCorrect) ...[
                       const SizedBox(height: 14),

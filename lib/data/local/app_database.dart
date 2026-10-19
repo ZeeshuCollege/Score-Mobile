@@ -98,6 +98,15 @@ class AppDatabase {
       )
     ''');
 
+    // 5. Question Notes Table (Custom Revision Notes)
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS question_notes (
+        question_id TEXT PRIMARY KEY,
+        note_text TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      )
+    ''');
+
     // Insert rich starter previous year questions with math equations
     await _insertInitialQuestions(db);
   }
@@ -285,5 +294,47 @@ class AppDatabase {
     final db = await instance.database;
     final result = await db.query('mistakes', orderBy: 'created_at DESC');
     return result.map((json) => MistakeEntity.fromMap(json)).toList();
+  }
+
+  // --- Question Notes Operations ---
+
+  Future<void> saveQuestionNote(String questionId, String noteText) async {
+    final db = await instance.database;
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS question_notes (
+        question_id TEXT PRIMARY KEY,
+        note_text TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      )
+    ''');
+    if (noteText.trim().isEmpty) {
+      await db.delete('question_notes', where: 'question_id = ?', whereArgs: [questionId]);
+    } else {
+      await db.insert(
+        'question_notes',
+        {
+          'question_id': questionId,
+          'note_text': noteText.trim(),
+          'updated_at': DateTime.now().toIso8601String(),
+        },
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
+  }
+
+  Future<String?> getQuestionNote(String questionId) async {
+    final db = await instance.database;
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS question_notes (
+        question_id TEXT PRIMARY KEY,
+        note_text TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      )
+    ''');
+    final res = await db.query('question_notes', where: 'question_id = ?', whereArgs: [questionId]);
+    if (res.isNotEmpty) {
+      return res.first['note_text'] as String?;
+    }
+    return null;
   }
 }

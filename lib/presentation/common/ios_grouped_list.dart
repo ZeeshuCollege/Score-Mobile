@@ -86,8 +86,11 @@ class IosGroupedTile extends StatelessWidget {
   final IconData? icon;
   final Color? iconColor;
   final Color? iconBgColor;
+  final Color? iconBackgroundColor;
   final String title;
   final String? subtitle;
+  final String? badge;
+  final Color? badgeColor;
   final Widget? trailing;
   final String? trailingText;
   final VoidCallback? onTap;
@@ -99,8 +102,11 @@ class IosGroupedTile extends StatelessWidget {
     this.icon,
     this.iconColor,
     this.iconBgColor,
+    this.iconBackgroundColor,
     required this.title,
     this.subtitle,
+    this.badge,
+    this.badgeColor,
     this.trailing,
     this.trailingText,
     this.onTap,
@@ -112,6 +118,8 @@ class IosGroupedTile extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textPrimary = isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
     final textSecondary = isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary;
+
+    final effectiveBgColor = iconBackgroundColor ?? iconBgColor ?? AppColors.systemBlue;
 
     return CupertinoButton(
       padding: EdgeInsets.zero,
@@ -135,7 +143,7 @@ class IosGroupedTile extends StatelessWidget {
                 width: 32,
                 height: 32,
                 decoration: BoxDecoration(
-                  color: iconBgColor ?? AppColors.systemBlue,
+                  color: effectiveBgColor,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
@@ -168,7 +176,23 @@ class IosGroupedTile extends StatelessWidget {
                 ],
               ),
             ),
-            if (trailingText != null) ...[
+            if (badge != null) ...[
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: (badgeColor ?? AppColors.systemBlue).withValues(alpha: 0.14),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  badge!,
+                  style: AppTypography.labelSmall(badgeColor ?? AppColors.systemBlue).copyWith(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 11,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 6),
+            ] else if (trailingText != null) ...[
               Text(
                 trailingText!,
                 style: AppTypography.bodyMedium(textSecondary),
