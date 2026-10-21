@@ -21,12 +21,22 @@ class AppDatabase {
 
   Future<Database> _initDB(String filePath) async {
     if (kIsWeb) {
-      databaseFactory = databaseFactoryFfiWeb;
-      return await openDatabase(
-        filePath,
-        version: 1,
-        onCreate: _createDB,
-      );
+      try {
+        databaseFactory = databaseFactoryFfiWeb;
+        return await openDatabase(
+          filePath,
+          version: 1,
+          onCreate: _createDB,
+        );
+      } catch (e) {
+        debugPrint('AppDatabase: Warning - Shared worker init failed ($e). Falling back to databaseFactoryFfiWebNoWebWorker');
+        databaseFactory = databaseFactoryFfiWebNoWebWorker;
+        return await openDatabase(
+          inMemoryDatabasePath,
+          version: 1,
+          onCreate: _createDB,
+        );
+      }
     }
 
     final docsDir = await getApplicationDocumentsDirectory();

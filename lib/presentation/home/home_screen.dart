@@ -256,20 +256,25 @@ class _HomeScreenState extends State<HomeScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Daily Practice Dose',
-                                    style: AppTypography.bodySmall(textSecondary),
-                                  ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    '24 of 30 Questions',
-                                    style: AppTypography.displayMedium(textPrimary),
-                                  ),
-                                ],
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Daily Practice Dose',
+                                      style: AppTypography.bodySmall(textSecondary),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      '24 of 30 Questions',
+                                      style: AppTypography.displayMedium(textPrimary),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ),
                               ),
+                              const SizedBox(width: 12),
                               Container(
                                 width: 44,
                                 height: 44,
