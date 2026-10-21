@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../app/theme/app_colors.dart';
 import '../../app/theme/app_typography.dart';
-import '../../data/services/daily_quote_service.dart';
 import '../../domain/entities/exam_entity.dart';
 import '../buckets/pyq_buckets_screen.dart';
 import '../common/ios_grouped_list.dart';
@@ -33,20 +32,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String _selectedExamId = 'jee_main';
-  QuoteEntity? _todayQuote;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadDailyQuote();
-  }
-
-  Future<void> _loadDailyQuote() async {
-    final quote = await DailyQuoteService.getTodayQuote();
-    if (mounted) {
-      setState(() => _todayQuote = quote);
-    }
-  }
 
   ExamEntity get _currentExam => ExamEntity.defaultExams.firstWhere(
         (e) => e.id == _selectedExamId,
@@ -182,64 +167,6 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 const SizedBox(height: 8),
 
-                // 1. Daily Motivational Quote Banner
-                if (_todayQuote != null)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                    child: Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: isDark ? AppColors.darkCardSurface : AppColors.lightCardSurface,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: isDark ? AppColors.darkCardStroke : AppColors.lightCardStroke,
-                          width: 0.5,
-                        ),
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: AppColors.systemOrange.withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: const Icon(CupertinoIcons.quote_bubble_fill, color: AppColors.systemOrange, size: 18),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '"${_todayQuote!.quote}"',
-                                  style: AppTypography.subhead(textPrimary).copyWith(
-                                    fontStyle: FontStyle.italic,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      '— ${_todayQuote!.author}',
-                                      style: AppTypography.labelSmall(textSecondary).copyWith(fontWeight: FontWeight.w600),
-                                    ),
-                                    Text(
-                                      'Day ${_todayQuote!.day}',
-                                      style: AppTypography.monoNumber(AppColors.systemOrange, fontSize: 11),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
 
                 // 2. Today's Practice Target Card
                 IosGroupedSection(
