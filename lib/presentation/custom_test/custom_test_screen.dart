@@ -5,6 +5,7 @@ import '../../app/theme/app_colors.dart';
 import '../../app/theme/app_typography.dart';
 import '../../domain/entities/exam_entity.dart';
 import '../common/ios_grouped_list.dart';
+import '../common/apple_segmented_control.dart';
 import 'test_simulation_screen.dart';
 
 class CustomTestScreen extends StatefulWidget {
@@ -108,44 +109,38 @@ class _CustomTestScreenState extends State<CustomTestScreen> {
                   children: [
                     Text('Total Questions', style: AppTypography.bodySmall(textSecondary)),
                     const SizedBox(height: 8),
-                    SizedBox(
-                      width: double.infinity,
-                      child: CupertinoSlidingSegmentedControl<int>(
-                        groupValue: _questionCount,
-                        children: {
-                          10: const Text('10 Qs', style: TextStyle(fontSize: 13)),
-                          25: const Text('25 Qs', style: TextStyle(fontSize: 13)),
-                          45: const Text('45 Qs', style: TextStyle(fontSize: 13)),
-                          75: const Text('75 Qs', style: TextStyle(fontSize: 13)),
-                        },
-                        onValueChanged: (val) {
-                          if (val != null) {
-                            HapticFeedback.selectionClick();
-                            setState(() => _questionCount = val);
-                          }
-                        },
-                      ),
+                    AppleSegmentedControl<int>(
+                      groupValue: _questionCount,
+                      children: const {
+                        10: Text('10 Qs', style: TextStyle(fontSize: 13)),
+                        25: Text('25 Qs', style: TextStyle(fontSize: 13)),
+                        45: Text('45 Qs', style: TextStyle(fontSize: 13)),
+                        75: Text('75 Qs', style: TextStyle(fontSize: 13)),
+                      },
+                      onValueChanged: (val) {
+                        if (val != null) {
+                          HapticFeedback.selectionClick();
+                          setState(() => _questionCount = val);
+                        }
+                      },
                     ),
                     const SizedBox(height: 16),
                     Text('Duration Limit', style: AppTypography.bodySmall(textSecondary)),
                     const SizedBox(height: 8),
-                    SizedBox(
-                      width: double.infinity,
-                      child: CupertinoSlidingSegmentedControl<int>(
-                        groupValue: _durationMinutes,
-                        children: {
-                          15: const Text('15 min', style: TextStyle(fontSize: 13)),
-                          30: const Text('30 min', style: TextStyle(fontSize: 13)),
-                          60: const Text('60 min', style: TextStyle(fontSize: 13)),
-                          180: const Text('180 min', style: TextStyle(fontSize: 13)),
-                        },
-                        onValueChanged: (val) {
-                          if (val != null) {
-                            HapticFeedback.selectionClick();
-                            setState(() => _durationMinutes = val);
-                          }
-                        },
-                      ),
+                    AppleSegmentedControl<int>(
+                      groupValue: _durationMinutes,
+                      children: const {
+                        15: Text('15 min', style: TextStyle(fontSize: 13)),
+                        30: Text('30 min', style: TextStyle(fontSize: 13)),
+                        60: Text('60 min', style: TextStyle(fontSize: 13)),
+                        180: Text('180 min', style: TextStyle(fontSize: 13)),
+                      },
+                      onValueChanged: (val) {
+                        if (val != null) {
+                          HapticFeedback.selectionClick();
+                          setState(() => _durationMinutes = val);
+                        }
+                      },
                     ),
                   ],
                 ),

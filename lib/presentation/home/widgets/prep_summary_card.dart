@@ -49,27 +49,34 @@ class PrepSummaryCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 32,
-                        height: 32,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF2563EB).withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(8),
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 32,
+                          height: 32,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF2563EB).withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Icon(CupertinoIcons.chart_pie_fill, color: Color(0xFF2563EB), size: 18),
                         ),
-                        child: const Icon(CupertinoIcons.chart_pie_fill, color: Color(0xFF2563EB), size: 18),
-                      ),
-                      const SizedBox(width: 10),
-                      Text(
-                        'Preparation Readiness',
-                        style: AppTypography.titleMedium(textPrimary).copyWith(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 15,
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            'Preparation Readiness',
+                            style: AppTypography.titleMedium(textPrimary).copyWith(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 15,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
+                  const SizedBox(width: 8),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                     decoration: BoxDecoration(

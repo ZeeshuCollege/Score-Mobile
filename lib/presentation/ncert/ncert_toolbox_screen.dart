@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import '../../app/theme/app_colors.dart';
 import '../../app/theme/app_typography.dart';
 import '../common/ios_grouped_list.dart';
+import '../common/apple_segmented_control.dart';
 import '../cpyq/question_solve_screen.dart';
 
 class NcertChapterItem {
@@ -212,27 +213,24 @@ class _NcertToolboxScreenState extends State<NcertToolboxScreen> {
           // Class Segmented Control (Class 11 vs Class 12)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: SizedBox(
-              width: double.infinity,
-              child: CupertinoSlidingSegmentedControl<int>(
-                groupValue: _selectedClass,
-                children: {
-                  11: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: Text('Class 11 NCERT', style: AppTypography.subhead(textPrimary).copyWith(fontSize: 13)),
-                  ),
-                  12: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: Text('Class 12 NCERT', style: AppTypography.subhead(textPrimary).copyWith(fontSize: 13)),
-                  ),
-                },
-                onValueChanged: (val) {
-                  if (val != null) {
-                    HapticFeedback.selectionClick();
-                    setState(() => _selectedClass = val);
-                  }
-                },
-              ),
+            child: AppleSegmentedControl<int>(
+              groupValue: _selectedClass,
+              children: {
+                11: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Text('Class 11 NCERT', style: AppTypography.subhead(textPrimary).copyWith(fontSize: 13)),
+                ),
+                12: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Text('Class 12 NCERT', style: AppTypography.subhead(textPrimary).copyWith(fontSize: 13)),
+                ),
+              },
+              onValueChanged: (val) {
+                if (val != null) {
+                  HapticFeedback.selectionClick();
+                  setState(() => _selectedClass = val);
+                }
+              },
             ),
           ),
           const SizedBox(height: 12),

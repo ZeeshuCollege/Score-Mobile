@@ -8,6 +8,7 @@ import '../../domain/entities/question_entity.dart';
 import '../../domain/entities/mistake_entity.dart';
 import '../common/katex_math_view.dart';
 import '../common/option_card.dart';
+import '../common/apple_segmented_control.dart';
 
 class QuestionSolveScreen extends StatefulWidget {
   final String title;
@@ -504,34 +505,31 @@ class _QuestionSolveScreenState extends State<QuestionSolveScreen> {
                     const SizedBox(height: 12),
 
                     // Solution Toggle: Official vs Community Shortcuts
-                    SizedBox(
-                      width: double.infinity,
-                      child: CupertinoSlidingSegmentedControl<int>(
-                        groupValue: _solutionTab,
-                        children: {
-                          0: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 6),
-                            child: Text('Official Solution', style: AppTypography.subhead(textPrimary).copyWith(fontSize: 12, fontWeight: FontWeight.bold)),
+                    AppleSegmentedControl<int>(
+                      groupValue: _solutionTab,
+                      children: {
+                        0: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 6),
+                          child: Text('Official Solution', style: AppTypography.subhead(textPrimary).copyWith(fontSize: 12, fontWeight: FontWeight.bold)),
+                        ),
+                        1: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 6),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(CupertinoIcons.sparkles, size: 14, color: AppColors.systemOrange),
+                              const SizedBox(width: 4),
+                              Text('Community Shortcut', style: AppTypography.subhead(textPrimary).copyWith(fontSize: 12, fontWeight: FontWeight.bold)),
+                            ],
                           ),
-                          1: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 6),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(CupertinoIcons.sparkles, size: 14, color: AppColors.systemOrange),
-                                const SizedBox(width: 4),
-                                Text('Community Shortcut', style: AppTypography.subhead(textPrimary).copyWith(fontSize: 12, fontWeight: FontWeight.bold)),
-                              ],
-                            ),
-                          ),
-                        },
-                        onValueChanged: (val) {
-                          if (val != null) {
-                            HapticFeedback.selectionClick();
-                            setState(() => _solutionTab = val);
-                          }
-                        },
-                      ),
+                        ),
+                      },
+                      onValueChanged: (val) {
+                        if (val != null) {
+                          HapticFeedback.selectionClick();
+                          setState(() => _solutionTab = val);
+                        }
+                      },
                     ),
                     const SizedBox(height: 12),
 

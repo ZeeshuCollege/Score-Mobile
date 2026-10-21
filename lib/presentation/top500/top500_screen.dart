@@ -6,6 +6,7 @@ import '../../app/theme/app_typography.dart';
 import '../../data/local/app_database.dart';
 import '../../domain/entities/question_entity.dart';
 import '../common/ios_grouped_list.dart';
+import '../common/apple_segmented_control.dart';
 import '../cpyq/question_solve_screen.dart';
 
 class Top500Screen extends StatefulWidget {
@@ -165,32 +166,29 @@ class _Top500ScreenState extends State<Top500Screen> {
           // Subject Sliding Segmented Control
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: SizedBox(
-              width: double.infinity,
-              child: CupertinoSlidingSegmentedControl<String>(
-                groupValue: _selectedSubject,
-                children: {
-                  'all': Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                    child: Text('All (500)', style: AppTypography.subhead(textPrimary).copyWith(fontSize: 13)),
-                  ),
-                  'physics': Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                    child: Text('Physics', style: AppTypography.subhead(textPrimary).copyWith(fontSize: 13)),
-                  ),
-                  'chemistry': Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                    child: Text('Chemistry', style: AppTypography.subhead(textPrimary).copyWith(fontSize: 13)),
-                  ),
-                  'mathematics': Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                    child: Text('Math', style: AppTypography.subhead(textPrimary).copyWith(fontSize: 13)),
-                  ),
-                },
-                onValueChanged: (val) {
-                  if (val != null) _onSubjectChanged(val);
-                },
-              ),
+            child: AppleSegmentedControl<String>(
+              groupValue: _selectedSubject,
+              children: {
+                'all': Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                  child: Text('All (500)', style: AppTypography.subhead(textPrimary).copyWith(fontSize: 13)),
+                ),
+                'physics': Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                  child: Text('Physics', style: AppTypography.subhead(textPrimary).copyWith(fontSize: 13)),
+                ),
+                'chemistry': Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                  child: Text('Chemistry', style: AppTypography.subhead(textPrimary).copyWith(fontSize: 13)),
+                ),
+                'mathematics': Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                  child: Text('Math', style: AppTypography.subhead(textPrimary).copyWith(fontSize: 13)),
+                ),
+              },
+              onValueChanged: (val) {
+                if (val != null) _onSubjectChanged(val);
+              },
             ),
           ),
           const SizedBox(height: 16),

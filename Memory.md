@@ -152,10 +152,20 @@
   - Recompiled and updated [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) (248 MB) at the root of the workspace.
   - Mirrored and pushed to GitHub remote `origin main`.
 
+- **Action 35**: Resolved zero-dimension web startup constraints, segmented control assertions, and layout overflows:
+  - Guarded against transient zero/uninitialized canvas dimensions (`mediaQuery.size.width <= 0 || mediaQuery.size.height <= 0`) in [`ScoreApp.build`](file:///d:/CodeSupa/Score/lib/main.dart) during Flutter Web engine startup.
+  - Built resilient [`AppleSegmentedControl`](file:///d:/CodeSupa/Score/lib/presentation/common/apple_segmented_control.dart) handling zero-width boundaries, preventing negative constraint crashes (`BoxConstraints(w=-0.8; NOT NORMALIZED)`), and supporting smooth horizontal bouncing scrolling.
+  - Migrated all segmented controls across the app to `AppleSegmentedControl` in [`FormulaCardsScreen`](file:///d:/CodeSupa/Score/lib/presentation/formula_cards/formula_cards_screen.dart), [`CustomTestScreen`](file:///d:/CodeSupa/Score/lib/presentation/custom_test/custom_test_screen.dart), [`MistakeNotebookScreen`](file:///d:/CodeSupa/Score/lib/presentation/mistakes/mistake_notebook_screen.dart), [`Top500Screen`](file:///d:/CodeSupa/Score/lib/presentation/top500/top500_screen.dart), [`NcertToolboxScreen`](file:///d:/CodeSupa/Score/lib/presentation/ncert/ncert_toolbox_screen.dart), [`VideoSolutionsScreen`](file:///d:/CodeSupa/Score/lib/presentation/video_solutions/video_solutions_screen.dart), [`QuickConceptsScreen`](file:///d:/CodeSupa/Score/lib/presentation/concepts/quick_concepts_screen.dart), and [`QuestionSolveScreen`](file:///d:/CodeSupa/Score/lib/presentation/cpyq/question_solve_screen.dart).
+  - Fixed 76-pixel right overflow in [`PrepSummaryCard`](file:///d:/CodeSupa/Score/lib/presentation/home/widgets/prep_summary_card.dart) by wrapping title header row in `Expanded` with text ellipsis truncation.
+  - Verified with `flutter analyze` (0 issues) and `flutter test` (100% pass).
+  - Recompiled and updated [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) (248 MB) at the root of the workspace.
+  - Mirrored and pushed to GitHub remote `origin main`.
+
 ---
 
 ## 5. Next Immediate Actions
 1. Keep [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) continuously refreshed upon subsequent commits.
 2. Synchronize and push latest commits to remote repository `https://github.com/ZeeshuCollege/Score-Mobile.git`.
 3. Enhance offline synchronization for user-generated notes.
+
 

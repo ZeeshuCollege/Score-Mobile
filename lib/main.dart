@@ -26,6 +26,9 @@ class ScoreApp extends StatelessWidget {
       builder: (context, child) {
         if (child == null) return const SizedBox.shrink();
         final mediaQuery = MediaQuery.of(context);
+        if (mediaQuery.size.width <= 0 || mediaQuery.size.height <= 0) {
+          return const SizedBox.shrink();
+        }
         const double scale = 0.7; // Scale entire app content 30% smaller
         final scaledSize = mediaQuery.size / scale;
         const double invScale = 1.0 / scale;

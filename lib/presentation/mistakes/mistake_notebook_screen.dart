@@ -6,6 +6,7 @@ import '../../app/theme/app_typography.dart';
 import '../../data/local/app_database.dart';
 import '../../domain/entities/mistake_entity.dart';
 import '../common/ios_grouped_list.dart';
+import '../common/apple_segmented_control.dart';
 import '../cpyq/question_solve_screen.dart';
 
 class MistakeNotebookScreen extends StatefulWidget {
@@ -72,39 +73,36 @@ class _MistakeNotebookScreenState extends State<MistakeNotebookScreen> {
                 // iOS Sliding Segmented Filter Control
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: CupertinoSlidingSegmentedControl<String>(
-                      groupValue: _selectedFilter,
-                      children: const {
-                        'all': Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                          child: Text('All', style: TextStyle(fontSize: 12)),
-                        ),
-                        'sillyMistake': Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                          child: Text('Silly', style: TextStyle(fontSize: 12)),
-                        ),
-                        'conceptualGap': Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                          child: Text('Concept', style: TextStyle(fontSize: 12)),
-                        ),
-                        'calculationError': Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                          child: Text('Calc', style: TextStyle(fontSize: 12)),
-                        ),
-                        'ranOutOfTime': Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                          child: Text('Time', style: TextStyle(fontSize: 12)),
-                        ),
-                      },
-                      onValueChanged: (val) {
-                        if (val != null) {
-                          HapticFeedback.selectionClick();
-                          setState(() => _selectedFilter = val);
-                        }
-                      },
-                    ),
+                  child: AppleSegmentedControl<String>(
+                    groupValue: _selectedFilter,
+                    children: const {
+                      'all': Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                        child: Text('All', style: TextStyle(fontSize: 12)),
+                      ),
+                      'sillyMistake': Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                        child: Text('Silly', style: TextStyle(fontSize: 12)),
+                      ),
+                      'conceptualGap': Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                        child: Text('Concept', style: TextStyle(fontSize: 12)),
+                      ),
+                      'calculationError': Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                        child: Text('Calc', style: TextStyle(fontSize: 12)),
+                      ),
+                      'ranOutOfTime': Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                        child: Text('Time', style: TextStyle(fontSize: 12)),
+                      ),
+                    },
+                    onValueChanged: (val) {
+                      if (val != null) {
+                        HapticFeedback.selectionClick();
+                        setState(() => _selectedFilter = val);
+                      }
+                    },
                   ),
                 ),
                 const SizedBox(height: 8),

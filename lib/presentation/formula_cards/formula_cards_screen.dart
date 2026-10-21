@@ -6,6 +6,7 @@ import '../../app/theme/app_colors.dart';
 import '../../app/theme/app_typography.dart';
 import '../../domain/entities/formula_entity.dart';
 import '../common/katex_math_view.dart';
+import '../common/apple_segmented_control.dart';
 
 class FormulaCardsScreen extends StatefulWidget {
   final String? initialSubjectId;
@@ -120,33 +121,30 @@ class _FormulaCardsScreenState extends State<FormulaCardsScreen> {
           // iOS Sliding Segmented Control
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-            child: SizedBox(
-              width: double.infinity,
-              child: CupertinoSlidingSegmentedControl<String>(
-                groupValue: _selectedSubject,
-                children: {
-                  for (final s in _subjects)
-                    s['id']!: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                      child: Text(
-                        s['label']!,
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: _selectedSubject == s['id'] ? FontWeight.w600 : FontWeight.w400,
-                          color: _selectedSubject == s['id']
-                              ? (isDark ? Colors.white : Colors.black)
-                              : textSecondary,
-                        ),
+            child: AppleSegmentedControl<String>(
+              groupValue: _selectedSubject,
+              children: {
+                for (final s in _subjects)
+                  s['id']!: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                    child: Text(
+                      s['label']!,
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: _selectedSubject == s['id'] ? FontWeight.w600 : FontWeight.w400,
+                        color: _selectedSubject == s['id']
+                            ? (isDark ? Colors.white : Colors.black)
+                            : textSecondary,
                       ),
                     ),
-                },
-                onValueChanged: (val) {
-                  if (val != null) {
-                    HapticFeedback.selectionClick();
-                    setState(() => _selectedSubject = val);
-                  }
-                },
-              ),
+                  ),
+              },
+              onValueChanged: (val) {
+                if (val != null) {
+                  HapticFeedback.selectionClick();
+                  setState(() => _selectedSubject = val);
+                }
+              },
             ),
           ),
           const SizedBox(height: 6),
