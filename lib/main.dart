@@ -23,6 +23,31 @@ class ScoreApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,
+      builder: (context, child) {
+        if (child == null) return const SizedBox.shrink();
+        final mediaQuery = MediaQuery.of(context);
+        const double scale = 0.7; // Scale entire app content 30% smaller
+        final scaledSize = mediaQuery.size / scale;
+        const double invScale = 1.0 / scale;
+
+        return MediaQuery(
+          data: mediaQuery.copyWith(
+            size: scaledSize,
+            padding: mediaQuery.padding * invScale,
+            viewPadding: mediaQuery.viewPadding * invScale,
+            viewInsets: mediaQuery.viewInsets * invScale,
+          ),
+          child: FittedBox(
+            fit: BoxFit.contain,
+            alignment: Alignment.topCenter,
+            child: SizedBox(
+              width: scaledSize.width,
+              height: scaledSize.height,
+              child: child,
+            ),
+          ),
+        );
+      },
       home: const MainNavScreen(),
     );
   }
