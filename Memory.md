@@ -133,12 +133,17 @@
   - Recompiled and updated [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) (248 MB) at the root of the workspace.
   - Mirrored and pushed to GitHub remote `origin main` (commit `a718b76`).
 
+- **Action 33**: Fixed Flutter Web runtime issues and layout overflow:
+  - Fixed `RenderFlex overflowed by 83 pixels` on [`HomeScreen`](file:///d:/CodeSupa/Score/lib/presentation/home/home_screen.dart) line 256 in the "Today's Practice Goal" dose card by wrapping the inner text column with `Expanded` and adding text ellipsis truncation.
+  - Resolved `SqfliteFfiWebException` on Chrome by generating and installing `sqflite_sw.js` and `sqlite3.wasm` binaries into the `web/` assets directory.
+  - Added graceful fallback in [`AppDatabase._initDB`](file:///d:/CodeSupa/Score/lib/data/local/app_database.dart) to fall back to `databaseFactoryFfiWebNoWebWorker` with `inMemoryDatabasePath` if shared web workers are unavailable in the browser environment.
+  - Passed `flutter analyze` (0 issues) and `flutter test` (100% pass).
+  - Synchronized binaries and code to GitHub remote `origin main` (commit `472e2dc`).
+  - Recompiled and updated [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) (248 MB) at the root of the workspace.
+
 ---
 
 ## 5. Next Immediate Actions
 1. Keep [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) continuously refreshed upon subsequent commits.
 2. Synchronize and push latest commits to remote repository `https://github.com/ZeeshuCollege/Score-Mobile.git`.
 3. Enhance offline synchronization for user-generated notes.
-
-
-
