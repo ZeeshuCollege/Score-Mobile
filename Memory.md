@@ -141,9 +141,21 @@
   - Synchronized binaries and code to GitHub remote `origin main` (commit `472e2dc`).
   - Recompiled and updated [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) (248 MB) at the root of the workspace.
 
+- **Action 34**: Restructured and elevated Home Screen visual hierarchy using `apple-design` skill:
+  - Replaced repetitive monolithic list rows with distinct, high-impact Apple HIG card components:
+    - Built [`HeroSpotlightCard`](file:///d:/CodeSupa/Score/lib/presentation/home/widgets/hero_spotlight_card.dart) for **Top 500 Questions** (App Store / Fitness+ showcase with tiered badges: Bronze, Silver, Gold, Platinum).
+    - Built [`BentoCard`](file:///d:/CodeSupa/Score/lib/presentation/home/widgets/bento_card.dart) for 2-column high-velocity modes (**Marks Shorts & Quick Polls** and **PYQ Buckets**; and **NCERT Line-by-Line (LBLQ)** and **Video Solutions**).
+    - Built [`PrepSummaryCard`](file:///d:/CodeSupa/Score/lib/presentation/home/widgets/prep_summary_card.dart) for **Preparation Health & Readiness** (Apple Health diagnostic summary with 78% overall readiness, 98.4 %ile chip, and subject breakdown bars).
+    - Built [`QuickConceptStrip`](file:///d:/CodeSupa/Score/lib/presentation/home/widgets/quick_concept_strip.dart) for micro-theory and exam trap revision.
+    - Preserved authentic `IosGroupedSection` for secondary utilities (DPP, Custom Tests, Formula Cards, Mistake Notebook).
+  - Verified with `flutter analyze` (0 issues) and `flutter test` (100% pass).
+  - Recompiled and updated [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) (248 MB) at the root of the workspace.
+  - Mirrored and pushed to GitHub remote `origin main`.
+
 ---
 
 ## 5. Next Immediate Actions
 1. Keep [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) continuously refreshed upon subsequent commits.
 2. Synchronize and push latest commits to remote repository `https://github.com/ZeeshuCollege/Score-Mobile.git`.
 3. Enhance offline synchronization for user-generated notes.
+

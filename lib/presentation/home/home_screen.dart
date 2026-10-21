@@ -19,6 +19,10 @@ import '../subscription/subscription_screen.dart';
 import '../top500/top500_screen.dart';
 import '../tracker/prep_tracker_screen.dart';
 import '../video_solutions/video_solutions_screen.dart';
+import 'widgets/hero_spotlight_card.dart';
+import 'widgets/bento_card.dart';
+import 'widgets/prep_summary_card.dart';
+import 'widgets/quick_concept_strip.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -306,110 +310,154 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
 
-                // 3. Featured Power Modes Inset Group
-                IosGroupedSection(
-                  header: 'Featured Modes & Collections',
-                  children: [
-                    IosGroupedTile(
-                      icon: CupertinoIcons.rosette,
-                      iconBackgroundColor: AppColors.systemPurple,
-                      title: 'Top 500 Questions',
-                      subtitle: 'Curated high-yield rank deciders with milestone tiers',
-                      badge: 'TOP 500',
-                      badgeColor: AppColors.systemPurple,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          CupertinoPageRoute(builder: (_) => Top500Screen(examId: _selectedExamId)),
-                        );
-                      },
-                    ),
-                    IosGroupedTile(
-                      icon: CupertinoIcons.bolt_fill,
-                      iconBackgroundColor: AppColors.systemOrange,
-                      title: 'Marks Shorts & Quick Polls',
-                      subtitle: 'Fast 45-second vertical swipe feed with live stats',
-                      badge: 'NEW',
-                      badgeColor: AppColors.systemOrange,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          CupertinoPageRoute(builder: (_) => ShortsPollScreen(examId: _selectedExamId)),
-                        );
-                      },
-                    ),
-                    IosGroupedTile(
-                      icon: CupertinoIcons.square_stack_3d_up_fill,
-                      iconBackgroundColor: AppColors.systemBlue,
-                      title: 'PYQ Buckets',
-                      subtitle: 'Most repeated, tricky, speed boosters & recent trends',
-                      badge: '5 Buckets',
-                      badgeColor: AppColors.systemBlue,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          CupertinoPageRoute(builder: (_) => PyqBucketsScreen(examId: _selectedExamId)),
-                        );
-                      },
-                    ),
-                    IosGroupedTile(
-                      icon: CupertinoIcons.book_fill,
-                      iconBackgroundColor: AppColors.correctGreen,
-                      title: 'NCERT Line-by-Line (LBLQ)',
-                      subtitle: 'Class 11 & 12 textbook questions with page numbers',
-                      badge: 'NCERT',
-                      badgeColor: AppColors.correctGreen,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          CupertinoPageRoute(builder: (_) => const NcertToolboxScreen()),
-                        );
-                      },
-                    ),
-                    IosGroupedTile(
-                      icon: CupertinoIcons.lightbulb_fill,
-                      iconBackgroundColor: AppColors.systemTeal,
-                      title: 'Quick Concepts & Formulas',
-                      subtitle: 'Micro-theory notes, definitions & exam trap warnings',
-                      badge: 'REVISION',
-                      badgeColor: AppColors.systemTeal,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          CupertinoPageRoute(builder: (_) => const QuickConceptsScreen()),
-                        );
-                      },
-                    ),
-                    IosGroupedTile(
-                      icon: CupertinoIcons.play_circle_fill,
-                      iconBackgroundColor: AppColors.systemIndigo,
-                      title: 'Video Solutions Hub',
-                      subtitle: 'Detailed video walkthroughs with timestamps',
-                      badge: 'HD VIDEO',
-                      badgeColor: AppColors.systemIndigo,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          CupertinoPageRoute(builder: (_) => const VideoSolutionsScreen()),
-                        );
-                      },
-                    ),
-                    IosGroupedTile(
-                      icon: CupertinoIcons.chart_pie_fill,
-                      iconBackgroundColor: const Color(0xFF2563EB),
-                      title: 'Preparation Tracker & Report Card',
-                      subtitle: 'Readiness score, accuracy matrix & predicted rank',
-                      badge: 'REPORT',
-                      badgeColor: const Color(0xFF2563EB),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          CupertinoPageRoute(builder: (_) => const PrepTrackerScreen()),
-                        );
-                      },
-                    ),
+                // 3. Flagship Hero Feature Spotlight
+                HeroSpotlightCard(
+                  eyebrow: 'Flagship Series',
+                  title: 'Top 500 Questions',
+                  subtitle: 'Curated high-yield rank deciders with milestone tiers & progress medals',
+                  tiers: const [
+                    '🥉 Bronze (0–150)',
+                    '🥈 Silver (150–300)',
+                    '🥇 Gold (300–450)',
+                    '💎 Platinum (450–500)',
                   ],
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      CupertinoPageRoute(builder: (_) => Top500Screen(examId: _selectedExamId)),
+                    );
+                  },
                 ),
+
+                // 4. Quick Power Modes Bento Grid
+                Padding(
+                  padding: const EdgeInsets.only(left: 32, right: 16, top: 14, bottom: 6),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'HIGH-SPEED PRACTICE',
+                      style: AppTypography.labelSmall(textSecondary).copyWith(
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: BentoCard(
+                          icon: CupertinoIcons.bolt_fill,
+                          accentColor: AppColors.systemOrange,
+                          title: 'Marks Shorts',
+                          subtitle: '45s vertical swipe polls with live stats',
+                          badge: 'NEW',
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              CupertinoPageRoute(builder: (_) => ShortsPollScreen(examId: _selectedExamId)),
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: BentoCard(
+                          icon: CupertinoIcons.square_stack_3d_up_fill,
+                          accentColor: AppColors.systemBlue,
+                          title: 'PYQ Buckets',
+                          subtitle: '5 smart categorized high-impact buckets',
+                          badge: '5 BUCKETS',
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              CupertinoPageRoute(builder: (_) => PyqBucketsScreen(examId: _selectedExamId)),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // 5. Preparation Readiness & Report Diagnostic Card
+                const SizedBox(height: 6),
+                PrepSummaryCard(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      CupertinoPageRoute(builder: (_) => const PrepTrackerScreen()),
+                    );
+                  },
+                ),
+
+                // 6. Textbook & Video Media Hub Bento Grid
+                Padding(
+                  padding: const EdgeInsets.only(left: 32, right: 16, top: 14, bottom: 6),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'TEXTBOOK & MEDIA HUB',
+                      style: AppTypography.labelSmall(textSecondary).copyWith(
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: BentoCard(
+                          icon: CupertinoIcons.book_fill,
+                          accentColor: AppColors.correctGreen,
+                          title: 'NCERT LBLQ',
+                          subtitle: 'Class 11 & 12 with textbook page refs',
+                          badge: 'NCERT',
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              CupertinoPageRoute(builder: (_) => const NcertToolboxScreen()),
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: BentoCard(
+                          icon: CupertinoIcons.play_circle_fill,
+                          accentColor: AppColors.systemIndigo,
+                          title: 'Video Solutions',
+                          subtitle: 'HD breakdown sheets with timestamps',
+                          badge: 'HD VIDEO',
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              CupertinoPageRoute(builder: (_) => const VideoSolutionsScreen()),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // 7. Quick Concepts & Formula Micro-Discovery Strip
+                const SizedBox(height: 4),
+                QuickConceptStrip(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      CupertinoPageRoute(builder: (_) => const QuickConceptsScreen()),
+                    );
+                  },
+                ),
+
+                const SizedBox(height: 8),
 
                 // 4. Standard Practice Tools Inset Group
                 IosGroupedSection(
