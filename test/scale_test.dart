@@ -2,43 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  Widget buildScaledApp({required Widget home}) {
+  Widget buildDefaultApp({required Widget home}) {
     return MaterialApp(
-      builder: (context, child) {
-        if (child == null) return const SizedBox.shrink();
-        final mediaQuery = MediaQuery.of(context);
-        const scale = 0.7;
-        final scaledSize = mediaQuery.size / scale;
-        const invScale = 1.0 / scale;
-
-        return MediaQuery(
-          data: mediaQuery.copyWith(
-            size: scaledSize,
-            padding: mediaQuery.padding * invScale,
-            viewPadding: mediaQuery.viewPadding * invScale,
-            viewInsets: mediaQuery.viewInsets * invScale,
-          ),
-          child: FittedBox(
-            fit: BoxFit.contain,
-            alignment: Alignment.topCenter,
-            child: SizedBox(
-              width: scaledSize.width,
-              height: scaledSize.height,
-              child: child,
-            ),
-          ),
-        );
-      },
       home: home,
     );
   }
 
-  testWidgets('Test tap, scroll, textfield, dialog under 0.7 scale', (tester) async {
+  testWidgets('Test tap, scroll, textfield, dialog under default scale', (tester) async {
     bool dialogConfirmed = false;
     final textController = TextEditingController();
 
     await tester.pumpWidget(
-      buildScaledApp(
+      buildDefaultApp(
         home: Scaffold(
           body: ListView(
             children: [

@@ -183,6 +183,14 @@
   - Recompiled and updated [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) at root of workspace.
   - Mirrored and pushed to GitHub remote `origin main`.
 
+- **Action 39**: Restored content size and all UI elements back to default (100% natural scale):
+  - Removed global 0.7 `FittedBox` and inverted `MediaQuery` safe inset scaling in [`lib/main.dart`](file:///d:/CodeSupa/Score/lib/main.dart).
+  - Maintained edge-to-edge transparent notification and navigation bar styling with system overlay style and dynamic insets.
+  - Updated test suite [`test/scale_test.dart`](file:///d:/CodeSupa/Score/test/scale_test.dart) to verify default scale functionality.
+  - Verified with `flutter analyze` (0 issues) and `flutter test` (100% pass).
+  - Recompiled and updated [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) at root of workspace.
+  - Mirrored and pushed to GitHub remote `origin main`.
+
 ---
 
 ## 5. Next Immediate Actions

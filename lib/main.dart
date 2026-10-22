@@ -44,31 +44,11 @@ class ScoreApp extends StatelessWidget {
           systemNavigationBarContrastEnforced: false,
         );
 
-        const double scale = 0.7; // Scale entire app content 30% smaller
-        final scaledSize = mediaQuery.size / scale;
-        const double invScale = 1.0 / scale;
-
         return AnnotatedRegion<SystemUiOverlayStyle>(
           value: systemOverlay,
           child: ColoredBox(
             color: isDark ? AppColors.darkCanvasBg : AppColors.lightCanvasBg,
-            child: MediaQuery(
-              data: mediaQuery.copyWith(
-                size: scaledSize,
-                padding: mediaQuery.padding * invScale,
-                viewPadding: mediaQuery.viewPadding * invScale,
-                viewInsets: mediaQuery.viewInsets * invScale,
-              ),
-              child: FittedBox(
-                fit: BoxFit.contain,
-                alignment: Alignment.topCenter,
-                child: SizedBox(
-                  width: scaledSize.width,
-                  height: scaledSize.height,
-                  child: child,
-                ),
-              ),
-            ),
+            child: child,
           ),
         );
       },
