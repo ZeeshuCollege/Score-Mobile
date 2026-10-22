@@ -6,6 +6,7 @@ import '../../../app/app_state.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_typography.dart';
 import '../../../domain/entities/exam_entity.dart';
+import '../../profile/profile_screen.dart';
 
 class ScoreDrawer extends ConsumerWidget {
   const ScoreDrawer({super.key});
@@ -59,113 +60,7 @@ class ScoreDrawer extends ConsumerWidget {
     );
   }
 
-  void _showProfileModal(BuildContext context, bool isDark) {
-    HapticFeedback.lightImpact();
-    final textPrimary = isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
-    final textSecondary = isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary;
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) {
-        return Container(
-          padding: EdgeInsets.only(
-            top: 16,
-            left: 20,
-            right: 20,
-            bottom: 24 + MediaQuery.of(ctx).padding.bottom,
-          ),
-          decoration: BoxDecoration(
-            color: isDark ? AppColors.darkCardSurface : AppColors.lightCardSurface,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 36,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: isDark ? Colors.white24 : Colors.black12,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Container(
-                width: 72,
-                height: 72,
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF007AFF), Color(0xFF5856D6)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.systemBlue.withValues(alpha: 0.3),
-                      blurRadius: 16,
-                      offset: const Offset(0, 6),
-                    ),
-                  ],
-                ),
-                child: const Icon(CupertinoIcons.person_crop_circle_fill, size: 44, color: Colors.white),
-              ),
-              const SizedBox(height: 12),
-              Text('Aspirant Scholar', style: AppTypography.headlineSmall(textPrimary)),
-              const SizedBox(height: 4),
-              Text('Target: Top 100 AIR · JEE & NEET 2026', style: AppTypography.subhead(textSecondary)),
-              const SizedBox(height: 20),
-
-              // Profile Stats Grid
-              Row(
-                children: [
-                  _statCard('Solved', '1,248', AppColors.systemBlue, isDark),
-                  const SizedBox(width: 8),
-                  _statCard('Accuracy', '84.2%', AppColors.correctGreen, isDark),
-                  const SizedBox(width: 8),
-                  _statCard('Streak', '12 Days', AppColors.systemOrange, isDark),
-                ],
-              ),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: CupertinoButton.filled(
-                  borderRadius: BorderRadius.circular(12),
-                  onPressed: () => Navigator.pop(ctx),
-                  child: const Text('Close Profile', style: TextStyle(fontWeight: FontWeight.w600)),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _statCard(String label, String value, Color accent, bool isDark) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-        decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isDark ? AppColors.darkCardStroke : AppColors.lightCardStroke,
-            width: 0.5,
-          ),
-        ),
-        child: Column(
-          children: [
-            Text(value, style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16, color: accent)),
-            const SizedBox(height: 4),
-            Text(label, style: const TextStyle(fontSize: 11, color: Colors.grey)),
-          ],
-        ),
-      ),
-    );
-  }
 
   void _showSettingsModal(BuildContext context, bool isDark) {
     HapticFeedback.lightImpact();
@@ -397,7 +292,12 @@ class ScoreDrawer extends ConsumerWidget {
                 textPrimary: textPrimary,
                 textSecondary: textSecondary,
                 onTap: () {
-                  _showProfileModal(context, isDark);
+                  HapticFeedback.lightImpact();
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    CupertinoPageRoute(builder: (_) => const ProfileScreen()),
+                  );
                 },
               ),
               const SizedBox(height: 12),

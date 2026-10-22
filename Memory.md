@@ -234,6 +234,18 @@
   - Integrated `SlidebarSection` into [`HomeScreen`](file:///d:/CodeSupa/Score/lib/presentation/home/home_screen.dart) in place of `HeroSpotlightCard`.
   - Added dedicated test suite [`test/slidebar_section_test.dart`](file:///d:/CodeSupa/Score/test/slidebar_section_test.dart) verifying 5-item cap, Flutter logo presence, white dots, video badge, and 2-second auto-advance.
   - Verified with `flutter analyze` (0 issues) and `flutter test` (100% pass across all 7 tests).
+- **Action 44**: Built full Apple-Design Profile Screen with editable user details & performance stats:
+  - Created [`ProfileScreen`](file:///d:/CodeSupa/Score/lib/presentation/profile/profile_screen.dart) and user profile data model & provider ([`user_profile_model.dart`](file:///d:/CodeSupa/Score/lib/presentation/profile/user_profile_model.dart), [`user_profile_provider.dart`](file:///d:/CodeSupa/Score/lib/presentation/profile/user_profile_provider.dart)).
+  - Implemented editable PFP with camera badge and an Apple-styled bottom modal sheet offering 8 curated aspirant personas with vibrant Apple system gradients and real-time selection.
+  - Implemented Apple Inset Grouped form rows for editing Full Name, Bio/Goal, Dream College, and Target Exam with live validation and persistence to `SharedPreferences`.
+  - Implemented Apple-Design grounded Performance Metrics section:
+    - 4 Bento Metric Cards (Questions Solved, Accuracy %, Current Streak, Study Hours) with Apple system colors, micro-labels, and trend indicators.
+    - Weekly Problem Drills Bar Chart (Mon–Sun) with daily target guideline and highlighted active day.
+    - Subject Mastery Breakdown with smooth linear progress indicators and accuracy tags.
+    - Unlocked Aspirant Achievement Badges (Century Solver, Streak Pioneer, Precision Pro, Top 500 Candidate).
+  - Wired [`ScoreDrawer`](file:///d:/CodeSupa/Score/lib/presentation/home/widgets/score_drawer.dart) Profile button to open `ProfileScreen` via `CupertinoPageRoute`.
+  - Added test suite [`test/profile_screen_test.dart`](file:///d:/CodeSupa/Score/test/profile_screen_test.dart) covering rendering, editing, avatar selection, and save flow.
+  - Verified with `flutter analyze` (0 issues) and `flutter test` (100% pass across all 10 tests).
   - Recompiled and updated [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) at root of workspace.
   - Mirrored and pushed to GitHub remote `origin main`.
 
