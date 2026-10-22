@@ -20,7 +20,7 @@ import '../subscription/subscription_screen.dart';
 import '../top500/top500_screen.dart';
 import '../tracker/prep_tracker_screen.dart';
 import '../video_solutions/video_solutions_screen.dart';
-import 'widgets/hero_spotlight_card.dart';
+import 'widgets/slidebar_section.dart';
 import 'widgets/bento_card.dart';
 import 'widgets/prep_summary_card.dart';
 import 'widgets/quick_concept_strip.dart';
@@ -227,23 +227,40 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ],
                 ),
 
-                // 3. Flagship Hero Feature Spotlight
-                HeroSpotlightCard(
-                  eyebrow: 'Flagship Series',
-                  title: 'Top 500 Questions',
-                  subtitle: 'Curated high-yield rank deciders with milestone tiers & progress medals',
-                  tiers: const [
-                    '🥉 Bronze (0–150)',
-                    '🥈 Silver (150–300)',
-                    '🥇 Gold (300–450)',
-                    '💎 Platinum (450–500)',
-                  ],
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      CupertinoPageRoute(builder: (_) => Top500Screen(examId: _selectedExamId)),
-                    );
-                  },
+                // 3. Featured Slideshow Section (Max 5 images/videos, 2s auto-scroll, white dots inside at bottom)
+                SlidebarSection(
+                  items: SlidebarSection.defaultFlutterSlides(
+                    onTop500Tap: () {
+                      Navigator.push(
+                        context,
+                        CupertinoPageRoute(builder: (_) => Top500Screen(examId: _selectedExamId)),
+                      );
+                    },
+                    onDppTap: () {
+                      Navigator.push(
+                        context,
+                        CupertinoPageRoute(builder: (_) => DppScreen(examId: _selectedExamId)),
+                      );
+                    },
+                    onTestTap: () {
+                      Navigator.push(
+                        context,
+                        CupertinoPageRoute(builder: (_) => const CustomTestScreen()),
+                      );
+                    },
+                    onMistakesTap: () {
+                      Navigator.push(
+                        context,
+                        CupertinoPageRoute(builder: (_) => const MistakeNotebookScreen()),
+                      );
+                    },
+                    onFormulasTap: () {
+                      Navigator.push(
+                        context,
+                        CupertinoPageRoute(builder: (_) => const FormulaCardsScreen()),
+                      );
+                    },
+                  ),
                 ),
 
                 // 4. Quick Power Modes Bento Grid

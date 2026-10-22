@@ -224,6 +224,17 @@
   - Updated test assertions in [`test/header_drawer_test.dart`](file:///d:/CodeSupa/Score/test/header_drawer_test.dart) confirming absence of subtitle texts and 100% test pass rate.
   - Verified with `flutter analyze` (0 issues) and `flutter test` (100% pass).
   - Recompiled and updated [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) at root of workspace.
+- **Action 43**: Added `SlidebarSection` slideshow replacing `HeroSpotlightCard`:
+  - Created [`SlidebarSection`](file:///d:/CodeSupa/Score/lib/presentation/home/widgets/slidebar_section.dart) matching all user requirements:
+    - Maximum 5 slides (strictly enforced via `.take(5)`).
+    - Multi-format media support (`SlideMediaType.image`, `SlideMediaType.video`, `SlideMediaType.flutterDefault`) handling web URLs, Flutter assets, and local files.
+    - Embedded white indicator dots located exclusively inside the container at the bottom (`Positioned(bottom: 10, ...)`), with active dot expansion and dark gradient scrim for universal visibility in both dark and light modes.
+    - Default Flutter logo showcase slides (`FlutterLogo`) with clean badges, title, and descriptive subtitles.
+    - Automated 2-second slideshow interval (`Duration(seconds: 2)`) with smooth `Curves.easeInOutCubic` page transitions and touch-drag reset.
+  - Integrated `SlidebarSection` into [`HomeScreen`](file:///d:/CodeSupa/Score/lib/presentation/home/home_screen.dart) in place of `HeroSpotlightCard`.
+  - Added dedicated test suite [`test/slidebar_section_test.dart`](file:///d:/CodeSupa/Score/test/slidebar_section_test.dart) verifying 5-item cap, Flutter logo presence, white dots, video badge, and 2-second auto-advance.
+  - Verified with `flutter analyze` (0 issues) and `flutter test` (100% pass across all 7 tests).
+  - Recompiled and updated [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) at root of workspace.
   - Mirrored and pushed to GitHub remote `origin main`.
 
 ---
