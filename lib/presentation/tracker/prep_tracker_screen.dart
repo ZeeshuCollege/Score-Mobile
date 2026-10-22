@@ -201,7 +201,7 @@ class PrepTrackerScreen extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: 16 + MediaQuery.of(context).padding.bottom),
         ],
       ),
     );

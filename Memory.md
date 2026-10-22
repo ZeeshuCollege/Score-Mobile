@@ -172,12 +172,20 @@
   - Successfully recompiled and updated [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) at workspace root: 27,599,052 bytes (26.3 MB / 27.5 MB), down from 248,644,171 bytes (a 221 MB reduction).
   - Mirrored and pushed to GitHub remote `origin main`.
 
+- **Action 38**: Implemented edge-to-edge responsiveness for mobile full-screen gestures, notification bars, and Dynamic Island cutouts:
+  - Enabled native display cutout handling (`shortEdges`) and fully transparent status/navigation bars in [`android/app/src/main/res/values/styles.xml`](file:///d:/CodeSupa/Score/android/app/src/main/res/values/styles.xml) and [`values-night/styles.xml`](file:///d:/CodeSupa/Score/android/app/src/main/res/values-night/styles.xml).
+  - Configured `SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge)` in [`lib/main.dart`](file:///d:/CodeSupa/Score/lib/main.dart) and applied dynamic theme-adaptive `AnnotatedRegion<SystemUiOverlayStyle>` for pixel-perfect status bar icons and transparent navigation bar.
+  - Implemented Apple-style swipe-to-back interactive edge transitions across all platforms using `CupertinoPageTransitionsBuilder()` in [`lib/app/theme/app_theme.dart`](file:///d:/CodeSupa/Score/lib/app/theme/app_theme.dart).
+  - Enhanced Android 3-button back button handling in [`MainNavScreen`](file:///d:/CodeSupa/Score/lib/presentation/main_nav_screen.dart) with `PopScope` returning to the Home tab before exiting the app.
+  - Added dynamic hardware-safe inset calculations (`MediaQuery.of(context).padding.bottom`) across 17 presentation screens ensuring zero content occlusion regardless of navigation pill, 3-button bar, or camera punch-holes / Dynamic Islands.
+  - Mathematically aligned hardware safe area insets with 0.7 content scaling (`mediaQuery.padding * invScale`) in [`lib/main.dart`](file:///d:/CodeSupa/Score/lib/main.dart).
+  - Verified with `flutter analyze` (0 issues) and `flutter test` (100% pass).
+  - Recompiled and updated [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) at root of workspace.
+  - Mirrored and pushed to GitHub remote `origin main`.
+
 ---
 
 ## 5. Next Immediate Actions
 1. Keep [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) continuously refreshed upon subsequent commits.
 2. Synchronize and push latest commits to remote repository `https://github.com/ZeeshuCollege/Score-Mobile.git`.
 3. Enhance offline synchronization for user-generated notes.
-
-
-

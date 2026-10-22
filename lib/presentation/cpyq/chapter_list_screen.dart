@@ -145,7 +145,7 @@ class ChapterListScreen extends StatelessWidget {
         title: Text(subjectName),
       ),
       body: ListView(
-        padding: const EdgeInsets.symmetric(vertical: 12),
+        padding: EdgeInsets.fromLTRB(0, 12, 0, 16 + MediaQuery.of(context).padding.bottom),
         children: [
           for (final entry in groupedByUnit.entries) ...[
             IosGroupedSection(

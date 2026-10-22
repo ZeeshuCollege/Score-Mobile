@@ -272,7 +272,7 @@ class _VideoSolutionsScreenState extends State<VideoSolutionsScreen> {
               );
             }).toList(),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: 16 + MediaQuery.of(context).padding.bottom),
         ],
       ),
     );

@@ -64,12 +64,19 @@ class _MainNavScreenState extends State<MainNavScreen> {
     final glassColor = isDark ? AppColors.darkCardSurface.withValues(alpha: 0.82) : AppColors.lightCardSurface.withValues(alpha: 0.85);
     final borderColor = isDark ? AppColors.darkCardStroke : AppColors.lightCardStroke;
 
-    return Scaffold(
-      extendBody: true,
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _screens,
-      ),
+    return PopScope(
+      canPop: _currentIndex == 0,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop && _currentIndex != 0) {
+          setState(() => _currentIndex = 0);
+        }
+      },
+      child: Scaffold(
+        extendBody: true,
+        body: IndexedStack(
+          index: _currentIndex,
+          children: _screens,
+        ),
       bottomNavigationBar: ClipRect(
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
@@ -126,6 +133,7 @@ class _MainNavScreenState extends State<MainNavScreen> {
               ),
             ),
           ),
+        ),
         ),
       ),
     );

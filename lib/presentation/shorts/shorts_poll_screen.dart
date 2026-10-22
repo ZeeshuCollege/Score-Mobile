@@ -319,17 +319,20 @@ class _ShortsPollScreenState extends State<ShortsPollScreen> {
                 ),
 
                 // Bottom Indicator: Swipe Up for Next
-                Center(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(CupertinoIcons.chevron_up, size: 14, color: textSecondary),
-                      const SizedBox(width: 4),
-                      Text(
-                        'Swipe up for next poll',
-                        style: AppTypography.labelSmall(textSecondary),
-                      ),
-                    ],
+                Padding(
+                  padding: EdgeInsets.only(bottom: 12 + MediaQuery.of(context).padding.bottom),
+                  child: Center(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(CupertinoIcons.chevron_up, size: 14, color: textSecondary),
+                        const SizedBox(width: 4),
+                        Text(
+                          'Swipe up for next poll',
+                          style: AppTypography.labelSmall(textSecondary),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],

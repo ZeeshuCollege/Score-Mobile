@@ -327,7 +327,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               ),
             ),
           ),
-          const SizedBox(height: 80),
+          SizedBox(height: 24 + MediaQuery.of(context).padding.bottom),
         ],
       ),
     );

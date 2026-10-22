@@ -164,7 +164,7 @@ class PyqBucketsScreen extends StatelessWidget {
               );
             }).toList(),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: 16 + MediaQuery.of(context).padding.bottom),
         ],
       ),
     );

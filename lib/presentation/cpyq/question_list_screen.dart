@@ -215,7 +215,7 @@ class _QuestionListScreenState extends State<QuestionListScreen> {
                         ),
                       )
                     : ListView.builder(
-                        padding: const EdgeInsets.fromLTRB(16, 8, 16, 80),
+                        padding: EdgeInsets.fromLTRB(16, 8, 16, 16 + MediaQuery.of(context).padding.bottom),
                         itemCount: _filteredQuestions.length,
                         itemBuilder: (context, index) {
                           final q = _filteredQuestions[index];

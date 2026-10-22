@@ -236,7 +236,7 @@ class _Top500ScreenState extends State<Top500Screen> {
                 );
               }).toList(),
             ),
-          const SizedBox(height: 24),
+          SizedBox(height: 16 + MediaQuery.of(context).padding.bottom),
         ],
       ),
     );

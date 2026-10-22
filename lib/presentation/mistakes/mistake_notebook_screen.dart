@@ -238,7 +238,7 @@ class _MistakeNotebookScreenState extends State<MistakeNotebookScreen> {
                         ),
                     ],
                   ),
-                const SizedBox(height: 80),
+                SizedBox(height: 56 + MediaQuery.of(context).padding.bottom + 24),
               ],
             ),
     );

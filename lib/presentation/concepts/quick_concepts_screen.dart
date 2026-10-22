@@ -274,7 +274,7 @@ class _QuickConceptsScreenState extends State<QuickConceptsScreen> {
                 ),
               );
             }),
-          const SizedBox(height: 24),
+          SizedBox(height: 16 + MediaQuery.of(context).padding.bottom),
         ],
       ),
     );

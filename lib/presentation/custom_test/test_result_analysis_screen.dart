@@ -203,7 +203,7 @@ class _TestResultAnalysisScreenState extends State<TestResultAnalysisScreen> {
               _buildQuestionReviewCard(widget.questions[i], i, textPrimary, textSecondary, isDark),
               const SizedBox(height: 14),
             ],
-            const SizedBox(height: 24),
+            SizedBox(height: 16 + MediaQuery.of(context).padding.bottom),
           ],
         ),
       ),

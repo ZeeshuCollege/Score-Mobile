@@ -163,7 +163,7 @@ class _FormulaCardsScreenState extends State<FormulaCardsScreen> {
                     ),
                   )
                 : ListView.builder(
-                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 90),
+                    padding: EdgeInsets.fromLTRB(16, 8, 16, 56 + MediaQuery.of(context).padding.bottom + 24),
                     itemCount: list.length,
                     itemBuilder: (ctx, idx) {
                       final item = list[idx];
