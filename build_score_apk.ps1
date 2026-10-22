@@ -3,7 +3,7 @@
 
 Write-Host "Building SCORE APK..." -ForegroundColor Cyan
 
-flutter build apk --release
+flutter build apk --release --no-tree-shake-icons
 
 if ($LASTEXITCODE -eq 0) {
     $apkPath = "build\app\outputs\flutter-apk\app-release.apk"

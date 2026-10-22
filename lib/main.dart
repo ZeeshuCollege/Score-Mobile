@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'app/app_state.dart';
 import 'app/theme/app_colors.dart';
 import 'app/theme/app_theme.dart';
 import 'presentation/main_nav_screen.dart';
@@ -16,17 +17,19 @@ void main() async {
   );
 }
 
-class ScoreApp extends StatelessWidget {
+class ScoreApp extends ConsumerWidget {
   const ScoreApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeModeProvider);
+
     return MaterialApp(
       title: 'SCORE',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
+      themeMode: themeMode,
       builder: (context, child) {
         if (child == null) return const SizedBox.shrink();
         final mediaQuery = MediaQuery.of(context);

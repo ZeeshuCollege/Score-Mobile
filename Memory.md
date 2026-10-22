@@ -191,6 +191,19 @@
   - Recompiled and updated [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) at root of workspace.
   - Mirrored and pushed to GitHub remote `origin main`.
 
+- **Action 40**: Implemented single-line aligned top bar, left-sliding ScoreDrawer, and subject filtering:
+  - Redesigned `HomeScreen` top bar to align `SCORE ▾ | <course name> | 🔥 12d` horizontally on a single line with `CrossAxisAlignment.center`, removing the lower-placed flexible space discrepancy.
+  - Built Apple-styled leading [`ScoreDrawer`](file:///d:/CodeSupa/Score/lib/presentation/home/widgets/score_drawer.dart) accessible via `SCORE ▾` tap or left edge swipe:
+    - **Profile section**: User avatar, student level, target status, and interactive Profile sheet with solved questions, accuracy, and streak.
+    - **Course changer**: Direct selection between JEE Main, JEE Advanced, NEET UG, and BITSAT with active indicators and instant home screen updates.
+    - **Appearance**: Light, Dark, and System theme toggler wired to persistent Riverpod state (`ThemeModeNotifier`).
+    - **Settings**: Preferences sheet featuring DPP notification reminders, exam timer countdown, tactile haptic toggles, and solution cache clearing.
+  - Filtered test subjects in [`CustomTestScreen`](file:///d:/CodeSupa/Score/lib/presentation/custom_test/custom_test_screen.dart) to strictly display subjects for the selected exam, removing the Biology subject for JEE Main and JEE Advanced while preserving it for NEET.
+  - Added comprehensive test suite [`test/header_drawer_test.dart`](file:///d:/CodeSupa/Score/test/header_drawer_test.dart).
+  - Verified with `flutter analyze` (0 issues) and `flutter test` (100% pass).
+  - Recompiled and updated [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) at root of workspace.
+  - Mirrored and pushed to GitHub remote `origin main`.
+
 ---
 
 ## 5. Next Immediate Actions

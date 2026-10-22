@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../app/app_state.dart';
 import '../../app/theme/app_colors.dart';
 import '../../app/theme/app_typography.dart';
 import '../../domain/entities/exam_entity.dart';
@@ -22,142 +24,150 @@ import 'widgets/hero_spotlight_card.dart';
 import 'widgets/bento_card.dart';
 import 'widgets/prep_summary_card.dart';
 import 'widgets/quick_concept_strip.dart';
+import 'widgets/score_drawer.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  String _selectedExamId = 'jee_main';
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  String get _selectedExamId => ref.watch(selectedExamProvider);
 
   ExamEntity get _currentExam => ExamEntity.defaultExams.firstWhere(
         (e) => e.id == _selectedExamId,
         orElse: () => ExamEntity.defaultExams.first,
       );
 
-  void _showExamPicker(BuildContext context) {
-    HapticFeedback.lightImpact();
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    showCupertinoModalPopup(
-      context: context,
-      builder: (_) => CupertinoActionSheet(
-        title: const Text('Select Target Examination'),
-        message: const Text('Practice previous year questions tailored to your exam syllabus'),
-        actions: ExamEntity.defaultExams.map((exam) {
-          final isSelected = exam.id == _selectedExamId;
-          return CupertinoActionSheetAction(
-            onPressed: () {
-              setState(() => _selectedExamId = exam.id);
-              Navigator.pop(context);
-            },
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  exam.name,
-                  style: TextStyle(
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                    color: isSelected
-                        ? (isDark ? AppColors.systemBlueDark : AppColors.systemBlue)
-                        : (isDark ? Colors.white : Colors.black),
-                  ),
-                ),
-                if (isSelected) ...[
-                  const SizedBox(width: 8),
-                  Icon(
-                    CupertinoIcons.checkmark_alt,
-                    size: 18,
-                    color: isDark ? AppColors.systemBlueDark : AppColors.systemBlue,
-                  ),
-                ],
-              ],
-            ),
-          );
-        }).toList(),
-        cancelButton: CupertinoActionSheetAction(
-          isDefaultAction: true,
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textPrimary = isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
     final textSecondary = isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary;
+    final currentExam = _currentExam;
 
     return Scaffold(
+      key: _scaffoldKey,
+      drawer: const ScoreDrawer(),
+      drawerEnableOpenDragGesture: true,
       body: CustomScrollView(
         slivers: [
-          // iOS Collapsible Navigation Bar
+          // Single-line properly aligned SCORE | <course name> | Streak AppBar
           SliverAppBar(
             pinned: true,
-            expandedHeight: 110,
             backgroundColor: isDark ? AppColors.darkCanvasBg : AppColors.lightCanvasBg,
             surfaceTintColor: Colors.transparent,
-            title: Text(
-              _currentExam.name,
-              style: AppTypography.titleMedium(textPrimary),
-            ),
-            actions: [
-              CupertinoButton(
-                padding: const EdgeInsets.only(right: 16),
-                onPressed: () {
-                  HapticFeedback.lightImpact();
-                  Navigator.push(
-                    context,
-                    CupertinoPageRoute(builder: (_) => DppScreen(examId: _selectedExamId)),
-                  );
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  decoration: BoxDecoration(
-                    color: AppColors.systemOrange.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
+            automaticallyImplyLeading: false,
+            centerTitle: false,
+            titleSpacing: 16,
+            title: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // 1. SCORE with dropdown trigger (comes from left side)
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () {
+                    HapticFeedback.lightImpact();
+                    _scaffoldKey.currentState?.openDrawer();
+                  },
                   child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const Icon(CupertinoIcons.flame_fill, color: AppColors.systemOrange, size: 16),
-                      const SizedBox(width: 4),
                       Text(
-                        '12d',
-                        style: AppTypography.monoNumber(AppColors.systemOrange, fontSize: 13),
+                        'SCORE',
+                        style: AppTypography.titleLarge(textPrimary).copyWith(
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: -0.5,
+                          fontSize: 18,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Icon(
+                        CupertinoIcons.chevron_down,
+                        size: 13,
+                        color: textSecondary,
                       ),
                     ],
                   ),
                 ),
-              ),
-            ],
-            flexibleSpace: FlexibleSpaceBar(
-              titlePadding: const EdgeInsets.only(left: 16, bottom: 12),
-              title: GestureDetector(
-                onTap: () => _showExamPicker(context),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'SCORE',
-                      style: AppTypography.titleLarge(textPrimary).copyWith(
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: -0.5,
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    Icon(
-                      CupertinoIcons.chevron_down,
-                      size: 14,
-                      color: textSecondary,
-                    ),
-                  ],
+                const SizedBox(width: 8),
+                Text(
+                  '|',
+                  style: TextStyle(
+                    color: isDark ? Colors.white24 : Colors.black26,
+                    fontWeight: FontWeight.w300,
+                    fontSize: 15,
+                  ),
                 ),
-              ),
+                const SizedBox(width: 8),
+
+                // 2. Course Name (tappable to open left course changer / drawer)
+                Expanded(
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () {
+                      HapticFeedback.lightImpact();
+                      _scaffoldKey.currentState?.openDrawer();
+                    },
+                    child: Text(
+                      currentExam.name,
+                      style: AppTypography.titleMedium(textPrimary).copyWith(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  '|',
+                  style: TextStyle(
+                    color: isDark ? Colors.white24 : Colors.black26,
+                    fontWeight: FontWeight.w300,
+                    fontSize: 15,
+                  ),
+                ),
+                const SizedBox(width: 8),
+
+                // 3. Streak badge
+                CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  minimumSize: Size.zero,
+                  onPressed: () {
+                    HapticFeedback.lightImpact();
+                    Navigator.push(
+                      context,
+                      CupertinoPageRoute(builder: (_) => DppScreen(examId: _selectedExamId)),
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: AppColors.systemOrange.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Icon(CupertinoIcons.flame_fill, color: AppColors.systemOrange, size: 14),
+                        const SizedBox(width: 3),
+                        Text(
+                          '12d',
+                          style: AppTypography.monoNumber(AppColors.systemOrange, fontSize: 12),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
 
