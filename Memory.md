@@ -214,6 +214,16 @@
   - Updated test suite [`test/header_drawer_test.dart`](file:///d:/CodeSupa/Score/test/header_drawer_test.dart) verifying side arrow, absence of dividers, and 4 rectangular drawer buttons.
   - Verified with `flutter analyze` (0 issues) and `flutter test` (100% pass).
   - Recompiled and updated [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) at root of workspace.
+- **Action 42**: Removed subtitle texts and vertically aligned main titles across all sidebar drawer buttons:
+  - Removed dummy subtitle texts from [`ScoreDrawer`](file:///d:/CodeSupa/Score/lib/presentation/home/widgets/score_drawer.dart) buttons matching user request:
+    - `"Dark appearance"` / `"Light appearance"` under Theme.
+    - `"Aspirant Scholar"` under Profile.
+    - `"Preferences & Cache"` under Settings.
+  - Relocated course name (`currentExam.name`) from subtitle to trailing text next to the right chevron in the Course button.
+  - Standardized all 4 rectangular buttons (`Course`, `Theme`, `Profile`, `Settings`) to have identical padding (`horizontal: 16, vertical: 14`), identical icon containers (`38x38` box with 20px centered icon), and centered vertical alignment (`CrossAxisAlignment.center`) for the main title text in `Expanded(child: Text(title, ...))`.
+  - Updated test assertions in [`test/header_drawer_test.dart`](file:///d:/CodeSupa/Score/test/header_drawer_test.dart) confirming absence of subtitle texts and 100% test pass rate.
+  - Verified with `flutter analyze` (0 issues) and `flutter test` (100% pass).
+  - Recompiled and updated [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) at root of workspace.
   - Mirrored and pushed to GitHub remote `origin main`.
 
 ---
@@ -222,3 +232,4 @@
 1. Keep [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) continuously refreshed upon subsequent commits.
 2. Synchronize and push latest commits to remote repository `https://github.com/ZeeshuCollege/Score-Mobile.git`.
 3. Enhance offline synchronization for user-generated notes.
+

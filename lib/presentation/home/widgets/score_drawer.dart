@@ -368,7 +368,7 @@ class ScoreDrawer extends ConsumerWidget {
                 icon: CupertinoIcons.book_fill,
                 iconColor: AppColors.systemBlue,
                 title: 'Course',
-                subtitle: currentExam.name,
+                trailingText: currentExam.name,
                 isDark: isDark,
                 textPrimary: textPrimary,
                 textSecondary: textSecondary,
@@ -393,7 +393,6 @@ class ScoreDrawer extends ConsumerWidget {
                 icon: CupertinoIcons.person_crop_circle_fill,
                 iconColor: const Color(0xFF5856D6),
                 title: 'Profile',
-                subtitle: 'Aspirant Scholar',
                 isDark: isDark,
                 textPrimary: textPrimary,
                 textSecondary: textSecondary,
@@ -408,7 +407,6 @@ class ScoreDrawer extends ConsumerWidget {
                 icon: CupertinoIcons.gear_alt_fill,
                 iconColor: Colors.grey,
                 title: 'Settings',
-                subtitle: 'Preferences & Cache',
                 isDark: isDark,
                 textPrimary: textPrimary,
                 textSecondary: textSecondary,
@@ -437,7 +435,7 @@ class ScoreDrawer extends ConsumerWidget {
     required IconData icon,
     required Color iconColor,
     required String title,
-    required String subtitle,
+    String? trailingText,
     required VoidCallback onTap,
     required bool isDark,
     required Color textPrimary,
@@ -461,38 +459,42 @@ class ScoreDrawer extends ConsumerWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
-                padding: const EdgeInsets.all(9),
+                width: 38,
+                height: 38,
                 decoration: BoxDecoration(
                   color: iconColor.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(icon, size: 20, color: iconColor),
+                child: Center(
+                  child: Icon(icon, size: 20, color: iconColor),
+                ),
               ),
               const SizedBox(width: 14),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 15,
-                        color: textPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      subtitle,
-                      style: TextStyle(fontSize: 12, color: textSecondary),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15,
+                    color: textPrimary,
+                    letterSpacing: -0.2,
+                  ),
                 ),
               ),
+              if (trailingText != null) ...[
+                Text(
+                  trailingText,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: textSecondary,
+                  ),
+                ),
+                const SizedBox(width: 6),
+              ],
               Icon(CupertinoIcons.chevron_right, size: 14, color: textSecondary),
             ],
           ),
@@ -513,7 +515,7 @@ class ScoreDrawer extends ConsumerWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
         color: isDark ? AppColors.darkCardSurface : AppColors.lightCardSurface,
         borderRadius: BorderRadius.circular(14),
@@ -523,42 +525,34 @@ class ScoreDrawer extends ConsumerWidget {
         ),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(9),
-                decoration: BoxDecoration(
-                  color: AppColors.systemOrange.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(
-                  isDarkModeActive ? CupertinoIcons.moon_fill : CupertinoIcons.sun_max_fill,
-                  size: 20,
-                  color: AppColors.systemOrange,
-                ),
+          Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              color: AppColors.systemOrange.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Center(
+              child: Icon(
+                isDarkModeActive ? CupertinoIcons.moon_fill : CupertinoIcons.sun_max_fill,
+                size: 20,
+                color: AppColors.systemOrange,
               ),
-              const SizedBox(width: 14),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Theme',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 15,
-                      color: textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    isDarkModeActive ? 'Dark appearance' : 'Light appearance',
-                    style: TextStyle(fontSize: 12, color: textSecondary),
-                  ),
-                ],
+            ),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Text(
+              'Theme',
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 15,
+                color: textPrimary,
+                letterSpacing: -0.2,
               ),
-            ],
+            ),
           ),
           // Simple toggle button saying dark and light each side in small
           Container(

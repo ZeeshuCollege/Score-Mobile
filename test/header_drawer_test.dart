@@ -44,6 +44,12 @@ void main() {
     expect(find.text('Settings'), findsOneWidget);
     expect(find.byIcon(CupertinoIcons.gear_alt_fill), findsOneWidget);
 
+    // Verify removed subtitle texts are not shown on the sidebar buttons
+    expect(find.text('Dark appearance'), findsNothing);
+    expect(find.text('Light appearance'), findsNothing);
+    expect(find.text('Aspirant Scholar'), findsNothing);
+    expect(find.text('Preferences & Cache'), findsNothing);
+
     // 4. Test Course button click opens the previous popup (CupertinoActionSheet)
     await tester.tap(find.text('Course'));
     await tester.pumpAndSettle();

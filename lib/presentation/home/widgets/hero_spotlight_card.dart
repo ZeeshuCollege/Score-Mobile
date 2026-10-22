@@ -72,28 +72,35 @@ class HeroSpotlightCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: AppColors.systemPurple.withValues(alpha: isDark ? 0.3 : 0.15),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(CupertinoIcons.rosette, color: AppColors.systemPurple, size: 14),
-                          const SizedBox(width: 5),
-                          Text(
-                            eyebrow.toUpperCase(),
-                            style: AppTypography.labelSmall(AppColors.systemPurple).copyWith(
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 0.6,
-                              fontSize: 11,
+                    Flexible(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: AppColors.systemPurple.withValues(alpha: isDark ? 0.3 : 0.15),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(CupertinoIcons.rosette, color: AppColors.systemPurple, size: 14),
+                            const SizedBox(width: 5),
+                            Flexible(
+                              child: Text(
+                                eyebrow.toUpperCase(),
+                                style: AppTypography.labelSmall(AppColors.systemPurple).copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 0.6,
+                                  fontSize: 11,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
+                    const SizedBox(width: 8),
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
