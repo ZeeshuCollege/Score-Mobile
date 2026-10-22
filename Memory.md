@@ -161,11 +161,15 @@
   - Recompiled and updated [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) (248 MB) at the root of the workspace.
   - Mirrored and pushed to GitHub remote `origin main`.
 
-- **Action 36**: Removed the Daily Motivational Quote Banner from the Home Screen:
-  - Removed the quote card widget, the unused `_todayQuote` state variable, and `_loadDailyQuote()` method from [`HomeScreen`](file:///d:/CodeSupa/Score/lib/presentation/home/home_screen.dart).
-  - Cleaned up unused import of `daily_quote_service.dart`.
+- **Action 37**: Cleaned dead code and achieved 89.4% app size reduction (from 248.6 MB down to 26.3 MB):
+  - Removed dead `DailyQuoteService` and `QuoteEntity` code ([`lib/data/services/daily_quote_service.dart`](file:///d:/CodeSupa/Score/lib/data/services/daily_quote_service.dart)).
+  - Cleaned unreferenced dependencies in [`pubspec.yaml`](file:///d:/CodeSupa/Score/pubspec.yaml): `flutter_svg` and `intl`.
+  - Removed 14 MB of unused decompiled web/bootstrap assets from APK asset bundle declarations in `pubspec.yaml`.
+  - Configured Android R8 minification, resource shrinking, and native jniLibs packaging in [`android/app/build.gradle.kts`](file:///d:/CodeSupa/Score/android/app/build.gradle.kts) and [`android/app/proguard-rules.pro`](file:///d:/CodeSupa/Score/android/app/proguard-rules.pro).
+  - Updated [`build_score_apk.ps1`](file:///d:/CodeSupa/Score/build_score_apk.ps1) to compile optimized release builds signed with debug keys for universal deployment.
+  - Enabled icon font tree-shaking (MaterialIcons: 99.8% reduction from 1.6MB to 2.8KB; CupertinoIcons: 98.6% reduction from 257KB to 3.5KB).
   - Verified with `flutter analyze` (0 issues) and `flutter test` (100% pass).
-  - Recompiled and updated [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) (248 MB) at the root of the workspace.
+  - Successfully recompiled and updated [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) at workspace root: 27,599,052 bytes (26.3 MB / 27.5 MB), down from 248,644,171 bytes (a 221 MB reduction).
   - Mirrored and pushed to GitHub remote `origin main`.
 
 ---

@@ -3,10 +3,10 @@
 
 Write-Host "Building SCORE APK..." -ForegroundColor Cyan
 
-flutter build apk --debug
+flutter build apk --release
 
 if ($LASTEXITCODE -eq 0) {
-    $apkPath = "build\app\outputs\flutter-apk\app-debug.apk"
+    $apkPath = "build\app\outputs\flutter-apk\app-release.apk"
     if (Test-Path $apkPath) {
         Copy-Item -Force $apkPath "Score.apk"
         Write-Host "Successfully updated Score.apk at root!" -ForegroundColor Green
