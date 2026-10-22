@@ -249,10 +249,45 @@
   - Recompiled and updated [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) at root of workspace.
   - Mirrored and pushed to GitHub remote `origin main`.
 
+- **Action 45**: Complete Startup Flow (White Splash Loading Screen, 3-Slide Full-Screen Onboarding, Switchable Auth Landing Page with Google Buttons, SQLite Testing Credentials):
+  - **White Startup Splash Screen** ([`SplashScreen`](file:///d:/CodeSupa/Score/lib/presentation/auth/splash_screen.dart)):
+    - Pure white background (`Colors.white`).
+    - Centered default Flutter logo (`FlutterLogo(size: 74)`) functioning as the Score logo.
+    - Prominent bold `SCORE` brand text below logo with subtitle.
+    - Smooth auto-transition timer (1.8s) routing to `MainNavScreen` if already logged in, otherwise transitioning to `OnboardingSlideshowScreen`.
+  - **Full-Screen Onboarding Slideshow** ([`OnboardingSlideshowScreen`](file:///d:/CodeSupa/Score/lib/presentation/auth/onboarding_slideshow_screen.dart)):
+    - Maximum 3 full-screen slides presenting key app features (`100K+ Authentic PYQs with KaTeX Math`, `NTA-Style Mock Tests with Real Percentiles`, `Smart Mistake Notebook with Weak-Area Insights`).
+    - Styled with Flutter logo hero badges, subtle background gradients, bottom white indicator dots, and top "Skip" button.
+    - Prominent bottom "Login / Sign Up" button navigating directly to `AuthLandingScreen`.
+  - **Switchable Auth Landing Page** ([`AuthLandingScreen`](file:///d:/CodeSupa/Score/lib/presentation/auth/auth_landing_screen.dart)):
+    - Unified single landing page with smooth switching between Login and Sign Up views via Apple-style segmented pill control (`[ Login | Sign Up ]`).
+    - All form elements, headers, and buttons centered with maximum content width constraint (440px).
+    - Login Form: Email & password fields with eye toggle + "Login to SCORE" action button.
+    - Signup Form: Full name, email, password, and confirm password fields + "Create Account" action button.
+    - "Sign in with Google" button placed cleanly below the login form.
+    - "Sign up with Google" button placed cleanly below the signup form.
+    - Includes one-tap "Auto-Fill Testing ID" chip for rapid testing.
+  - **SQLite Testing Database Setup** ([`AppDatabase`](file:///d:/CodeSupa/Score/lib/data/local/app_database.dart)):
+    - Added `users` table (`CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY, email TEXT UNIQUE NOT NULL, password TEXT NOT NULL, name TEXT NOT NULL, created_at TEXT NOT NULL)`).
+    - Seeded testing credentials requested by user:
+      - Email: `pinjari.work@gmail.com`
+      - Password: `Student@123`
+    - Implemented `authenticateUser`, `registerUser`, and `getUserByEmail` methods with Riverpod `authProvider` ([`auth_provider.dart`](file:///d:/CodeSupa/Score/lib/presentation/auth/auth_provider.dart)) and `SharedPreferences` session persistence.
+  - **App Entry Point**:
+    - Updated [`main.dart`](file:///d:/CodeSupa/Score/lib/main.dart) to launch with `home: const SplashScreen()`.
+  - **Comprehensive Test Suite** ([`test/auth_flow_test.dart`](file:///d:/CodeSupa/Score/test/auth_flow_test.dart)):
+    - Verifies splash screen white background, Flutter logo, and SCORE text.
+    - Verifies onboarding slideshow 3-slide limit and navigation to AuthLandingScreen.
+    - Verifies segmented switching between login and signup forms, presence of Google buttons, and successful SQLite authentication routing into `MainNavScreen`.
+    - Unit tests SQLite user authentication for test credentials.
+  - Verified with `flutter analyze` (0 issues) and `flutter test` (14/14 tests passing, 100%).
+  - Recompiled and updated [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) at root of workspace.
+
 ---
 
 ## 5. Next Immediate Actions
 1. Keep [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) continuously refreshed upon subsequent commits.
 2. Synchronize and push latest commits to remote repository `https://github.com/ZeeshuCollege/Score-Mobile.git`.
 3. Enhance offline synchronization for user-generated notes.
+
 

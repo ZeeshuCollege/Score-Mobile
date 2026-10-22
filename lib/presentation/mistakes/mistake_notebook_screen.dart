@@ -30,6 +30,7 @@ class _MistakeNotebookScreenState extends State<MistakeNotebookScreen> {
   Future<void> _loadMistakes() async {
     setState(() => _isLoading = true);
     final list = await AppDatabase.instance.getMistakes();
+    if (!mounted) return;
     setState(() {
       _mistakes = list;
       _isLoading = false;

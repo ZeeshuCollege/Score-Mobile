@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'app/app_state.dart';
 import 'app/theme/app_colors.dart';
 import 'app/theme/app_theme.dart';
-import 'presentation/main_nav_screen.dart';
+import 'presentation/auth/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -55,7 +55,7 @@ class ScoreApp extends ConsumerWidget {
           ),
         );
       },
-      home: const MainNavScreen(),
+      home: const SplashScreen(),
     );
   }
 }

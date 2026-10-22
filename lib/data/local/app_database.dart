@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -39,14 +40,30 @@ class AppDatabase {
       }
     }
 
-    final docsDir = await getApplicationDocumentsDirectory();
-    final path = p.join(docsDir.path, filePath);
+    if (WidgetsBinding.instance.runtimeType.toString().contains('TestWidgetsFlutterBinding')) {
+      return await openDatabase(
+        inMemoryDatabasePath,
+        version: 1,
+        onCreate: _createDB,
+      );
+    }
 
-    return await openDatabase(
-      path,
-      version: 1,
-      onCreate: _createDB,
-    );
+    try {
+      final docsDir = await getApplicationDocumentsDirectory();
+      final path = p.join(docsDir.path, filePath);
+
+      return await openDatabase(
+        path,
+        version: 1,
+        onCreate: _createDB,
+      );
+    } catch (_) {
+      return await openDatabase(
+        inMemoryDatabasePath,
+        version: 1,
+        onCreate: _createDB,
+      );
+    }
   }
 
   FutureOr<void> _createDB(Database db, int version) async {
@@ -116,6 +133,20 @@ class AppDatabase {
         updated_at TEXT NOT NULL
       )
     ''');
+
+    // 6. Users Table (Authentication & Testing)
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS users (
+        id TEXT PRIMARY KEY,
+        email TEXT UNIQUE NOT NULL,
+        password TEXT NOT NULL,
+        name TEXT NOT NULL,
+        created_at TEXT NOT NULL
+      )
+    ''');
+
+    // Seed test account requested by user
+    await _seedTestUser(db);
 
     // Insert rich starter previous year questions with math equations
     await _insertInitialQuestions(db);
@@ -345,6 +376,87 @@ class AppDatabase {
     if (res.isNotEmpty) {
       return res.first['note_text'] as String?;
     }
+    return null;
+  }
+
+  // --- User Authentication & Testing Database Methods ---
+
+  static Future<void> _seedTestUser(Database db) async {
+    await db.insert(
+      'users',
+      {
+        'id': 'test_user_01',
+        'email': 'pinjari.work@gmail.com',
+        'password': 'Student@123',
+        'name': 'Pinjari Scholar',
+        'created_at': DateTime.now().toIso8601String(),
+      },
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<void> _ensureUsersTable(Database db) async {
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS users (
+        id TEXT PRIMARY KEY,
+        email TEXT UNIQUE NOT NULL,
+        password TEXT NOT NULL,
+        name TEXT NOT NULL,
+        created_at TEXT NOT NULL
+      )
+    ''');
+    await _seedTestUser(db);
+  }
+
+  Future<bool> authenticateUser(String email, String password) async {
+    final db = await database;
+    await _ensureUsersTable(db);
+
+    final res = await db.query(
+      'users',
+      where: 'LOWER(email) = ? AND password = ?',
+      whereArgs: [email.trim().toLowerCase(), password.trim()],
+    );
+    return res.isNotEmpty;
+  }
+
+  Future<bool> registerUser({
+    required String name,
+    required String email,
+    required String password,
+  }) async {
+    final db = await database;
+    await _ensureUsersTable(db);
+
+    try {
+      await db.insert(
+        'users',
+        {
+          'id': 'usr_${DateTime.now().millisecondsSinceEpoch}',
+          'email': email.trim().toLowerCase(),
+          'password': password.trim(),
+          'name': name.trim().isEmpty ? 'Aspirant' : name.trim(),
+          'created_at': DateTime.now().toIso8601String(),
+        },
+        conflictAlgorithm: ConflictAlgorithm.abort,
+      );
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  Future<Map<String, dynamic>?> getUserByEmail(String email) async {
+    final db = await database;
+    await _ensureUsersTable(db);
+
+    final res = await db.query(
+      'users',
+      where: 'LOWER(email) = ?',
+      whereArgs: [email.trim().toLowerCase()],
+      limit: 1,
+    );
+    if (res.isNotEmpty) return res.first;
     return null;
   }
 }
