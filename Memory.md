@@ -204,6 +204,18 @@
   - Recompiled and updated [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) at root of workspace.
   - Mirrored and pushed to GitHub remote `origin main`.
 
+- **Action 41**: Refined top bar spacing, side arrow, and full-width rectangular sidebar buttons:
+  - Updated `HomeScreen` top bar: replaced dropdown chevron with right-pointing side arrow (`CupertinoIcons.chevron_right`), removed `|` dividers, and balanced spacing using identical flex `Spacer`s between `SCORE >`, `<course name>`, and `🔥 12d`.
+  - Redesigned [`ScoreDrawer`](file:///d:/CodeSupa/Score/lib/presentation/home/widgets/score_drawer.dart) with 4 full-width rectangular buttons:
+    1. **Course button**: Long rectangular button opening the `CupertinoActionSheet` target exam selection popup.
+    2. **Theme button**: Long rectangular card with "Theme" label and dual small toggle pills ("Light" & "Dark") for instant switching.
+    3. **Profile button**: Long rectangular button with profile icon opening study statistics modal.
+    4. **Settings button**: Long rectangular button with settings gear icon opening app preferences modal.
+  - Updated test suite [`test/header_drawer_test.dart`](file:///d:/CodeSupa/Score/test/header_drawer_test.dart) verifying side arrow, absence of dividers, and 4 rectangular drawer buttons.
+  - Verified with `flutter analyze` (0 issues) and `flutter test` (100% pass).
+  - Recompiled and updated [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) at root of workspace.
+  - Mirrored and pushed to GitHub remote `origin main`.
+
 ---
 
 ## 5. Next Immediate Actions

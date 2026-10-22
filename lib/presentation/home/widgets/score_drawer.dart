@@ -10,6 +10,55 @@ import '../../../domain/entities/exam_entity.dart';
 class ScoreDrawer extends ConsumerWidget {
   const ScoreDrawer({super.key});
 
+  void _showExamPicker(BuildContext context, WidgetRef ref, String currentExamId) {
+    HapticFeedback.lightImpact();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    showCupertinoModalPopup(
+      context: context,
+      builder: (ctx) => CupertinoActionSheet(
+        title: const Text('Select Target Examination'),
+        message: const Text('Practice previous year questions tailored to your exam syllabus'),
+        actions: ExamEntity.defaultExams.map((exam) {
+          final isSelected = exam.id == currentExamId;
+          return CupertinoActionSheetAction(
+            onPressed: () {
+              ref.read(selectedExamProvider.notifier).setExam(exam.id);
+              Navigator.pop(ctx);
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  exam.name,
+                  style: TextStyle(
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                    color: isSelected
+                        ? (isDark ? AppColors.systemBlueDark : AppColors.systemBlue)
+                        : (isDark ? Colors.white : Colors.black),
+                  ),
+                ),
+                if (isSelected) ...[
+                  const SizedBox(width: 8),
+                  Icon(
+                    CupertinoIcons.checkmark_alt,
+                    size: 18,
+                    color: isDark ? AppColors.systemBlueDark : AppColors.systemBlue,
+                  ),
+                ],
+              ],
+            ),
+          );
+        }).toList(),
+        cancelButton: CupertinoActionSheetAction(
+          isDefaultAction: true,
+          onPressed: () => Navigator.pop(ctx),
+          child: const Text('Cancel'),
+        ),
+      ),
+    );
+  }
+
   void _showProfileModal(BuildContext context, bool isDark) {
     HapticFeedback.lightImpact();
     final textPrimary = isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
@@ -282,374 +331,305 @@ class ScoreDrawer extends ConsumerWidget {
       child: SafeArea(
         top: true,
         bottom: true,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 1. Profile Section Header
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.pop(context);
-                  _showProfileModal(context, isDark);
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: isDark ? AppColors.darkCardSurface : AppColors.lightCardSurface,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: isDark ? AppColors.darkCardStroke : AppColors.lightCardStroke,
-                      width: 0.5,
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 48,
-                        height: 48,
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFF007AFF), Color(0xFF5856D6)],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.systemBlue.withValues(alpha: 0.3),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: const Icon(
-                          CupertinoIcons.person_crop_circle_fill,
-                          color: Colors.white,
-                          size: 28,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Text(
-                                  'Aspirant Profile',
-                                  style: AppTypography.titleMedium(textPrimary).copyWith(
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 15,
-                                  ),
-                                ),
-                                const SizedBox(width: 4),
-                                const Icon(CupertinoIcons.checkmark_seal_fill, color: AppColors.systemBlue, size: 14),
-                              ],
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              'Target: ${currentExam.name}',
-                              style: AppTypography.bodySmall(textSecondary).copyWith(fontSize: 12),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Icon(CupertinoIcons.chevron_forward, color: textSecondary, size: 16),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-
-            const Divider(height: 1, thickness: 0.5),
-
-            // Scrollable Content: Course Changer, Appearance & Settings
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                children: [
-                  // Section: Course Changer
-                  Row(
-                    children: [
-                      const Icon(CupertinoIcons.square_stack_3d_up_fill, size: 16, color: AppColors.systemBlue),
-                      const SizedBox(width: 6),
-                      Text(
-                        'COURSE CHANGER',
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 0.6,
-                          color: textSecondary,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-
-                  Container(
-                    decoration: BoxDecoration(
-                      color: isDark ? AppColors.darkCardSurface : AppColors.lightCardSurface,
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(
-                        color: isDark ? AppColors.darkCardStroke : AppColors.lightCardStroke,
-                        width: 0.5,
-                      ),
-                    ),
-                    child: Column(
-                      children: ExamEntity.defaultExams.map((exam) {
-                        final isSelected = exam.id == selectedExamId;
-                        return InkWell(
-                          onTap: () {
-                            HapticFeedback.selectionClick();
-                            ref.read(selectedExamProvider.notifier).setExam(exam.id);
-                            Navigator.pop(context); // Close left drawer smoothly
-                          },
-                          borderRadius: BorderRadius.circular(14),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        exam.name,
-                                        style: TextStyle(
-                                          fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                                          fontSize: 14,
-                                          color: isSelected
-                                              ? (isDark ? AppColors.systemBlueDark : AppColors.systemBlue)
-                                              : textPrimary,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 2),
-                                      Text(
-                                        exam.subtitle,
-                                        style: TextStyle(fontSize: 11, color: textSecondary),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                if (isSelected)
-                                  Container(
-                                    padding: const EdgeInsets.all(3),
-                                    decoration: const BoxDecoration(
-                                      color: AppColors.systemBlue,
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: const Icon(CupertinoIcons.checkmark, size: 12, color: Colors.white),
-                                  ),
-                              ],
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  // Section: Appearance (Light / Dark Mode Toggler)
-                  Row(
-                    children: [
-                      const Icon(CupertinoIcons.paintbrush_fill, size: 16, color: AppColors.systemOrange),
-                      const SizedBox(width: 6),
-                      Text(
-                        'APPEARANCE',
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 0.6,
-                          color: textSecondary,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-
-                  Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: isDark ? AppColors.darkCardSurface : AppColors.lightCardSurface,
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(
-                        color: isDark ? AppColors.darkCardStroke : AppColors.lightCardStroke,
-                        width: 0.5,
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        _themeOption(
-                          label: 'Light',
-                          icon: CupertinoIcons.sun_max_fill,
-                          isSelected: currentThemeMode == ThemeMode.light,
-                          isDark: isDark,
-                          onTap: () {
-                            HapticFeedback.selectionClick();
-                            ref.read(themeModeProvider.notifier).setThemeMode(ThemeMode.light);
-                          },
-                        ),
-                        _themeOption(
-                          label: 'Dark',
-                          icon: CupertinoIcons.moon_fill,
-                          isSelected: currentThemeMode == ThemeMode.dark,
-                          isDark: isDark,
-                          onTap: () {
-                            HapticFeedback.selectionClick();
-                            ref.read(themeModeProvider.notifier).setThemeMode(ThemeMode.dark);
-                          },
-                        ),
-                        _themeOption(
-                          label: 'System',
-                          icon: CupertinoIcons.circle_lefthalf_fill,
-                          isSelected: currentThemeMode == ThemeMode.system,
-                          isDark: isDark,
-                          onTap: () {
-                            HapticFeedback.selectionClick();
-                            ref.read(themeModeProvider.notifier).setThemeMode(ThemeMode.system);
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  // Section: Settings Button with Settings Icon
-                  Row(
-                    children: [
-                      const Icon(CupertinoIcons.gear_alt_fill, size: 16, color: Colors.grey),
-                      const SizedBox(width: 6),
-                      Text(
-                        'PREFERENCES',
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 0.6,
-                          color: textSecondary,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-
-                  Material(
-                    color: isDark ? AppColors.darkCardSurface : AppColors.lightCardSurface,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      side: BorderSide(
-                        color: isDark ? AppColors.darkCardStroke : AppColors.lightCardStroke,
-                        width: 0.5,
-                      ),
-                    ),
-                    clipBehavior: Clip.antiAlias,
-                    child: ListTile(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
-                      leading: Container(
-                        padding: const EdgeInsets.all(7),
-                        decoration: BoxDecoration(
-                          color: AppColors.systemBlue.withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Icon(CupertinoIcons.gear_alt_fill, size: 18, color: AppColors.systemBlue),
-                      ),
-                      title: const Text('Settings', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-                      subtitle: const Text('Haptics, alerts, cache & version', style: TextStyle(fontSize: 11, color: Colors.grey)),
-                      trailing: const Icon(CupertinoIcons.chevron_forward, size: 16, color: Colors.grey),
-                      onTap: () {
-                        Navigator.pop(context);
-                        _showSettingsModal(context, isDark);
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // Drawer Footer
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              child: Row(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Top Drawer Bar
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'SCORE Mobile v1.0.0',
-                    style: TextStyle(fontSize: 11, color: textSecondary, fontWeight: FontWeight.w500),
+                    'Menu',
+                    style: AppTypography.titleLarge(textPrimary).copyWith(
+                      fontWeight: FontWeight.w800,
+                      fontSize: 20,
+                    ),
                   ),
                   GestureDetector(
+                    behavior: HitTestBehavior.opaque,
                     onTap: () => Navigator.pop(context),
-                    child: Text(
-                      'Done',
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: isDark ? AppColors.systemBlueDark : AppColors.systemBlue,
+                    child: Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: Icon(
+                        CupertinoIcons.xmark_circle_fill,
+                        color: textSecondary.withValues(alpha: 0.6),
+                        size: 24,
                       ),
                     ),
                   ),
                 ],
               ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+              const SizedBox(height: 20),
 
-  Widget _themeOption({
-    required String label,
-    required IconData icon,
-    required bool isSelected,
-    required bool isDark,
-    required VoidCallback onTap,
-  }) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          decoration: BoxDecoration(
-            color: isSelected
-                ? (isDark ? Colors.white.withValues(alpha: 0.15) : Colors.white)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: isSelected && !isDark
-                ? [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.06),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ]
-                : null,
-          ),
-          child: Column(
-            children: [
-              Icon(
-                icon,
-                size: 16,
-                color: isSelected
-                    ? (isDark ? AppColors.systemBlueDark : AppColors.systemBlue)
-                    : Colors.grey,
+              // 1. Course Button (Long rectangular button)
+              _drawerRectangleButton(
+                icon: CupertinoIcons.book_fill,
+                iconColor: AppColors.systemBlue,
+                title: 'Course',
+                subtitle: currentExam.name,
+                isDark: isDark,
+                textPrimary: textPrimary,
+                textSecondary: textSecondary,
+                onTap: () {
+                  _showExamPicker(context, ref, selectedExamId);
+                },
               ),
-              const SizedBox(height: 4),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                  color: isSelected
-                      ? (isDark ? AppColors.systemBlueDark : AppColors.systemBlue)
-                      : Colors.grey,
+              const SizedBox(height: 12),
+
+              // 2. Dark/Light Mode Toggler (Long rectangular button saying dark and light each side in small)
+              _themeRectangleButton(
+                isDark: isDark,
+                textPrimary: textPrimary,
+                textSecondary: textSecondary,
+                currentThemeMode: currentThemeMode,
+                ref: ref,
+              ),
+              const SizedBox(height: 12),
+
+              // 3. Profile Button (Long rectangular button)
+              _drawerRectangleButton(
+                icon: CupertinoIcons.person_crop_circle_fill,
+                iconColor: const Color(0xFF5856D6),
+                title: 'Profile',
+                subtitle: 'Aspirant Scholar',
+                isDark: isDark,
+                textPrimary: textPrimary,
+                textSecondary: textSecondary,
+                onTap: () {
+                  _showProfileModal(context, isDark);
+                },
+              ),
+              const SizedBox(height: 12),
+
+              // 4. Settings Button (Long rectangular button)
+              _drawerRectangleButton(
+                icon: CupertinoIcons.gear_alt_fill,
+                iconColor: Colors.grey,
+                title: 'Settings',
+                subtitle: 'Preferences & Cache',
+                isDark: isDark,
+                textPrimary: textPrimary,
+                textSecondary: textSecondary,
+                onTap: () {
+                  _showSettingsModal(context, isDark);
+                },
+              ),
+
+              const Spacer(),
+
+              // Bottom Brand
+              Center(
+                child: Text(
+                  'SCORE Mobile · v1.0.0',
+                  style: TextStyle(fontSize: 11, color: textSecondary, fontWeight: FontWeight.w500),
                 ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _drawerRectangleButton({
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+    required bool isDark,
+    required Color textPrimary,
+    required Color textSecondary,
+  }) {
+    return Material(
+      color: isDark ? AppColors.darkCardSurface : AppColors.lightCardSurface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(14),
+        side: BorderSide(
+          color: isDark ? AppColors.darkCardStroke : AppColors.lightCardStroke,
+          width: 0.5,
+        ),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () {
+          HapticFeedback.lightImpact();
+          onTap();
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(9),
+                decoration: BoxDecoration(
+                  color: iconColor.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(icon, size: 20, color: iconColor),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 15,
+                        color: textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: TextStyle(fontSize: 12, color: textSecondary),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+              Icon(CupertinoIcons.chevron_right, size: 14, color: textSecondary),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _themeRectangleButton({
+    required bool isDark,
+    required Color textPrimary,
+    required Color textSecondary,
+    required ThemeMode currentThemeMode,
+    required WidgetRef ref,
+  }) {
+    final isDarkModeActive = currentThemeMode == ThemeMode.dark ||
+        (currentThemeMode == ThemeMode.system && isDark);
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.darkCardSurface : AppColors.lightCardSurface,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: isDark ? AppColors.darkCardStroke : AppColors.lightCardStroke,
+          width: 0.5,
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(9),
+                decoration: BoxDecoration(
+                  color: AppColors.systemOrange.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  isDarkModeActive ? CupertinoIcons.moon_fill : CupertinoIcons.sun_max_fill,
+                  size: 20,
+                  color: AppColors.systemOrange,
+                ),
+              ),
+              const SizedBox(width: 14),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Theme',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 15,
+                      color: textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    isDarkModeActive ? 'Dark appearance' : 'Light appearance',
+                    style: TextStyle(fontSize: 12, color: textSecondary),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          // Simple toggle button saying dark and light each side in small
+          Container(
+            padding: const EdgeInsets.all(3),
+            decoration: BoxDecoration(
+              color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () {
+                    HapticFeedback.selectionClick();
+                    ref.read(themeModeProvider.notifier).setThemeMode(ThemeMode.light);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: !isDarkModeActive
+                          ? (isDark ? Colors.white24 : Colors.white)
+                          : Colors.transparent,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: !isDarkModeActive
+                          ? [BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 4)]
+                          : null,
+                    ),
+                    child: Text(
+                      'Light',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: !isDarkModeActive ? FontWeight.w700 : FontWeight.w400,
+                        color: !isDarkModeActive
+                            ? (isDark ? Colors.white : Colors.black87)
+                            : textSecondary,
+                      ),
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () {
+                    HapticFeedback.selectionClick();
+                    ref.read(themeModeProvider.notifier).setThemeMode(ThemeMode.dark);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: isDarkModeActive
+                          ? (isDark ? AppColors.systemBlueDark : AppColors.systemBlue)
+                          : Colors.transparent,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: isDarkModeActive
+                          ? [BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 4)]
+                          : null,
+                    ),
+                    child: Text(
+                      'Dark',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: isDarkModeActive ? FontWeight.w700 : FontWeight.w400,
+                        color: isDarkModeActive ? Colors.white : textSecondary,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

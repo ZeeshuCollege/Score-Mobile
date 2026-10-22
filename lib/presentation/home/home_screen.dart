@@ -67,7 +67,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             title: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // 1. SCORE with dropdown trigger (comes from left side)
+                // 1. SCORE with side arrow (pointy side faces to the right)
                 GestureDetector(
                   behavior: HitTestBehavior.opaque,
                   onTap: () {
@@ -88,55 +88,35 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ),
                       const SizedBox(width: 4),
                       Icon(
-                        CupertinoIcons.chevron_down,
+                        CupertinoIcons.chevron_right,
                         size: 13,
                         color: textSecondary,
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(width: 8),
-                Text(
-                  '|',
-                  style: TextStyle(
-                    color: isDark ? Colors.white24 : Colors.black26,
-                    fontWeight: FontWeight.w300,
-                    fontSize: 15,
-                  ),
-                ),
-                const SizedBox(width: 8),
+                const Spacer(),
 
-                // 2. Course Name (tappable to open left course changer / drawer)
-                Expanded(
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: () {
-                      HapticFeedback.lightImpact();
-                      _scaffoldKey.currentState?.openDrawer();
-                    },
-                    child: Text(
-                      currentExam.name,
-                      style: AppTypography.titleMedium(textPrimary).copyWith(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                // 2. Course Name (equal distance from SCORE and Streak)
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () {
+                    HapticFeedback.lightImpact();
+                    _scaffoldKey.currentState?.openDrawer();
+                  },
+                  child: Text(
+                    currentExam.name,
+                    style: AppTypography.titleMedium(textPrimary).copyWith(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                const SizedBox(width: 8),
-                Text(
-                  '|',
-                  style: TextStyle(
-                    color: isDark ? Colors.white24 : Colors.black26,
-                    fontWeight: FontWeight.w300,
-                    fontSize: 15,
-                  ),
-                ),
-                const SizedBox(width: 8),
+                const Spacer(),
 
-                // 3. Streak badge
+                // 3. Streak badge (equal distance from Course Name)
                 CupertinoButton(
                   padding: EdgeInsets.zero,
                   minimumSize: Size.zero,
