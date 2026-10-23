@@ -9,6 +9,9 @@ import 'package:score/presentation/auth/auth_landing_screen.dart';
 import 'package:score/presentation/main_nav_screen.dart';
 import 'package:score/data/local/app_database.dart';
 
+import 'package:score/core/supabase/supabase_config.dart';
+import 'package:score/data/remote/supabase_service.dart';
+
 void main() {
   setUpAll(() {
     sqfliteFfiInit();
@@ -17,6 +20,12 @@ void main() {
 
   setUp(() {
     SharedPreferences.setMockInitialValues({});
+  });
+
+  test('SupabaseConfig has valid redirect URL for OAuth deep link and safe test initialization', () {
+    expect(SupabaseConfig.redirectUrl, 'score://login-callback');
+    expect(SupabaseConfig.url.isNotEmpty, isTrue);
+    expect(SupabaseService.instance.isInitialized, isFalse);
   });
 
   testWidgets('SplashScreen renders white background, default Flutter icon as Score logo, and SCORE text', (tester) async {

@@ -5,11 +5,16 @@ import 'app/app_state.dart';
 import 'app/theme/app_colors.dart';
 import 'app/theme/app_theme.dart';
 import 'presentation/auth/splash_screen.dart';
+import 'data/remote/supabase_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Enable full-screen edge-to-edge drawing under notification bar, Dynamic Island, and gestures
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+
+  // Initialize Supabase Backend Client (Email Auth, Google OAuth, Cloud DB)
+  await SupabaseService.instance.initialize();
+
   runApp(
     const ProviderScope(
       child: ScoreApp(),

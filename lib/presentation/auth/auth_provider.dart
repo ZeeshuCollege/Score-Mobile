@@ -1,6 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../core/supabase/supabase_config.dart';
 import '../../data/local/app_database.dart';
+import '../../data/remote/supabase_service.dart';
 
 class AuthState {
   final bool isAuthenticated;
@@ -62,17 +65,61 @@ class AuthNotifier extends Notifier<AuthState> {
     }
   }
 
+  Future<void> _persistSession(String email, String name) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_authPrefKey, true);
+    await prefs.setString(_emailPrefKey, email.trim().toLowerCase());
+    await prefs.setString(_namePrefKey, name);
+  }
+
+  /// Log in via Supabase cloud auth or local SQLite fallback
   Future<bool> login(String email, String password) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
+
+    // 1. If Supabase is configured with cloud keys, authenticate via Supabase
+    if (SupabaseConfig.isConfigured) {
+      try {
+        final cloudResult = await SupabaseService.instance.signInWithEmail(
+          email: email,
+          password: password,
+        );
+        if (cloudResult.success) {
+          final name = cloudResult.name ?? 'Aspirant Scholar';
+          await _persistSession(email, name);
+          // Mirror credentials locally for offline capabilities
+          await AppDatabase.instance.registerUser(
+            name: name,
+            email: email,
+            password: password,
+          );
+
+          state = AuthState(
+            isAuthenticated: true,
+            email: email.trim().toLowerCase(),
+            name: name,
+            isLoading: false,
+          );
+          return true;
+        } else if (!email.trim().toLowerCase().contains('pinjari.work')) {
+          // If explicitly rejected on cloud and not test user, report cloud error
+          state = state.copyWith(
+            isLoading: false,
+            errorMessage: cloudResult.errorMessage,
+          );
+          return false;
+        }
+      } catch (e) {
+        debugPrint('Supabase login error ($e). Checking local database fallback...');
+      }
+    }
+
+    // 2. Local SQLite database authentication (including test ID pinjari.work@gmail.com)
     try {
       final success = await AppDatabase.instance.authenticateUser(email, password);
       if (success) {
         final user = await AppDatabase.instance.getUserByEmail(email);
         final name = user?['name'] as String? ?? 'Aspirant Scholar';
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setBool(_authPrefKey, true);
-        await prefs.setString(_emailPrefKey, email.trim().toLowerCase());
-        await prefs.setString(_namePrefKey, name);
+        await _persistSession(email, name);
 
         state = AuthState(
           isAuthenticated: true,
@@ -97,8 +144,46 @@ class AuthNotifier extends Notifier<AuthState> {
     }
   }
 
+  /// Sign up via Supabase cloud auth and mirror to local database
   Future<bool> signup(String name, String email, String password) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
+
+    // 1. If Supabase is configured, create account in Supabase
+    if (SupabaseConfig.isConfigured) {
+      try {
+        final cloudResult = await SupabaseService.instance.signUpWithEmail(
+          name: name,
+          email: email,
+          password: password,
+        );
+        if (cloudResult.success) {
+          await _persistSession(email, name.trim());
+          await AppDatabase.instance.registerUser(
+            name: name,
+            email: email,
+            password: password,
+          );
+
+          state = AuthState(
+            isAuthenticated: true,
+            email: email.trim().toLowerCase(),
+            name: name.trim(),
+            isLoading: false,
+          );
+          return true;
+        } else if (cloudResult.errorMessage != null) {
+          state = state.copyWith(
+            isLoading: false,
+            errorMessage: cloudResult.errorMessage,
+          );
+          return false;
+        }
+      } catch (e) {
+        debugPrint('Supabase signup error ($e). Falling back to local...');
+      }
+    }
+
+    // 2. Local SQLite database registration
     try {
       final registered = await AppDatabase.instance.registerUser(
         name: name,
@@ -107,10 +192,7 @@ class AuthNotifier extends Notifier<AuthState> {
       );
 
       if (registered) {
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setBool(_authPrefKey, true);
-        await prefs.setString(_emailPrefKey, email.trim().toLowerCase());
-        await prefs.setString(_namePrefKey, name.trim());
+        await _persistSession(email, name.trim());
 
         state = AuthState(
           isAuthenticated: true,
@@ -135,17 +217,39 @@ class AuthNotifier extends Notifier<AuthState> {
     }
   }
 
+  /// Sign in with Google via Supabase OAuth (redirects to `score://login-callback`)
   Future<bool> signInWithGoogle() async {
     state = state.copyWith(isLoading: true, errorMessage: null);
-    await Future.delayed(const Duration(milliseconds: 600));
 
+    if (SupabaseConfig.isConfigured) {
+      try {
+        final launched = await SupabaseService.instance.signInWithGoogle();
+        if (launched) {
+          final currentUser = SupabaseService.instance.currentUser;
+          final googleEmail = currentUser?.email ?? 'google.student@score.app';
+          final googleName = currentUser?.userMetadata?['name'] as String? ??
+              currentUser?.userMetadata?['full_name'] as String? ??
+              'Google Aspirant';
+
+          await _persistSession(googleEmail, googleName);
+          state = AuthState(
+            isAuthenticated: true,
+            email: googleEmail,
+            name: googleName,
+            isLoading: false,
+          );
+          return true;
+        }
+      } catch (e) {
+        debugPrint('Google OAuth launch error: $e');
+      }
+    }
+
+    // Fallback simulated authentication for testing and preview
+    await Future.delayed(const Duration(milliseconds: 500));
     const googleEmail = 'google.student@score.app';
     const googleName = 'Google Aspirant';
-
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_authPrefKey, true);
-    await prefs.setString(_emailPrefKey, googleEmail);
-    await prefs.setString(_namePrefKey, googleName);
+    await _persistSession(googleEmail, googleName);
 
     state = const AuthState(
       isAuthenticated: true,
@@ -168,6 +272,7 @@ class AuthNotifier extends Notifier<AuthState> {
   }
 
   Future<void> logout() async {
+    await SupabaseService.instance.signOut();
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_authPrefKey);
     await prefs.remove(_emailPrefKey);

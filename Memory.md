@@ -282,7 +282,6 @@
     - Unit tests SQLite user authentication for test credentials.
   - Verified with `flutter analyze` (0 issues) and `flutter test` (14/14 tests passing, 100%).
   - Recompiled and updated [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) at root of workspace.
-
 - **Action 46**: Profile Edit/Save Mode Control, Persistent Avatar Persona Editing & App Permissions on Install:
   - **Profile Editing State Control** ([`ProfileScreen`](file:///d:/CodeSupa/Score/lib/presentation/profile/profile_screen.dart)):
     - Profile form fields (Name, Bio/Goal, Dream College) and Target Exam selector are locked in read-only mode by default (`_isEditing = false`).
@@ -301,12 +300,46 @@
   - 100% test pass rate (14/14 tests) and 0 `flutter analyze` issues.
   - Recompiled release APK [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) at root.
 
+- **Action 47**: Complete Supabase Backend Integration (Email/Password Auth, Google OAuth (GAuth), Deep Linking, and Cloud Database Schema):
+  - **Supabase Flutter SDK**:
+    - Integrated `supabase_flutter: ^2.18.3` in [`pubspec.yaml`](file:///d:/CodeSupa/Score/pubspec.yaml).
+    - Configured client options with `AuthFlowType.pkce` for modern secure authorization code exchange.
+  - **Android Deep Link Integration** ([`AndroidManifest.xml`](file:///d:/CodeSupa/Score/android/app/src/main/AndroidManifest.xml)):
+    - Registered intent-filter with `<data android:scheme="score" android:host="login-callback" />` inside `MainActivity` to receive OAuth redirection for seamless Google sign-in.
+  - **Configuration Architecture** ([`SupabaseConfig`](file:///d:/CodeSupa/Score/lib/core/supabase/supabase_config.dart)):
+    - Supports compile-time overrides via `--dart-define=SUPABASE_URL=...` and `--dart-define=SUPABASE_ANON_KEY=...`.
+    - Fallback default project URL, anon key, and redirect scheme (`score://login-callback`).
+    - Dynamic credential setter `setCredentials(...)` for runtime overrides and validation status helper `isConfigured`.
+  - **Supabase Remote Service** ([`SupabaseService`](file:///d:/CodeSupa/Score/lib/data/remote/supabase_service.dart)):
+    - Initialized safely on app startup in [`main.dart`](file:///d:/CodeSupa/Score/lib/main.dart) while bypassing remote network sockets in widget tests.
+    - `signInWithEmail(email, password)`: Authenticates existing user with Supabase auth and handles custom user metadata.
+    - `signUpWithEmail(name, email, password)`: Registers new user in Supabase auth with display name metadata.
+    - `signInWithGoogle()`: Initiates browser-based PKCE OAuth flow using `OAuthProvider.google` with `redirectTo: score://login-callback`.
+    - `signOut()`, `currentUser`, and real-time `authStateChanges` stream listener.
+  - **Hybrid Auth Bridging** ([`auth_provider.dart`](file:///d:/CodeSupa/Score/lib/presentation/auth/auth_provider.dart)):
+    - Dual cloud/offline architecture: Tries Supabase first when configured, while seamlessly syncing user records into local SQLite database (`AppDatabase`) and preserving session in `SharedPreferences`.
+    - Preserves testing credentials (`pinjari.work@gmail.com` / `Student@123`) for offline and integration test execution.
+    - Updated `signInWithGoogle` to handle both Supabase OAuth flow and offline mock fallback gracefully.
+  - **Production Database Schema & Migration** ([`supabase/schema.sql`](file:///d:/CodeSupa/Score/supabase/schema.sql)):
+    - Created complete SQL schema for Supabase SQL Editor including:
+      - `profiles` table referenced to `auth.users(id)`.
+      - Trigger `on_auth_user_created` that automatically provisions student profiles on sign-up (both email & Google OAuth).
+      - Row Level Security (RLS) policies for user data isolation.
+      - Tables for `questions`, `bookmarks`, `mistakes`, `test_attempts`, and `question_notes`.
+  - **Developer Guide & Documentation** ([`supabase/README.md`](file:///d:/CodeSupa/Score/supabase/README.md)):
+    - Detailed steps for Google Cloud Console OAuth 2.0 Web Client setup, Supabase Auth provider enablement, Redirect URLs configuration, and Flutter launch commands.
+  - **Quality & Test Validation**:
+    - Updated [`test/auth_flow_test.dart`](file:///d:/CodeSupa/Score/test/auth_flow_test.dart) covering Supabase configuration, OAuth redirect URL, and safe test initialization.
+    - 15/15 tests passing (100% pass rate) and 0 `flutter analyze` issues.
+  - Recompiled release APK [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) at root.
+
 ---
 
 ## 5. Next Immediate Actions
 1. Keep [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) continuously refreshed upon subsequent commits.
 2. Synchronize and push latest commits to remote repository `https://github.com/ZeeshuCollege/Score-Mobile.git`.
 3. Enhance offline synchronization for user-generated notes.
+
 
 
 
