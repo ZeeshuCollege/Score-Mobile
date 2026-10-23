@@ -283,11 +283,30 @@
   - Verified with `flutter analyze` (0 issues) and `flutter test` (14/14 tests passing, 100%).
   - Recompiled and updated [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) at root of workspace.
 
+- **Action 46**: Profile Edit/Save Mode Control, Persistent Avatar Persona Editing & App Permissions on Install:
+  - **Profile Editing State Control** ([`ProfileScreen`](file:///d:/CodeSupa/Score/lib/presentation/profile/profile_screen.dart)):
+    - Profile form fields (Name, Bio/Goal, Dream College) and Target Exam selector are locked in read-only mode by default (`_isEditing = false`).
+    - The top-right AppBar action displays an "Edit" button by default with pencil icon (`CupertinoIcons.pencil`).
+    - Clicking "Edit" activates edit mode: form fields become interactive with focus decoration, Target Exam becomes selectable, and top action switches to "Save" (`CupertinoIcons.checkmark_alt`).
+    - In edit mode, leading AppBar action provides "Cancel" to revert uncommitted edits. A full-width "Save Profile Changes" button is also provided below the profile card.
+    - Saving changes commits updates to `userProfileProvider`, displays confirmation snackbar, and locks fields back into view mode.
+  - **Profile Picture Unconditional Editing**:
+    - The avatar and camera badge remain editable at all times without requiring the "Edit" button to be clicked.
+    - Selecting any avatar style instantly updates the UI and persists the selection directly to `userProfileProvider` and `SharedPreferences`.
+  - **Camera & Notification Permissions on Installation** ([`PermissionService`](file:///d:/CodeSupa/Score/lib/core/services/permission_service.dart)):
+    - Integrated `permission_handler` and declared `CAMERA` and `POST_NOTIFICATIONS` in `AndroidManifest.xml`.
+    - Created `PermissionService` to request Camera and Notification permissions on app startup in `SplashScreen`.
+    - Handled permission prompts when interacting with avatar/photo customization.
+  - Updated test suite [`test/profile_screen_test.dart`](file:///d:/CodeSupa/Score/test/profile_screen_test.dart) covering locked fields, edit/save toggle, cancel action, and avatar editing without edit mode.
+  - 100% test pass rate (14/14 tests) and 0 `flutter analyze` issues.
+  - Recompiled release APK [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) at root.
+
 ---
 
 ## 5. Next Immediate Actions
 1. Keep [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) continuously refreshed upon subsequent commits.
 2. Synchronize and push latest commits to remote repository `https://github.com/ZeeshuCollege/Score-Mobile.git`.
 3. Enhance offline synchronization for user-generated notes.
+
 
 

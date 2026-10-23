@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app/theme/app_colors.dart';
 import '../../app/theme/app_typography.dart';
+import '../../core/services/permission_service.dart';
 import '../../domain/entities/exam_entity.dart';
 import 'user_profile_model.dart';
 import 'user_profile_provider.dart';
@@ -24,6 +25,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   int _selectedAvatarId = 0;
   String _selectedExam = 'JEE Advanced';
   bool _isEdited = false;
+  bool _isEditing = false; // By default, profile fields cannot be edited
 
   @override
   void initState() {
@@ -41,7 +43,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   void _markEdited() {
-    if (!_isEdited) {
+    if (!_isEdited && _isEditing) {
       setState(() => _isEdited = true);
     }
   }
@@ -54,6 +56,20 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     super.dispose();
   }
 
+  void _cancelEditing() {
+    HapticFeedback.lightImpact();
+    final profile = ref.read(userProfileProvider);
+    _nameController.text = profile.name;
+    _bioController.text = profile.description;
+    _collegeController.text = profile.targetCollege;
+    setState(() {
+      _selectedExam = profile.targetExam;
+      _selectedAvatarId = profile.avatarId;
+      _isEditing = false;
+      _isEdited = false;
+    });
+  }
+
   Future<void> _saveProfile() async {
     HapticFeedback.mediumImpact();
     await ref.read(userProfileProvider.notifier).updateProfile(
@@ -64,7 +80,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       targetExam: _selectedExam,
     );
 
-    setState(() => _isEdited = false);
+    setState(() {
+      _isEdited = false;
+      _isEditing = false;
+    });
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -85,6 +104,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   void _openAvatarPicker(bool isDark) {
     HapticFeedback.lightImpact();
+    // Prompt camera permission if needed
+    PermissionService.instance.requestCameraPermission();
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -155,6 +177,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         _selectedAvatarId = style.id;
                         _isEdited = true;
                       });
+                      // Persist avatar selection immediately so profile picture is editable anytime!
+                      ref.read(userProfileProvider.notifier).updateProfile(
+                        avatarId: style.id,
+                      );
                       Navigator.pop(ctx);
                     },
                     child: Column(
@@ -288,15 +314,29 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         backgroundColor: isDark ? AppColors.darkCanvasBg : AppColors.lightCanvasBg,
         elevation: 0,
         scrolledUnderElevation: 0,
-        leading: CupertinoButton(
-          padding: EdgeInsets.zero,
-          onPressed: () => Navigator.pop(context),
-          child: Icon(
-            CupertinoIcons.chevron_left,
-            color: isDark ? Colors.white : Colors.black87,
-            size: 24,
-          ),
-        ),
+        leading: _isEditing
+            ? CupertinoButton(
+                padding: const EdgeInsets.symmetric(horizontal: 14),
+                onPressed: _cancelEditing,
+                child: Text(
+                  'Cancel',
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                    color: isDark ? Colors.white70 : Colors.black54,
+                  ),
+                ),
+              )
+            : CupertinoButton(
+                padding: EdgeInsets.zero,
+                onPressed: () => Navigator.pop(context),
+                child: Icon(
+                  CupertinoIcons.chevron_left,
+                  color: isDark ? Colors.white : Colors.black87,
+                  size: 24,
+                ),
+              ),
+        leadingWidth: _isEditing ? 76 : null,
         title: Text(
           'Profile',
           style: AppTypography.titleLarge(textPrimary).copyWith(
@@ -308,14 +348,32 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         actions: [
           CupertinoButton(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            onPressed: _saveProfile,
-            child: Text(
-              'Save',
-              style: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 16,
-                color: _isEdited ? AppColors.systemBlue : AppColors.systemBlue.withValues(alpha: 0.6),
-              ),
+            onPressed: () {
+              if (_isEditing) {
+                _saveProfile();
+              } else {
+                HapticFeedback.lightImpact();
+                setState(() => _isEditing = true);
+              }
+            },
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  _isEditing ? CupertinoIcons.checkmark_alt : CupertinoIcons.pencil,
+                  size: 16,
+                  color: AppColors.systemBlue,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  _isEditing ? 'Save' : 'Edit',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                    color: AppColors.systemBlue,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -435,7 +493,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   ),
                   _buildDivider(isDark),
                   InkWell(
-                    onTap: () => _showExamSelector(context, isDark),
+                    onTap: _isEditing ? () => _showExamSelector(context, isDark) : null,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                       child: Row(
@@ -453,17 +511,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             children: [
                               Text(
                                 _selectedExam,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
-                                  color: AppColors.systemBlue,
+                                  color: _isEditing ? AppColors.systemBlue : textSecondary,
                                 ),
                               ),
                               const SizedBox(width: 4),
                               Icon(
-                                CupertinoIcons.chevron_right,
-                                size: 14,
-                                color: textSecondary,
+                                _isEditing ? CupertinoIcons.chevron_right : CupertinoIcons.lock_fill,
+                                size: _isEditing ? 14 : 11,
+                                color: _isEditing ? textSecondary : textSecondary.withValues(alpha: 0.35),
                               ),
                             ],
                           ),
@@ -473,6 +531,53 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   ),
                 ],
               ),
+
+              // Dynamic Status / Action Row for Profile Editing
+              if (_isEditing) ...[
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  height: 46,
+                  child: CupertinoButton(
+                    color: AppColors.systemBlue,
+                    borderRadius: BorderRadius.circular(12),
+                    padding: EdgeInsets.zero,
+                    onPressed: _saveProfile,
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(CupertinoIcons.checkmark_circle_fill, color: Colors.white, size: 18),
+                        SizedBox(width: 8),
+                        Text(
+                          'Save Profile Changes',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ] else ...[
+                Padding(
+                  padding: const EdgeInsets.only(top: 8, left: 4),
+                  child: Row(
+                    children: [
+                      Icon(CupertinoIcons.lock, size: 12, color: textSecondary.withValues(alpha: 0.6)),
+                      const SizedBox(width: 5),
+                      Text(
+                        'Profile details are locked. Tap "Edit" above to change.',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: textSecondary.withValues(alpha: 0.6),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
               const SizedBox(height: 24),
 
               // 3. Apple-Design Performance Metrics (Fitness+ / Health Style Bento Grid)
@@ -661,7 +766,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           Expanded(
             child: CupertinoTextField(
               controller: controller,
-              placeholder: placeholder,
+              readOnly: !_isEditing,
+              showCursor: _isEditing,
+              placeholder: _isEditing ? placeholder : '',
               placeholderStyle: TextStyle(
                 color: textSecondary.withValues(alpha: 0.5),
                 fontSize: 14,
@@ -669,11 +776,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w500,
-                color: textPrimary,
+                color: _isEditing ? textPrimary : textPrimary.withValues(alpha: 0.9),
               ),
-              decoration: const BoxDecoration(color: Colors.transparent),
-              padding: const EdgeInsets.symmetric(vertical: 4),
-              clearButtonMode: OverlayVisibilityMode.editing,
+              decoration: BoxDecoration(
+                color: _isEditing
+                    ? (isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03))
+                    : Colors.transparent,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              padding: EdgeInsets.symmetric(vertical: 4, horizontal: _isEditing ? 8 : 0),
+              clearButtonMode: _isEditing ? OverlayVisibilityMode.editing : OverlayVisibilityMode.never,
             ),
           ),
         ],

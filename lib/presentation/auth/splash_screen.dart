@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../main_nav_screen.dart';
+import '../../core/services/permission_service.dart';
 import 'auth_provider.dart';
 import 'onboarding_slideshow_screen.dart';
 
@@ -41,6 +42,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
     );
 
     _animController.forward();
+
+    // Request camera and notification permissions whenever app is installed / opened
+    PermissionService.instance.requestInitialPermissions();
 
     // After loading display (1.8s), navigate to Onboarding Slideshow (or main app if already logged in)
     _timer = Timer(const Duration(milliseconds: 1800), _navigateToNextScreen);

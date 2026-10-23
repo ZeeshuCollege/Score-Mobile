@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:score/presentation/profile/profile_screen.dart';
-
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -11,7 +10,7 @@ void main() {
     SharedPreferences.setMockInitialValues({});
   });
 
-  testWidgets('ProfileScreen renders Apple-design editable fields, stats cards, and weekly chart', (tester) async {
+  testWidgets('ProfileScreen renders with Edit button by default and locked profile fields', (tester) async {
     await tester.pumpWidget(
       const ProviderScope(
         child: MaterialApp(
@@ -23,13 +22,15 @@ void main() {
 
     // 1. Navigation bar & title
     expect(find.text('Profile'), findsOneWidget);
-    expect(find.text('Save'), findsOneWidget);
+    // Verified: Edit button is displayed instead of save button by default
+    expect(find.text('Edit'), findsOneWidget);
+    expect(find.text('Save'), findsNothing);
 
-    // 2. Avatar edit action
+    // 2. Avatar edit action is present and visible
     expect(find.text('Edit Photo & Persona'), findsOneWidget);
     expect(find.byIcon(CupertinoIcons.camera_fill), findsOneWidget);
 
-    // 3. Editable form fields
+    // 3. Form fields are read-only by default
     expect(find.text('STUDENT PROFILE'), findsOneWidget);
     expect(find.text('Name'), findsOneWidget);
     expect(find.text('Bio / Goal'), findsOneWidget);
@@ -37,7 +38,15 @@ void main() {
     expect(find.text('Target Exam'), findsOneWidget);
     expect(find.text('Aspirant Scholar'), findsOneWidget);
 
-    // 4. Apple Fitness-style 2x2 Bento Performance stats
+    final nameField = tester.widget<CupertinoTextField>(
+      find.widgetWithText(CupertinoTextField, 'Aspirant Scholar'),
+    );
+    expect(nameField.readOnly, isTrue);
+
+    // 4. Locked status hint is shown
+    expect(find.text('Profile details are locked. Tap "Edit" above to change.'), findsOneWidget);
+
+    // 5. Apple Fitness-style 2x2 Bento Performance stats
     expect(find.text('PERFORMANCE STATS'), findsOneWidget);
     expect(find.text('SOLVED'), findsOneWidget);
     expect(find.text('ACCURACY'), findsOneWidget);
@@ -47,13 +56,13 @@ void main() {
     expect(find.text('84.2%'), findsOneWidget);
     expect(find.text('12 Days'), findsOneWidget);
 
-    // 5. Weekly Practice chart
+    // 6. Weekly Practice chart
     expect(find.text('WEEKLY PRACTICE DRILLS'), findsOneWidget);
     expect(find.text('308 Questions Solved'), findsOneWidget);
     expect(find.text('Mon'), findsOneWidget);
     expect(find.text('Sun'), findsOneWidget);
 
-    // 6. Subject Breakdown & Unlocked Achievements
+    // 7. Subject Breakdown & Unlocked Achievements
     expect(find.text('SUBJECT MASTERY & ACCURACY'), findsOneWidget);
     expect(find.text('Physics'), findsOneWidget);
     expect(find.text('Chemistry'), findsOneWidget);
@@ -61,7 +70,7 @@ void main() {
     expect(find.text('Century Solver'), findsOneWidget);
   });
 
-  testWidgets('Editing name, bio, and college updates and enables saving', (tester) async {
+  testWidgets('Clicking Edit enables editing, changes button to Save, and saves profile changes', (tester) async {
     await tester.pumpWidget(
       const ProviderScope(
         child: MaterialApp(
@@ -71,25 +80,48 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    // Enter new name
-    final nameField = find.widgetWithText(CupertinoTextField, 'Aspirant Scholar');
-    expect(nameField, findsOneWidget);
+    // 1. Initially fields are readOnly and Edit button is visible
+    expect(find.text('Edit'), findsOneWidget);
+    var nameField = tester.widget<CupertinoTextField>(
+      find.widgetWithText(CupertinoTextField, 'Aspirant Scholar'),
+    );
+    expect(nameField.readOnly, isTrue);
 
-    await tester.enterText(nameField, 'Arjun Sharma');
+    // 2. Click Edit button
+    await tester.tap(find.text('Edit'));
+    await tester.pumpAndSettle();
+
+    // 3. Button changes to Save, and fields become editable
+    expect(find.text('Save'), findsWidgets);
+    expect(find.text('Cancel'), findsOneWidget);
+
+    nameField = tester.widget<CupertinoTextField>(
+      find.widgetWithText(CupertinoTextField, 'Aspirant Scholar'),
+    );
+    expect(nameField.readOnly, isFalse);
+
+    // 4. Enter new name
+    await tester.enterText(find.widgetWithText(CupertinoTextField, 'Aspirant Scholar'), 'Arjun Sharma');
     await tester.pumpAndSettle();
 
     expect(find.text('Arjun Sharma'), findsOneWidget);
 
-    // Tap Save
-    await tester.tap(find.text('Save'));
+    // 5. Tap Save in AppBar
+    await tester.tap(find.text('Save').first);
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
 
-    // SnackBar appears
+    // 6. SnackBar appears and screen returns to view mode
     expect(find.text('Profile changes saved successfully!'), findsOneWidget);
+    expect(find.text('Edit'), findsOneWidget);
+
+    final updatedField = tester.widget<CupertinoTextField>(
+      find.widgetWithText(CupertinoTextField, 'Arjun Sharma'),
+    );
+    expect(updatedField.readOnly, isTrue);
   });
 
-  testWidgets('Avatar Persona picker sheet opens and selects new persona', (tester) async {
+  testWidgets('Only profilepic option is editable even WITHOUT clicking edit button', (tester) async {
     await tester.pumpWidget(
       const ProviderScope(
         child: MaterialApp(
@@ -99,21 +131,31 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    // Tap on avatar edit
+    // Verify NOT in edit mode
+    expect(find.text('Edit'), findsOneWidget);
+    expect(find.text('Save'), findsNothing);
+
+    // Tap on avatar edit WITHOUT clicking Edit button
     await tester.tap(find.text('Edit Photo & Persona'));
     await tester.pumpAndSettle();
 
-    // Verify avatar picker sheet appears
+    // Verify avatar picker sheet opens
     expect(find.text('Choose Avatar Persona'), findsOneWidget);
     expect(find.text('Electric Teal'), findsOneWidget);
     expect(find.text('Sunset Flame'), findsOneWidget);
     expect(find.text('Cosmic Purple'), findsOneWidget);
 
-    // Tap Electric Teal persona
+    // Select Electric Teal persona
     await tester.tap(find.text('Electric Teal'));
     await tester.pumpAndSettle();
 
-    // Sheet dismissed
+    // Sheet dismissed and avatar updated immediately
     expect(find.text('Choose Avatar Persona'), findsNothing);
+
+    // Profile fields remain locked
+    final nameField = tester.widget<CupertinoTextField>(
+      find.widgetWithText(CupertinoTextField, 'Aspirant Scholar'),
+    );
+    expect(nameField.readOnly, isTrue);
   });
 }
