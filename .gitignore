@@ -53,3 +53,7 @@ app.*.map.json
 extracted_apk/
 Score.apk
 
+# Environment variables
+.env
+*.env
+

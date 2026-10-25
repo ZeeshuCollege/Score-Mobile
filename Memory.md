@@ -333,13 +333,24 @@
     - 15/15 tests passing (100% pass rate) and 0 `flutter analyze` issues.
   - Recompiled release APK [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) at root.
 
+- **Action 48**: Provisioned Live Supabase Backend & Google OAuth Credentials (`.env` & `SupabaseConfig`):
+  - **Live Environment Provisioning** ([`.env`](file:///d:/CodeSupa/Score/.env)):
+    - Created root `.env` (gitignored for security) populated with:
+      - `SUPABASE_URL=https://jpjvcimeggkcpvlybciq.supabase.co`
+      - `SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...`
+      - `GOOGLE_WEB_CLIENT_ID=451337378745-goklsv2dsh9tlcrj6j5l8fegq55kmvtt.apps.googleusercontent.com`
+    - Created developer template [`.env.example`](file:///d:/CodeSupa/Score/.env.example).
+  - **Core Configuration Update** ([`lib/core/supabase/supabase_config.dart`](file:///d:/CodeSupa/Score/lib/core/supabase/supabase_config.dart)):
+    - Integrated live project URL, production anon key, and Google OAuth Web Client ID as default fallbacks so the app works automatically without requiring command-line flags.
+    - Updated `isConfigured` status checking to validate against live keys.
+  - **Automated Build Integration** ([`build_score_apk.ps1`](file:///d:/CodeSupa/Score/build_score_apk.ps1)):
+    - Updated PowerShell APK builder script to automatically supply `--dart-define-from-file=.env` if `.env` exists.
+  - Verified with `flutter analyze` (0 issues) and `flutter test` (15/15 tests passing, 100%).
+  - Recompiled release APK [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) at root.
+
 ---
 
 ## 5. Next Immediate Actions
 1. Keep [`Score.apk`](file:///d:/CodeSupa/Score/Score.apk) continuously refreshed upon subsequent commits.
 2. Synchronize and push latest commits to remote repository `https://github.com/ZeeshuCollege/Score-Mobile.git`.
 3. Enhance offline synchronization for user-generated notes.
-
-
-
-

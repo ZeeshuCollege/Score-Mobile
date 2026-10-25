@@ -3,7 +3,12 @@
 
 Write-Host "Building SCORE APK..." -ForegroundColor Cyan
 
-flutter build apk --release --no-tree-shake-icons
+$envArg = @()
+if (Test-Path ".env") {
+    $envArg = @("--dart-define-from-file=.env")
+}
+
+flutter build apk --release --no-tree-shake-icons @envArg
 
 if ($LASTEXITCODE -eq 0) {
     $apkPath = "build\app\outputs\flutter-apk\app-release.apk"
