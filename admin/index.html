@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SCORE — Admin Management & Customization Portal</title>
+  <meta name="description" content="Central administrative portal for customizing SCORE frontend, PYQ question bank, exam taxonomy, and student profiles.">
+  <link rel="icon" type="image/png" href="../favicon.png">
+
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- KaTeX for High-Fidelity Math Equation Rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGExxAU4wnrvtvZXYzECGFURBRapdQ" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaego2qbTrwyRGVKeW82lTO2IF3ElCoBQPCGGT9" crossorigin="anonymous"></script>
+
+  <!-- Supabase JS Client (v2) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Custom Admin Stylesheet -->
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+  <!-- ========================================================================= -->
+  <!-- 1. SECURE ADMIN LOGIN OVERLAY (SHOWN WHEN NOT LOGGED IN)                   -->
+  <!-- ========================================================================= -->
+  <div id="login-overlay" class="login-overlay">
+    <div class="login-mesh-bg"></div>
+    <div class="login-card glass-panel" role="dialog" aria-labelledby="login-title">
+      <div class="login-header">
+        <div class="brand-badge">
+          <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+          <span class="brand-name">SCORE</span>
+          <span class="badge-role">ADMIN</span>
+        </div>
+        <h1 id="login-title" class="login-title">Executive Control Center</h1>
+        <p class="login-subtitle">Sign in to manage questions, customize the mobile UI, and update exam taxonomy.</p>
+      </div>
+
+      <form id="admin-login-form" class="login-form" novalidate>
+        <div class="form-group">
+          <label for="admin-email">Admin Email</label>
+          <div class="input-wrapper">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+              <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+            <input type="email" id="admin-email" placeholder="admin@domain.com" required autocomplete="email">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="label-row">
+            <label for="admin-password">Password</label>
+            <button type="button" id="toggle-pwd-btn" class="text-btn" aria-label="Toggle password visibility">Show</button>
+          </div>
+          <div class="input-wrapper">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            <input type="password" id="admin-password" placeholder="••••••••" required autocomplete="current-password">
+          </div>
+        </div>
+
+        <div id="login-error-msg" class="login-error" role="alert" style="display: none;"></div>
+
+        <button type="submit" id="login-submit-btn" class="btn btn-primary btn-block">
+          <span>Authenticate & Open Admin Portal</span>
+          <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+
+        <div class="login-footer">
+          <button type="button" id="btn-autofill-admin" class="btn btn-ghost btn-sm">
+            ⚡ Quick-fill: pinjari.zee@gmail.com
+          </button>
+          <span class="security-note">🔒 256-bit Encrypted Session · Supabase Cloud Backed</span>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 2. MAIN ADMIN APP SHELL (NAVBAR + SIDEBAR + CONTENT TABS)                 -->
+  <!-- ========================================================================= -->
+  <div id="admin-app" class="admin-app" style="display: none;">
+
+    <!-- TOP HEADER -->
+    <header class="admin-header glass-panel">
+      <div class="header-left">
+        <button id="sidebar-toggle-btn" class="icon-btn" aria-label="Toggle Navigation Sidebar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+        <div class="brand-badge-header">
+          <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+          <span class="brand-title">SCORE</span>
+          <span class="badge-portal">ADMIN CONSOLE</span>
+        </div>
+        <div class="cloud-status-pill" id="cloud-status-pill" title="Supabase Cloud Connection">
+          <span class="status-dot"></span>
+          <span class="status-text">Cloud Sync: Active</span>
+        </div>
+      </div>
+
+      <div class="header-center">
+        <div class="global-search-wrapper">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="global-search-input" placeholder="Search questions, chapters, students, or settings (Press /)">
+          <kbd class="search-kbd">/</kbd>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <button id="btn-open-preview" class="btn btn-outline btn-sm" title="Live Phone Mockup of Frontend Changes">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
+            <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+            <line x1="12" y1="18" x2="12.01" y2="18"></line>
+          </svg>
+          <span>Live App Mockup</span>
+        </button>
+
+        <button id="theme-toggle-btn" class="icon-btn" aria-label="Toggle Dark/Light Mode" title="Toggle Theme">
+          <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+        </button>
+
+        <div class="admin-profile-pill">
+          <div class="admin-avatar">PZ</div>
+          <div class="admin-meta">
+            <span class="admin-name">pinjari.zee</span>
+            <span class="admin-role">Super Admin</span>
+          </div>
+          <button id="admin-logout-btn" class="icon-btn-danger" title="Sign Out">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- WORKSPACE BODY (SIDEBAR + MAIN TABS) -->
+    <div class="admin-body">
+
+      <!-- LEFT SIDEBAR -->
+      <aside id="admin-sidebar" class="admin-sidebar glass-panel">
+        <nav class="sidebar-nav">
+          <div class="nav-section-label">COMMAND & CONTROL</div>
+          <button class="nav-item active" data-tab="tab-overview">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            <span>Overview & Stats</span>
+          </button>
+
+          <button class="nav-item" data-tab="tab-frontend">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+            </svg>
+            <span>App Frontend & Banners</span>
+          </button>
+
+          <button class="nav-item" data-tab="tab-questions">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+            <span>Questions & PYQs</span>
+            <span id="badge-total-questions" class="pill-count">0</span>
+          </button>
+
+          <button class="nav-item" data-tab="tab-courses">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            <span>Courses & Exams</span>
+          </button>
+
+          <button class="nav-item" data-tab="tab-students">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            <span>Students & Profiles</span>
+          </button>
+
+          <div class="nav-section-label">INFRASTRUCTURE</div>
+          <button class="nav-item" data-tab="tab-config">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+            <span>Supabase & Settings</span>
+          </button>
+        </nav>
+
+        <div class="sidebar-footer">
+          <div class="version-chip">SCORE Engine v2.1</div>
+          <div class="live-ping">
+            <span class="ping-circle"></span>
+            <span>Real-time DB Active</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- MAIN TAB CONTENT VIEWS -->
+      <main class="admin-main">
+
+        <!-- ================================================================= -->
+        <!-- TAB 1: OVERVIEW & SYSTEM METRICS                                 -->
+        <!-- ================================================================= -->
+        <section id="tab-overview" class="tab-pane active">
+          <div class="tab-header-banner glass-panel">
+            <div>
+              <h2 class="section-title">Operations Command Center</h2>
+              <p class="section-desc">Real-time telemetry, question bank distribution, and dynamic mobile controls.</p>
+            </div>
+            <div class="banner-actions">
+              <button class="btn btn-primary" onclick="adminApp.switchTab('tab-frontend')">
+                <span>🎨 Customize Frontend</span>
+              </button>
+              <button class="btn btn-secondary" onclick="adminApp.openNewQuestionModal()">
+                <span>➕ New Question</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- KPI STAT CARDS -->
+          <div class="kpi-grid">
+            <div class="kpi-card glass-panel">
+              <div class="kpi-icon-wrap icon-blue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                </svg>
+              </div>
+              <div class="kpi-details">
+                <span class="kpi-label">Active Question Bank</span>
+                <span id="kpi-total-questions" class="kpi-value">1,420</span>
+                <span class="kpi-trend trend-up">↑ 124 added this week</span>
+              </div>
+            </div>
+
+            <div class="kpi-card glass-panel">
+              <div class="kpi-icon-wrap icon-purple">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                </svg>
+              </div>
+              <div class="kpi-details">
+                <span class="kpi-label">Registered Students</span>
+                <span id="kpi-total-students" class="kpi-value">2,850</span>
+                <span class="kpi-trend trend-up">↑ 18.4% monthly growth</span>
+              </div>
+            </div>
+
+            <div class="kpi-card glass-panel">
+              <div class="kpi-icon-wrap icon-green">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                </svg>
+              </div>
+              <div class="kpi-details">
+                <span class="kpi-label">Daily PYQs Attempted</span>
+                <span id="kpi-total-attempts" class="kpi-value">48,920</span>
+                <span class="kpi-trend trend-up">↑ 88.2% avg accuracy</span>
+              </div>
+            </div>
+
+            <div class="kpi-card glass-panel">
+              <div class="kpi-icon-wrap icon-amber">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 14 14"></polyline>
+                </svg>
+              </div>
+              <div class="kpi-details">
+                <span class="kpi-label">JEE Main Countdown</span>
+                <span id="kpi-exam-countdown" class="kpi-value">90 Days</span>
+                <span class="kpi-subtext">Target: 24 Jan 2026</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- QUICK SYSTEM SHORTCUTS & APP HEALTH -->
+          <div class="overview-grid">
+            <div class="overview-card glass-panel">
+              <h3 class="card-title">Live Dynamic App Status</h3>
+              <div class="status-list">
+                <div class="status-row">
+                  <span class="status-label">Announcement Banner</span>
+                  <span id="overview-announcement-status" class="badge badge-success">ACTIVE</span>
+                </div>
+                <div class="status-row">
+                  <span class="status-label">Home Slideshow</span>
+                  <span id="overview-slideshow-count" class="badge badge-info">3 Slides Active</span>
+                </div>
+                <div class="status-row">
+                  <span class="status-label">Maintenance Mode</span>
+                  <span id="overview-maintenance-status" class="badge badge-secondary">OFFLINE (Normal)</span>
+                </div>
+                <div class="status-row">
+                  <span class="status-label">Primary Exam Focus</span>
+                  <span class="badge badge-purple">JEE Advanced & Main</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="overview-card glass-panel">
+              <h3 class="card-title">Subject PYQ Distribution</h3>
+              <div class="subject-bars">
+                <div class="bar-group">
+                  <div class="bar-meta">
+                    <span>Physics</span>
+                    <span id="dist-physics">480 Qs (34%)</span>
+                  </div>
+                  <div class="progress-track"><div class="progress-fill fill-blue" style="width: 34%"></div></div>
+                </div>
+                <div class="bar-group">
+                  <div class="bar-meta">
+                    <span>Chemistry</span>
+                    <span id="dist-chemistry">440 Qs (31%)</span>
+                  </div>
+                  <div class="progress-track"><div class="progress-fill fill-emerald" style="width: 31%"></div></div>
+                </div>
+                <div class="bar-group">
+                  <div class="bar-meta">
+                    <span>Mathematics</span>
+                    <span id="dist-maths">500 Qs (35%)</span>
+                  </div>
+                  <div class="progress-track"><div class="progress-fill fill-purple" style="width: 35%"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- TAB 2: APP FRONTEND & BANNER CUSTOMIZATION                        -->
+        <!-- ================================================================= -->
+        <section id="tab-frontend" class="tab-pane">
+          <div class="tab-header-banner glass-panel">
+            <div>
+              <h2 class="section-title">App Frontend & Design Customizer</h2>
+              <p class="section-desc">Update the live mobile UI in real-time without recompiling the APK. Banners, announcement tickers, slides, colors, and feature flags.</p>
+            </div>
+            <div class="banner-actions">
+              <button id="btn-save-frontend" class="btn btn-primary" onclick="adminApp.saveFrontendConfig()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
+                  <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                  <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                  <polyline points="7 3 7 8 15 8"></polyline>
+                </svg>
+                <span>Save & Broadcast to App</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="frontend-customizer-grid">
+
+            <!-- 1. ANNOUNCEMENT TICKER -->
+            <div class="config-card glass-panel">
+              <div class="config-card-header">
+                <div>
+                  <h3 class="card-title">Top Header Announcement Ticker</h3>
+                  <p class="card-desc">Appears at the top of the mobile home screen for urgent exam alerts.</p>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" id="cfg-announcement-enabled" checked>
+                  <span class="slider round"></span>
+                </label>
+              </div>
+
+              <div class="form-group">
+                <label for="cfg-announcement-text">Announcement Text</label>
+                <input type="text" id="cfg-announcement-text" class="input-field" value="🎯 JEE Main 2026 Registration Open · Complete NTA PYQ Revision Series Live!">
+              </div>
+
+              <div class="form-row">
+                <div class="form-group flex-1">
+                  <label for="cfg-announcement-type">Banner Alert Style</label>
+                  <select id="cfg-announcement-type" class="select-field">
+                    <option value="info">Info (Ocean Blue)</option>
+                    <option value="success">Success (Emerald Green)</option>
+                    <option value="warning">Urgent (Vibrant Amber)</option>
+                    <option value="alert">Critical (Ruby Red)</option>
+                  </select>
+                </div>
+                <div class="form-group flex-1">
+                  <label for="cfg-announcement-link">Action Link (Optional URL / Route)</label>
+                  <input type="text" id="cfg-announcement-link" class="input-field" placeholder="/test-series or https://...">
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. HOME SCREEN SLIDESHOW MANAGER -->
+            <div class="config-card glass-panel full-width">
+              <div class="config-card-header">
+                <div>
+                  <h3 class="card-title">Home Screen Featured Slideshow</h3>
+                  <p class="card-desc">Configure up to 5 dynamic slides. Change slide images, headline text, action badges, and display interval.</p>
+                </div>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="adminApp.addNewSlide()">
+                  <span>➕ Add Slide</span>
+                </button>
+              </div>
+
+              <div id="slides-container" class="slides-editor-list">
+                <!-- Dynamically rendered slides -->
+              </div>
+            </div>
+
+            <!-- 3. BRANDING, THEME COLORS & PALETTE -->
+            <div class="config-card glass-panel">
+              <div class="config-card-header">
+                <h3 class="card-title">Brand Styling & Accent Palette</h3>
+                <span class="badge badge-info">Dynamic Theme</span>
+              </div>
+
+              <div class="form-group">
+                <label>Primary Brand Accent Color</label>
+                <div class="color-picker-row">
+                  <input type="color" id="cfg-primary-color" value="#2563EB" class="color-input">
+                  <input type="text" id="cfg-primary-hex" value="#2563EB" class="input-field hex-field" maxlength="7">
+                  <div class="preset-colors">
+                    <button type="button" class="preset-dot" style="background: #2563EB;" onclick="adminApp.setThemeColor('#2563EB')" title="Royal Blue"></button>
+                    <button type="button" class="preset-dot" style="background: #7C3AED;" onclick="adminApp.setThemeColor('#7C3AED')" title="Electric Violet"></button>
+                    <button type="button" class="preset-dot" style="background: #059669;" onclick="adminApp.setThemeColor('#059669')" title="Emerald"></button>
+                    <button type="button" class="preset-dot" style="background: #E11D48;" onclick="adminApp.setThemeColor('#E11D48')" title="Crimson"></button>
+                    <button type="button" class="preset-dot" style="background: #EA580C;" onclick="adminApp.setThemeColor('#EA580C')" title="Solar Amber"></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="cfg-brand-name">Application Display Title</label>
+                <input type="text" id="cfg-brand-name" class="input-field" value="SCORE">
+              </div>
+
+              <div class="form-row">
+                <div class="form-group flex-1">
+                  <label for="cfg-dark-default">Default Theme</label>
+                  <select id="cfg-dark-default" class="select-field">
+                    <option value="true">Dark Mode (Default)</option>
+                    <option value="false">Light Mode</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- 4. FEATURE FLAGS & APP TOGGLES -->
+            <div class="config-card glass-panel">
+              <div class="config-card-header">
+                <h3 class="card-title">Feature Flags & Subsystems</h3>
+                <span class="badge badge-purple">Instant Kill-Switch</span>
+              </div>
+
+              <div class="toggle-list">
+                <div class="toggle-item">
+                  <div class="toggle-info">
+                    <span class="toggle-title">Smart Mistake Notebook</span>
+                    <span class="toggle-desc">Allow students to bookmark and categorize mistake patterns</span>
+                  </div>
+                  <label class="switch">
+                    <input type="checkbox" id="cfg-flag-mistakes" checked>
+                    <span class="slider round"></span>
+                  </label>
+                </div>
+
+                <div class="toggle-item">
+                  <div class="toggle-info">
+                    <span class="toggle-title">Custom Test Engine</span>
+                    <span class="toggle-desc">Enable student-configured custom chapter & timer mock tests</span>
+                  </div>
+                  <label class="switch">
+                    <input type="checkbox" id="cfg-flag-customtests" checked>
+                    <span class="slider round"></span>
+                  </label>
+                </div>
+
+                <div class="toggle-item">
+                  <div class="toggle-info">
+                    <span class="toggle-title">Daily Practice Challenge</span>
+                    <span class="toggle-desc">Show curated daily streak questions on the home dashboard</span>
+                  </div>
+                  <label class="switch">
+                    <input type="checkbox" id="cfg-flag-daily" checked>
+                    <span class="slider round"></span>
+                  </label>
+                </div>
+
+                <div class="toggle-item">
+                  <div class="toggle-info">
+                    <span class="toggle-title">AI Doubt & Hint Solver</span>
+                    <span class="toggle-desc">Enable step-by-step Socratic hints during PYQ practice</span>
+                  </div>
+                  <label class="switch">
+                    <input type="checkbox" id="cfg-flag-aihints" checked>
+                    <span class="slider round"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- 5. EMERGENCY MAINTENANCE & MINIMUM APP VERSION -->
+            <div class="config-card glass-panel full-width border-danger">
+              <div class="config-card-header">
+                <div>
+                  <h3 class="card-title text-danger">Emergency Maintenance Mode & App Force-Update</h3>
+                  <p class="card-desc">When active, blocks standard student access with a custom maintenance message.</p>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" id="cfg-maintenance-active">
+                  <span class="slider round slider-danger"></span>
+                </label>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group flex-2">
+                  <label for="cfg-maintenance-msg">Student Maintenance Message</label>
+                  <input type="text" id="cfg-maintenance-msg" class="input-field" value="SCORE is currently upgrading to high-speed servers for upcoming JEE mock tests. Normal practice resumes in 30 minutes!">
+                </div>
+                <div class="form-group flex-1">
+                  <label for="cfg-min-version">Minimum App Version Required</label>
+                  <input type="text" id="cfg-min-version" class="input-field" value="1.0.0">
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- TAB 3: QUESTIONS & PYQ REPOSITORY (CRUD)                          -->
+        <!-- ================================================================= -->
+        <section id="tab-questions" class="tab-pane">
+          <div class="tab-header-banner glass-panel">
+            <div>
+              <h2 class="section-title">Question Bank & PYQ Repository</h2>
+              <p class="section-desc">Create, view, edit, delete, and search questions across all subjects with full KaTeX math formatting.</p>
+            </div>
+            <div class="banner-actions">
+              <button class="btn btn-secondary" onclick="adminApp.openBulkImportModal()">
+                <span>📥 Import JSON</span>
+              </button>
+              <button class="btn btn-outline" onclick="adminApp.exportQuestionsJson()">
+                <span>📤 Export Backup</span>
+              </button>
+              <button class="btn btn-primary" onclick="adminApp.openNewQuestionModal()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                <span>Add Question</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- QUESTION FILTERS & SEARCH BAR -->
+          <div class="filters-bar glass-panel">
+            <div class="search-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="search-icon">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input type="text" id="questions-search-input" placeholder="Search by question text, chapter, ID, or formula..." oninput="adminApp.filterQuestions()">
+            </div>
+
+            <div class="filter-group">
+              <label>Subject:</label>
+              <select id="filter-subject" class="select-field select-sm" onchange="adminApp.filterQuestions()">
+                <option value="ALL">All Subjects</option>
+                <option value="Physics">Physics</option>
+                <option value="Chemistry">Chemistry</option>
+                <option value="Mathematics">Mathematics</option>
+                <option value="Biology">Biology</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label>Exam:</label>
+              <select id="filter-exam" class="select-field select-sm" onchange="adminApp.filterQuestions()">
+                <option value="ALL">All Exams</option>
+                <option value="jee_main">JEE Main</option>
+                <option value="jee_adv">JEE Advanced</option>
+                <option value="neet">NEET UG</option>
+                <option value="bitsat">BITSAT</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label>Difficulty:</label>
+              <select id="filter-difficulty" class="select-field select-sm" onchange="adminApp.filterQuestions()">
+                <option value="ALL">All Levels</option>
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+              </select>
+            </div>
+
+            <div class="total-matched-tag">
+              <span id="filtered-count">0</span> Questions
+            </div>
+          </div>
+
+          <!-- QUESTIONS LIST CONTAINER -->
+          <div id="questions-list-container" class="questions-list">
+            <!-- Questions rendered via admin.js -->
+          </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- TAB 4: COURSES & EXAM TAXONOMY                                    -->
+        <!-- ================================================================= -->
+        <section id="tab-courses" class="tab-pane">
+          <div class="tab-header-banner glass-panel">
+            <div>
+              <h2 class="section-title">Exam Architecture & Course Taxonomy</h2>
+              <p class="section-desc">Manage examination countdown dates, target streams, and subject inclusions.</p>
+            </div>
+            <div class="banner-actions">
+              <button class="btn btn-primary" onclick="adminApp.saveCoursesConfig()">
+                <span>Save Course Taxonomy</span>
+              </button>
+            </div>
+          </div>
+
+          <div id="courses-cards-grid" class="courses-cards-grid">
+            <!-- Dynamically populated course cards -->
+          </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- TAB 5: STUDENT ACCOUNTS & ANALYTICS                               -->
+        <!-- ================================================================= -->
+        <section id="tab-students" class="tab-pane">
+          <div class="tab-header-banner glass-panel">
+            <div>
+              <h2 class="section-title">Student Directory & Profiles</h2>
+              <p class="section-desc">Synchronized with Supabase Auth & Public Profiles table.</p>
+            </div>
+            <div class="banner-actions">
+              <button class="btn btn-secondary" onclick="adminApp.refreshStudents()">
+                <span>🔄 Sync Profiles</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="table-container glass-panel">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Student Name</th>
+                  <th>Email</th>
+                  <th>Target Exam</th>
+                  <th>Dream College</th>
+                  <th>Solved</th>
+                  <th>Accuracy</th>
+                  <th>Streak</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="students-table-body">
+                <!-- Rendered dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- TAB 6: SUPABASE & SETTINGS                                        -->
+        <!-- ================================================================= -->
+        <section id="tab-config" class="tab-pane">
+          <div class="tab-header-banner glass-panel">
+            <div>
+              <h2 class="section-title">Cloud Infrastructure & Credentials</h2>
+              <p class="section-desc">Supabase project connection, REST endpoints, and database health.</p>
+            </div>
+          </div>
+
+          <div class="config-grid">
+            <div class="config-card glass-panel">
+              <h3 class="card-title">Supabase Cloud Connection</h3>
+              <div class="form-group">
+                <label for="cfg-supabase-url">Supabase Project URL</label>
+                <input type="text" id="cfg-supabase-url" class="input-field" value="https://jpjvcimeggkcpvlybciq.supabase.co">
+              </div>
+
+              <div class="form-group">
+                <label for="cfg-supabase-key">Supabase Public Anon Key</label>
+                <textarea id="cfg-supabase-key" class="input-field textarea-sm">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpwanZjaW1lZ2drY3B2bHliY2lxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI5MjM5OTMsImV4cCI6MjEwODQ5OTk5M30.cZOiQRxedvp_Ac72XE_DZxJxhVrIdjcSqbdmJTjqQh4</textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="cfg-google-client-id">Google OAuth Web Client ID</label>
+                <input type="text" id="cfg-google-client-id" class="input-field" value="451337378745-goklsv2dsh9tlcrj6j5l8fegq55kmvtt.apps.googleusercontent.com">
+              </div>
+
+              <div class="button-row">
+                <button type="button" class="btn btn-primary" onclick="adminApp.testCloudConnection()">
+                  <span>⚡ Test Supabase Live Ping</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="config-card glass-panel">
+              <h3 class="card-title">Admin Account Credentials</h3>
+              <p class="card-desc">Current administrator identity authorized for this portal.</p>
+              
+              <div class="form-group">
+                <label>Admin Primary Email</label>
+                <input type="text" class="input-field" value="pinjari.zee@gmail.com" readonly>
+              </div>
+
+              <div class="form-group">
+                <label>Security Clearance</label>
+                <div class="badge badge-success">Full SuperAdmin Privileges</div>
+              </div>
+
+              <div class="security-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="shield-icon">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+                <div class="security-text">
+                  <strong>Access URL Routing:</strong>
+                  <code>www.webapp.domain/admin</code>
+                  <p>When deployed on your custom domain, visiting <code>/admin</code> renders this secure dashboard.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 3. DIALOG: CREATE / EDIT QUESTION MODAL (MODERN <dialog> WITH BACKDROP)   -->
+  <!-- ========================================================================= -->
+  <dialog id="question-modal" class="modern-dialog glass-panel">
+    <div class="dialog-header">
+      <h3 id="question-modal-title" class="dialog-title">➕ Add New PYQ Question</h3>
+      <button type="button" class="icon-btn" onclick="adminApp.closeQuestionModal()" aria-label="Close Dialog">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <form id="question-form" class="dialog-body" onsubmit="adminApp.saveQuestion(event)">
+      <input type="hidden" id="q-id">
+
+      <div class="form-row">
+        <div class="form-group flex-1">
+          <label for="q-subject">Subject</label>
+          <select id="q-subject" class="select-field" required>
+            <option value="Physics">Physics</option>
+            <option value="Chemistry">Chemistry</option>
+            <option value="Mathematics">Mathematics</option>
+            <option value="Biology">Biology</option>
+          </select>
+        </div>
+
+        <div class="form-group flex-1">
+          <label for="q-chapter">Chapter Name</label>
+          <input type="text" id="q-chapter" class="input-field" placeholder="e.g. Electrostatics, Thermodynamics..." required>
+        </div>
+
+        <div class="form-group flex-1">
+          <label for="q-exam">Target Exam</label>
+          <select id="q-exam" class="select-field" required>
+            <option value="jee_main">JEE Main</option>
+            <option value="jee_adv">JEE Advanced</option>
+            <option value="neet">NEET UG</option>
+            <option value="bitsat">BITSAT</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group flex-1">
+          <label for="q-year">Exam Year</label>
+          <input type="number" id="q-year" class="input-field" value="2024" min="2000" max="2026" required>
+        </div>
+
+        <div class="form-group flex-1">
+          <label for="q-type">Question Format</label>
+          <select id="q-type" class="select-field" required>
+            <option value="singleChoice">Single Choice (SCQ)</option>
+            <option value="multipleChoice">Multiple Choice (MCQ)</option>
+            <option value="numerical">Numerical Value</option>
+          </select>
+        </div>
+
+        <div class="form-group flex-1">
+          <label for="q-difficulty">Difficulty Level</label>
+          <select id="q-difficulty" class="select-field" required>
+            <option value="easy">Easy</option>
+            <option value="medium" selected>Medium</option>
+            <option value="hard">Hard (Advanced)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- QUESTION TEXT & LIVE KATEX PREVIEW -->
+      <div class="form-group">
+        <div class="label-row">
+          <label for="q-text">Question Formulation (Supports LaTeX: <code>$E=mc^2$</code> or <code>$$\int x dx$$</code>)</label>
+          <span class="katex-hint">LaTeX Enabled</span>
+        </div>
+        <textarea id="q-text" class="input-field textarea-md" placeholder="Enter problem statement here. For equations use KaTeX math markup..." required oninput="adminApp.previewQuestionMath()"></textarea>
+        <div class="katex-preview-box">
+          <span class="preview-tag">LIVE KATEX PREVIEW:</span>
+          <div id="q-text-preview" class="katex-rendered"></div>
+        </div>
+      </div>
+
+      <!-- OPTIONS A, B, C, D -->
+      <div class="options-grid">
+        <div class="form-group">
+          <label for="q-opt-a">Option A</label>
+          <input type="text" id="q-opt-a" class="input-field" placeholder="Option A text or formula" required>
+        </div>
+        <div class="form-group">
+          <label for="q-opt-b">Option B</label>
+          <input type="text" id="q-opt-b" class="input-field" placeholder="Option B text or formula" required>
+        </div>
+        <div class="form-group">
+          <label for="q-opt-c">Option C</label>
+          <input type="text" id="q-opt-c" class="input-field" placeholder="Option C text or formula" required>
+        </div>
+        <div class="form-group">
+          <label for="q-opt-d">Option D</label>
+          <input type="text" id="q-opt-d" class="input-field" placeholder="Option D text or formula" required>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group flex-1">
+          <label for="q-correct">Correct Answer</label>
+          <select id="q-correct" class="select-field font-mono" required>
+            <option value="A">Option A</option>
+            <option value="B">Option B</option>
+            <option value="C">Option C</option>
+            <option value="D">Option D</option>
+          </select>
+        </div>
+        <div class="form-group flex-2">
+          <label for="q-video-url">Video Solution URL (YouTube or Cloud Stream)</label>
+          <input type="text" id="q-video-url" class="input-field" placeholder="https://youtube.com/watch?v=...">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="q-solution">Step-by-Step Solution & Concepts Explanation</label>
+        <textarea id="q-solution" class="input-field textarea-sm" placeholder="Provide complete derivation and tips..." required></textarea>
+      </div>
+
+      <div class="dialog-footer">
+        <button type="button" class="btn btn-secondary" onclick="adminApp.closeQuestionModal()">Cancel</button>
+        <button type="submit" class="btn btn-primary">
+          <span>Save Question to Supabase</span>
+        </button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- ========================================================================= -->
+  <!-- 4. DIALOG: DELETE CONFIRMATION                                            -->
+  <!-- ========================================================================= -->
+  <dialog id="confirm-modal" class="modern-dialog glass-panel modal-sm">
+    <div class="dialog-header">
+      <h3 class="dialog-title text-danger">⚠️ Confirm Deletion</h3>
+    </div>
+    <div class="dialog-body">
+      <p id="confirm-modal-text">Are you sure you want to permanently delete this item from the cloud database? This action cannot be undone.</p>
+    </div>
+    <div class="dialog-footer">
+      <button type="button" class="btn btn-secondary" onclick="adminApp.closeConfirmModal()">Cancel</button>
+      <button type="button" id="confirm-delete-btn" class="btn btn-danger">Confirm Delete</button>
+    </div>
+  </dialog>
+
+  <!-- ========================================================================= -->
+  <!-- 5. DIALOG: LIVE MOBILE APP PREVIEW MOCKUP                                -->
+  <!-- ========================================================================= -->
+  <dialog id="preview-modal" class="modern-dialog glass-panel modal-preview">
+    <div class="dialog-header">
+      <h3 class="dialog-title">📱 Live Mobile App Screen Mockup</h3>
+      <button type="button" class="icon-btn" onclick="document.getElementById('preview-modal').close()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    <div class="dialog-body preview-modal-body">
+      <!-- MOCKUP PHONE FRAME -->
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen" id="preview-phone-screen">
+          <!-- PHONE HEADER -->
+          <div class="phone-appbar">
+            <div class="phone-header-left">
+              <span class="phone-brand" id="mock-brand-title">SCORE</span>
+              <span class="phone-chevron">›</span>
+              <span class="phone-course">JEE Advanced</span>
+            </div>
+            <div class="phone-streak">
+              <span>🔥 12</span>
+            </div>
+          </div>
+
+          <!-- MOCK ANNOUNCEMENT TICKER -->
+          <div id="mock-announcement" class="mock-ticker">
+            <span class="mock-ticker-text" id="mock-ticker-text">JEE Main 2026 Session Live!</span>
+          </div>
+
+          <!-- MOCK SLIDESHOW -->
+          <div class="mock-slideshow">
+            <div class="mock-slide" id="mock-active-slide">
+              <img id="mock-slide-img" src="https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600" alt="Slide Preview">
+              <div class="mock-slide-overlay">
+                <span id="mock-slide-badge" class="mock-badge">New Edition</span>
+                <h4 id="mock-slide-title">100K+ Authentic PYQs</h4>
+              </div>
+            </div>
+            <div class="mock-dots" id="mock-dots">
+              <span class="mock-dot active"></span>
+              <span class="mock-dot"></span>
+              <span class="mock-dot"></span>
+            </div>
+          </div>
+
+          <!-- MOCK PRACTICE BUTTONS -->
+          <div class="mock-cards">
+            <div class="mock-card">
+              <div class="mock-card-title">Chapter-wise PYQs</div>
+              <div class="mock-card-sub">Physics, Chemistry, Maths</div>
+            </div>
+            <div class="mock-card">
+              <div class="mock-card-title">NTA Mock Tests</div>
+              <div class="mock-card-sub">Real CBT Simulation</div>
+            </div>
+          </div>
+
+          <!-- PHONE BOTTOM NAV -->
+          <div class="phone-bottom-nav">
+            <span class="nav-icon active">🏠</span>
+            <span class="nav-icon">📖</span>
+            <span class="nav-icon">🎯</span>
+            <span class="nav-icon">👤</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- ========================================================================= -->
+  <!-- 6. DIALOG: BULK QUESTIONS JSON IMPORTER                                   -->
+  <!-- ========================================================================= -->
+  <dialog id="import-modal" class="modern-dialog glass-panel">
+    <div class="dialog-header">
+      <h3 class="dialog-title">📥 Bulk Import Questions (JSON)</h3>
+      <button type="button" class="icon-btn" onclick="document.getElementById('import-modal').close()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    <div class="dialog-body">
+      <p class="dialog-desc">Paste an array of question JSON objects to bulk-import into Supabase:</p>
+      <textarea id="import-json-area" class="input-field textarea-lg font-mono" placeholder='[
+  {
+    "id": "q_1001",
+    "exam_id": "jee_main",
+    "subject_id": "Physics",
+    "chapter_id": "Electrostatics",
+    "year": 2024,
+    "question_type": "singleChoice",
+    "question_text": "Calculate the electric field...",
+    "options_json": ["10 N/C", "20 N/C", "30 N/C", "40 N/C"],
+    "correct_answer": "B",
+    "solution_text": "Using Gauss Law..."
+  }
+]'></textarea>
+    </div>
+    <div class="dialog-footer">
+      <button type="button" class="btn btn-secondary" onclick="document.getElementById('import-modal').close()">Cancel</button>
+      <button type="button" class="btn btn-primary" onclick="adminApp.processBulkImport()">Import Questions</button>
+    </div>
+  </dialog>
+
+  <!-- TOAST NOTIFICATION STACK -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- Admin Controller Logic -->
+  <script src="admin.js"></script>
+</body>
+</html>

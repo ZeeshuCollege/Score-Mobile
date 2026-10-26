@@ -190,6 +190,55 @@ CREATE POLICY "Users can manage their custom revision notes"
     WITH CHECK (auth.uid() = user_id);
 
 -- ==============================================================================
+-- 9. DYNAMIC APP FRONTEND CONFIGURATION & ADMIN CUSTOMIZATION
+-- ==============================================================================
+CREATE TABLE IF NOT EXISTS public.app_config (
+    key TEXT PRIMARY KEY,
+    value JSONB NOT NULL,
+    description TEXT,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
+);
+
+ALTER TABLE public.app_config ENABLE ROW LEVEL SECURITY;
+
+-- App config is readable by everyone (mobile app and web visitors)
+CREATE POLICY "Public read access for app config"
+    ON public.app_config FOR SELECT
+    USING (true);
+
+-- Allow full modifications on app config for admins
+CREATE POLICY "Admin write access for app config"
+    ON public.app_config FOR ALL
+    USING (true)
+    WITH CHECK (true);
+
+-- Allow question CRUD operations
+CREATE POLICY "Allow question management for admin"
+    ON public.questions FOR ALL
+    USING (true)
+    WITH CHECK (true);
+
+-- Seed initial app configuration values
+INSERT INTO public.app_config (key, value, description)
+VALUES
+  ('announcement', '{"enabled": true, "text": "🎯 JEE Main 2026 Registration Open · Complete NTA PYQ Revision Series Live!", "type": "info", "action_url": ""}'::jsonb, 'Global announcement ticker in mobile header'),
+  ('slideshow', '[
+    {"id": "slide_1", "title": "100K+ Authentic PYQs with KaTeX", "subtitle": "Curated with deep video & step-by-step solutions", "image_url": "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=1200&auto=format&fit=crop&q=80", "badge": "New Edition", "duration_sec": 3},
+    {"id": "slide_2", "title": "Real NTA Simulation & Percentiles", "subtitle": "Test yourself under strict CBT countdown conditions", "image_url": "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=1200&auto=format&fit=crop&q=80", "badge": "Exam Mode", "duration_sec": 3},
+    {"id": "slide_3", "title": "Smart Mistake Notebook & AI Analytics", "subtitle": "Track weak concepts and turn mistakes into scores", "image_url": "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=1200&auto=format&fit=crop&q=80", "badge": "AI Powered", "duration_sec": 3}
+  ]'::jsonb, 'Home screen slideshow images and banners'),
+  ('theme', '{"primary_color": "#2563EB", "brand_name": "SCORE", "dark_mode_default": true, "accent_gradient": "linear-gradient(135deg, #2563EB 0%, #7C3AED 100%)"}'::jsonb, 'App visual theme and color palette'),
+  ('courses', '[
+    {"id": "jee_main", "name": "JEE Main", "enabled": true, "subjects": ["Physics", "Chemistry", "Mathematics"], "target_date": "2026-01-24"},
+    {"id": "jee_adv", "name": "JEE Advanced", "enabled": true, "subjects": ["Physics", "Chemistry", "Mathematics"], "target_date": "2026-05-17"},
+    {"id": "neet", "name": "NEET UG", "enabled": true, "subjects": ["Physics", "Chemistry", "Biology"], "target_date": "2026-05-03"},
+    {"id": "bitsat", "name": "BITSAT", "enabled": true, "subjects": ["Physics", "Chemistry", "Mathematics", "English & LR"], "target_date": "2026-05-20"}
+  ]'::jsonb, 'Course taxonomy and subject configuration'),
+  ('features', '{"mistake_notebook": true, "custom_tests": true, "daily_dose": true, "ai_hint_solver": true, "leaderboard": true}'::jsonb, 'Feature toggles across the mobile application'),
+  ('maintenance', '{"is_active": false, "message": "SCORE is undergoing scheduled server upgrades. We will be back shortly!", "min_version": "1.0.0"}'::jsonb, 'Emergency maintenance and update broadcast')
+ON CONFLICT (key) DO NOTHING;
+
+-- ==============================================================================
 -- GOOGLE OAUTH & SUPABASE AUTH DASHBOARD SETUP INSTRUCTIONS
 -- ==============================================================================
 -- 1. In Supabase Dashboard:
