@@ -57,3 +57,13 @@ Score.apk
 .env
 *.env
 
+# Local Technical Documentation
+APP_DOCUMENTATION.md
+
+# Firebase configuration files (must be added manually after Firebase project setup)
+google-services.json
+GoogleService-Info.plist
+
+# Supabase Edge Function secrets
+supabase/.env
+supabase/functions/.env
