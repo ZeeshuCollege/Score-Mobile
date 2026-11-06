@@ -10,6 +10,12 @@ class SupabaseConfig {
 
   /// Default Supabase Anon Key.
   /// Can be overridden via compile-time flag: --dart-define=SUPABASE_ANON_KEY=eyJh...
+  ///
+  /// SECURITY NOTE: The anon (public) key below is safe to include in client code
+  /// per Supabase's design. It is a publishable key — Row Level Security (RLS) is
+  /// the actual security boundary, not key secrecy. The service-role key grants
+  /// unrestricted database access and must NEVER appear in client code or be
+  /// committed to version control. See: https://supabase.com/docs/guides/api/api-keys
   static const String _defaultAnonKey =
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpwanZjaW1lZ2drY3B2bHliY2lxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI5MjM5OTMsImV4cCI6MjEwODQ5OTk5M30.cZOiQRxedvp_Ac72XE_DZxJxhVrIdjcSqbdmJTjqQh4';
 

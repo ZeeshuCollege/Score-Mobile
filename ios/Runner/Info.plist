@@ -4,6 +4,31 @@
 <dict>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+
+	<!-- Firebase Cloud Messaging: Background execution modes required for push notifications -->
+	<!-- fetch: allows periodic background fetch (iOS background refresh) -->
+	<!-- remote-notification: required for FCM data-only messages in background -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
+
+	<!-- FCM: Disable method swizzling if you need manual APNs token handling -->
+	<!-- Set to NO only if you are manually forwarding APNs tokens to Firebase -->
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
+
+	<!-- NOTE: After downloading GoogleService-Info.plist from Firebase Console, -->
+	<!-- add the REVERSED_CLIENT_ID value from that file as a URL scheme here: -->
+	<!-- <key>CFBundleURLTypes</key> -->
+	<!-- <array> -->
+	<!--   <dict> -->
+	<!--     <key>CFBundleURLSchemes</key> -->
+	<!--     <array><string>YOUR_REVERSED_CLIENT_ID_FROM_GoogleService-Info.plist</string></array> -->
+	<!--   </dict> -->
+	<!-- </array> -->
+	<!-- See INFRASTRUCTURE_SETUP.md for exact steps -->
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>

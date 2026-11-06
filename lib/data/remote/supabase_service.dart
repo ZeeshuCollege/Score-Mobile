@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/supabase/supabase_config.dart';
@@ -195,4 +196,23 @@ class SupabaseService {
 
   /// Stream of Supabase Auth state changes
   Stream<AuthState>? get authStateChanges => client?.auth.onAuthStateChange;
+
+  /// Listen to Supabase auth state changes (sign in, sign out, token refresh).
+  ///
+  /// Returns a subscription that must be cancelled when no longer needed.
+  /// Returns null if Supabase client is not initialized.
+  ///
+  /// Example usage in a StatefulWidget:
+  ///   StreamSubscription? _authSub;
+  ///   @override void initState() {
+  ///     _authSub = SupabaseService.instance.listenToAuthChanges((event) {
+  ///       if (event.event == AuthChangeEvent.signedOut) { ... }
+  ///     });
+  ///   }
+  ///   @override void dispose() { _authSub?.cancel(); super.dispose(); }
+  StreamSubscription<AuthState>? listenToAuthChanges(
+    void Function(AuthState event) callback,
+  ) {
+    return client?.auth.onAuthStateChange.listen(callback);
+  }
 }

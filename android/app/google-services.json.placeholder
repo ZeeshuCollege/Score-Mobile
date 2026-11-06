@@ -1,0 +1,17 @@
+{
+  "_comment": "PLACEHOLDER FILE — Replace this file with the actual google-services.json from Firebase Console",
+  "_instructions": [
+    "1. Go to Firebase Console: https://console.firebase.google.com/",
+    "2. Select or create your SCORE project",
+    "3. Go to Project Settings (gear icon) → General tab",
+    "4. Under 'Your apps', register an Android app if not already done:",
+    "   - Android package name: com.score.app.score",
+    "   - App nickname: SCORE Android",
+    "   - SHA-1 certificate (optional for now, required for Google Sign-In)",
+    "5. Click 'Download google-services.json'",
+    "6. RENAME this file to 'google-services.json' (remove .placeholder extension)",
+    "7. This file must stay in: android/app/google-services.json",
+    "8. This file is listed in .gitignore — do NOT commit it to version control",
+    "9. See INFRASTRUCTURE_SETUP.md for complete Firebase setup instructions"
+  ]
+}

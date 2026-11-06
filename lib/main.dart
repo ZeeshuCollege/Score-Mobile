@@ -6,6 +6,7 @@ import 'app/theme/app_colors.dart';
 import 'app/theme/app_theme.dart';
 import 'presentation/auth/splash_screen.dart';
 import 'data/remote/supabase_service.dart';
+import 'core/services/firebase_notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,6 +15,12 @@ void main() async {
 
   // Initialize Supabase Backend Client (Email Auth, Google OAuth, Cloud DB)
   await SupabaseService.instance.initialize();
+
+  // Initialize Firebase and FCM (gracefully degrades if config files are absent)
+  // google-services.json (Android) and GoogleService-Info.plist (iOS) must be
+  // added to the project before this will connect to a live Firebase project.
+  // See INFRASTRUCTURE_SETUP.md for Firebase configuration instructions.
+  await FirebaseNotificationService.instance.initialize();
 
   runApp(
     const ProviderScope(

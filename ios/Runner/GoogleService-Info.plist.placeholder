@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!--
+    PLACEHOLDER FILE — Replace this file with the actual GoogleService-Info.plist from Firebase Console
+
+    Instructions:
+    1. Go to Firebase Console: https://console.firebase.google.com/
+    2. Select or create your SCORE project
+    3. Go to Project Settings (gear icon) → General tab
+    4. Under 'Your apps', register an iOS app if not already done:
+       - iOS bundle ID: (check ios/Runner.xcodeproj/project.pbxproj for PRODUCT_BUNDLE_IDENTIFIER)
+       - App nickname: SCORE iOS
+       - App Store ID: (optional, leave blank for now)
+    5. Click 'Download GoogleService-Info.plist'
+    6. RENAME this file to 'GoogleService-Info.plist' (remove .placeholder extension)
+    7. In Xcode:
+       a. Open ios/Runner.xcworkspace
+       b. Right-click on Runner folder → Add Files to "Runner"
+       c. Select GoogleService-Info.plist
+       d. Ensure "Copy items if needed" is checked
+       e. Ensure Target "Runner" is checked
+       f. Click Add
+    8. This file must NOT be committed to version control (.gitignore excludes it)
+    9. After adding, copy the REVERSED_CLIENT_ID value from the plist
+       and add it to ios/Runner/Info.plist as a CFBundleURLTypes entry
+       (see commented section in Info.plist)
+
+    See INFRASTRUCTURE_SETUP.md for complete Firebase iOS setup instructions
+    -->
+    <key>PLACEHOLDER</key>
+    <string>See INFRASTRUCTURE_SETUP.md for Firebase iOS configuration steps</string>
+</dict>
+</plist>

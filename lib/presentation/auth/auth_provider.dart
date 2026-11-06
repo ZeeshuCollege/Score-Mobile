@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/supabase/supabase_config.dart';
+import '../../core/services/device_token_service.dart';
 import '../../data/local/app_database.dart';
 import '../../data/remote/supabase_service.dart';
 
@@ -272,6 +273,8 @@ class AuthNotifier extends Notifier<AuthState> {
   }
 
   Future<void> logout() async {
+    // Deactivate FCM token BEFORE signOut (requires active auth session for RLS)
+    await DeviceTokenService.instance.deactivateToken();
     await SupabaseService.instance.signOut();
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_authPrefKey);
