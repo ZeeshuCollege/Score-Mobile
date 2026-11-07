@@ -471,3 +471,4 @@ When SCORE approaches 100k+ concurrent users:
 2. Partition large tables (`questions`, `test_attempts`) by `exam_id`
 3. Consider Cloudflare Workers for server-side rendering of public content
 4. Implement token batching in `send-notification` for bulk notifications
+

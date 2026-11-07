@@ -256,3 +256,4 @@ The following are **not blockers for the codebase** but are required before the 
 | Task 1: Dependencies | `32fd98e` | firebase, http, notifications deps + env config |
 | Tasks 2–9: Infrastructure | `af15190` | Full infrastructure implementation (22 files, 4168 insertions) |
 | Documentation | (pending) | INFRASTRUCTURE.md, INFRASTRUCTURE_SETUP.md, IMPLEMENTATION_REPORT.md |
+
