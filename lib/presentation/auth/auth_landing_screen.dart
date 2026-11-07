@@ -38,10 +38,41 @@ class _AuthLandingScreenState extends ConsumerState<AuthLandingScreen> {
   bool _obscureSignupConfirmPassword = true;
   String? _errorMessage;
 
+  /// Set to true when the Google OAuth browser has been launched and we are
+  /// waiting for the deep-link callback.  Only in this state should the
+  /// authProvider listener trigger navigation.
+  bool _googleOAuthPending = false;
+
   @override
   void initState() {
     super.initState();
     _isSignup = widget.initialIsSignup;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Listen for auth state becoming authenticated.
+    // Only navigate here when _googleOAuthPending is true — i.e., the Google
+    // OAuth flow was started from this screen.  Email/password login navigates
+    // directly in _handleLogin/_handleSignup and does not set this flag.
+    ref.listenManual(authProvider, (previous, next) {
+      if (!mounted || !_googleOAuthPending) return;
+      if (next.isAuthenticated && !(previous?.isAuthenticated ?? false)) {
+        _googleOAuthPending = false;
+        HapticFeedback.mediumImpact();
+        Navigator.pushAndRemoveUntil(
+          context,
+          CupertinoPageRoute(builder: (_) => const MainNavScreen()),
+          (route) => false,
+        );
+      }
+      // If OAuth callback set an error, clear the pending flag
+      if (next.errorMessage != null && !next.isLoading) {
+        _googleOAuthPending = false;
+        setState(() => _errorMessage = next.errorMessage);
+      }
+    });
   }
 
   @override
@@ -130,15 +161,17 @@ class _AuthLandingScreenState extends ConsumerState<AuthLandingScreen> {
 
   Future<void> _handleGoogleAuth() async {
     HapticFeedback.mediumImpact();
-    final success = await ref.read(authProvider.notifier).signInWithGoogle();
+    final launched = await ref.read(authProvider.notifier).signInWithGoogle();
     if (!mounted) return;
 
-    if (success) {
-      Navigator.pushAndRemoveUntil(
-        context,
-        CupertinoPageRoute(builder: (_) => const MainNavScreen()),
-        (route) => false,
-      );
+    if (launched) {
+      // Browser is open — set pending flag so the listener navigates when
+      // the OAuth callback returns and auth state becomes authenticated.
+      setState(() => _googleOAuthPending = true);
+    } else {
+      // Browser could not be opened — error already set in auth state
+      final authState = ref.read(authProvider);
+      setState(() => _errorMessage = authState.errorMessage ?? 'Could not start Google Sign-In.');
     }
   }
 

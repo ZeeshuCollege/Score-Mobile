@@ -218,47 +218,82 @@ class AuthNotifier extends Notifier<AuthState> {
     }
   }
 
-  /// Sign in with Google via Supabase OAuth (redirects to `score://login-callback`)
+  /// Sign in with Google via Supabase OAuth (redirects to `score://login-callback`).
+  ///
+  /// This launches the browser and returns immediately — the session is
+  /// established asynchronously when the deep link brings the user back.
+  /// The auth state is updated via [handleOAuthCallback] once the deep link
+  /// is received.  Returns `true` if the browser was successfully launched,
+  /// `false` on error.
   Future<bool> signInWithGoogle() async {
     state = state.copyWith(isLoading: true, errorMessage: null);
 
-    if (SupabaseConfig.isConfigured) {
-      try {
-        final launched = await SupabaseService.instance.signInWithGoogle();
-        if (launched) {
-          final currentUser = SupabaseService.instance.currentUser;
-          final googleEmail = currentUser?.email ?? 'google.student@score.app';
-          final googleName = currentUser?.userMetadata?['name'] as String? ??
-              currentUser?.userMetadata?['full_name'] as String? ??
-              'Google Aspirant';
-
-          await _persistSession(googleEmail, googleName);
-          state = AuthState(
-            isAuthenticated: true,
-            email: googleEmail,
-            name: googleName,
-            isLoading: false,
-          );
-          return true;
-        }
-      } catch (e) {
-        debugPrint('Google OAuth launch error: $e');
-      }
+    if (!SupabaseConfig.isConfigured) {
+      // Supabase not configured — reset loading and report
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage: 'Google Sign-In is not available in offline mode.',
+      );
+      return false;
     }
 
-    // Fallback simulated authentication for testing and preview
-    await Future.delayed(const Duration(milliseconds: 500));
-    const googleEmail = 'google.student@score.app';
-    const googleName = 'Google Aspirant';
-    await _persistSession(googleEmail, googleName);
+    try {
+      final launched = await SupabaseService.instance.signInWithGoogle();
+      if (!launched) {
+        state = state.copyWith(
+          isLoading: false,
+          errorMessage: 'Could not open Google Sign-In. Please try again.',
+        );
+        return false;
+      }
+      // Browser launched — keep isLoading: true while we wait for the
+      // deep-link callback to come back via handleOAuthCallback().
+      return true;
+    } catch (e) {
+      debugPrint('Google OAuth launch error: $e');
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage: 'Google Sign-In failed. Please try again.',
+      );
+      return false;
+    }
+  }
 
-    state = const AuthState(
-      isAuthenticated: true,
-      email: googleEmail,
-      name: googleName,
-      isLoading: false,
-    );
-    return true;
+  /// Called by the deep-link handler in main.dart when `score://login-callback`
+  /// is received.  Supabase processes the URL and fires onAuthStateChange;
+  /// this method extracts the user details and updates the auth state.
+  Future<void> handleOAuthCallback(Uri uri) async {
+    debugPrint('AuthNotifier: handleOAuthCallback — $uri');
+    try {
+      // Let Supabase exchange the OAuth code for a session
+      await SupabaseService.instance.client?.auth.getSessionFromUrl(uri);
+
+      final currentUser = SupabaseService.instance.currentUser;
+      if (currentUser != null) {
+        final googleEmail = currentUser.email ?? 'google.student@score.app';
+        final googleName = currentUser.userMetadata?['name'] as String? ??
+            currentUser.userMetadata?['full_name'] as String? ??
+            'Google Aspirant';
+        await _persistSession(googleEmail, googleName);
+        state = AuthState(
+          isAuthenticated: true,
+          email: googleEmail,
+          name: googleName,
+          isLoading: false,
+        );
+      } else {
+        state = state.copyWith(
+          isLoading: false,
+          errorMessage: 'Google Sign-In completed but no user found. Please try again.',
+        );
+      }
+    } catch (e) {
+      debugPrint('AuthNotifier: handleOAuthCallback error: $e');
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage: 'Google Sign-In failed. Please try again.',
+      );
+    }
   }
 
   Future<void> continueAsGuest() async {

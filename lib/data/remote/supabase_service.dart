@@ -159,14 +159,20 @@ class SupabaseService {
     }
   }
 
-  /// Trigger Google OAuth authentication via Supabase
-  /// Opens the browser / custom tabs and redirects back to `score://login-callback`
+  /// Trigger Google OAuth authentication via Supabase.
+  ///
+  /// Opens the system browser / custom tabs and redirects back to
+  /// `score://login-callback` once the user completes sign-in.
+  ///
+  /// Returns `true` if the browser was successfully launched.
+  /// The actual session is established asynchronously via the deep-link
+  /// callback — listen to [authStateChanges] for the [AuthChangeEvent.signedIn]
+  /// event rather than checking [currentUser] immediately after this call.
   Future<bool> signInWithGoogle() async {
     final supabase = client;
     if (supabase == null || !SupabaseConfig.isConfigured) {
-      // In demo/test mode without active cloud keys, provide smooth simulated login
-      debugPrint('SupabaseService: Running Google OAuth in demo/test fallback mode');
-      return true;
+      debugPrint('SupabaseService: Supabase not configured — Google OAuth unavailable');
+      return false;
     }
 
     try {

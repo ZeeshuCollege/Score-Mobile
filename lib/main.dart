@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:app_links/app_links.dart';
 import 'app/app_state.dart';
 import 'app/theme/app_colors.dart';
 import 'app/theme/app_theme.dart';
 import 'presentation/auth/splash_screen.dart';
 import 'data/remote/supabase_service.dart';
 import 'core/services/firebase_notification_service.dart';
+import 'presentation/auth/auth_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,11 +31,43 @@ void main() async {
   );
 }
 
-class ScoreApp extends ConsumerWidget {
+class ScoreApp extends ConsumerStatefulWidget {
   const ScoreApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ScoreApp> createState() => _ScoreAppState();
+}
+
+class _ScoreAppState extends ConsumerState<ScoreApp> {
+  late final AppLinks _appLinks;
+
+  @override
+  void initState() {
+    super.initState();
+    _initDeepLinks();
+  }
+
+  /// Listens for incoming deep links (including the OAuth callback
+  /// `score://login-callback?code=...`) and forwards them to the
+  /// auth notifier for processing.
+  void _initDeepLinks() {
+    _appLinks = AppLinks();
+
+    _appLinks.uriLinkStream.listen(
+      (uri) {
+        debugPrint('ScoreApp: deep link received — $uri');
+        if (uri.host == 'login-callback') {
+          ref.read(authProvider.notifier).handleOAuthCallback(uri);
+        }
+      },
+      onError: (e) {
+        debugPrint('ScoreApp: deep link error — $e');
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final themeMode = ref.watch(themeModeProvider);
 
     return MaterialApp(
