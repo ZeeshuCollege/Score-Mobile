@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app/theme/app_colors.dart';
+import '../../core/services/app_config_service.dart';
+import '../common/widgets/dynamic_image_widget.dart';
 import '../main_nav_screen.dart';
 import 'auth_landing_screen.dart';
 import 'auth_provider.dart';
@@ -116,7 +118,7 @@ class _OnboardingSlideshowScreenState extends ConsumerState<OnboardingSlideshowS
             },
             itemBuilder: (context, index) {
               final item = slides[index];
-              return _buildSlidePage(item);
+              return _buildSlidePage(item, index);
             },
           ),
 
@@ -232,7 +234,10 @@ class _OnboardingSlideshowScreenState extends ConsumerState<OnboardingSlideshowS
     );
   }
 
-  Widget _buildSlidePage(OnboardingSlide slide) {
+  Widget _buildSlidePage(OnboardingSlide slide, int index) {
+    final customSlideImg = ref.watch(appConfigProvider).getOnboardingSlide(index);
+    final hasCustomImg = customSlideImg != null && customSlideImg.isNotEmpty;
+
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -250,12 +255,13 @@ class _OnboardingSlideshowScreenState extends ConsumerState<OnboardingSlideshowS
             children: [
               const Spacer(flex: 2),
 
-              // Default Flutter icon hero badge showcase
+              // Dynamic Onboarding Slide Image (or default Flutter icon hero badge)
               Container(
-                width: 140,
-                height: 140,
+                width: hasCustomImg ? 180 : 140,
+                height: hasCustomImg ? 180 : 140,
                 decoration: BoxDecoration(
-                  shape: BoxShape.circle,
+                  shape: hasCustomImg ? BoxShape.rectangle : BoxShape.circle,
+                  borderRadius: hasCustomImg ? BorderRadius.circular(24) : null,
                   color: Colors.white.withValues(alpha: 0.08),
                   border: Border.all(color: Colors.white24, width: 1.5),
                   boxShadow: [
@@ -266,10 +272,19 @@ class _OnboardingSlideshowScreenState extends ConsumerState<OnboardingSlideshowS
                     ),
                   ],
                 ),
-                child: const Center(
-                  child: FlutterLogo(
-                    size: 80,
-                  ),
+                child: Center(
+                  child: hasCustomImg
+                      ? DynamicImageWidget(
+                          imageSource: customSlideImg,
+                          width: 180,
+                          height: 180,
+                          fit: BoxFit.cover,
+                          borderRadius: BorderRadius.circular(22),
+                          fallback: const FlutterLogo(size: 80),
+                        )
+                      : const FlutterLogo(
+                          size: 80,
+                        ),
                 ),
               ),
               const SizedBox(height: 36),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../main_nav_screen.dart';
 import '../../core/services/permission_service.dart';
+import '../common/widgets/app_logo_widget.dart';
 import 'auth_provider.dart';
 import 'onboarding_slideshow_screen.dart';
 
@@ -100,7 +101,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
                 children: [
                   const Spacer(),
 
-                  // Default Flutter icon as SCORE Logo
+                  // Dynamic SCORE Logo (synced from Web Admin Portal, defaults to Flutter icon)
                   Container(
                     width: 110,
                     height: 110,
@@ -117,7 +118,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
                       ],
                     ),
                     child: const Center(
-                      child: FlutterLogo(
+                      child: AppLogoWidget(
                         size: 74,
                       ),
                     ),

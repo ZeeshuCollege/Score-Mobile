@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../app/theme/app_colors.dart';
+import '../../common/widgets/app_logo_widget.dart';
 
 /// Media format types supported by the slidebar section.
 enum SlideMediaType {
@@ -374,7 +376,7 @@ class _SlidebarSectionState extends State<SlidebarSection> {
                 ],
               ),
               child: const Center(
-                child: FlutterLogo(
+                child: AppLogoWidget(
                   size: 46,
                 ),
               ),
@@ -385,12 +387,27 @@ class _SlidebarSectionState extends State<SlidebarSection> {
     );
   }
 
-  /// Custom Image Slide supporting web URLs, assets, and local files
+  /// Custom Image Slide supporting web URLs, base64 data URLs, assets, and local files
   Widget _buildImageSlide(SlideMediaItem item, bool isDark) {
     final url = item.mediaUrl ?? '';
     Widget imageWidget;
 
-    if (url.startsWith('http://') || url.startsWith('https://')) {
+    if (url.startsWith('data:image')) {
+      try {
+        final commaIndex = url.indexOf(',');
+        final base64String = commaIndex != -1 ? url.substring(commaIndex + 1) : url;
+        final bytes = base64Decode(base64String);
+        imageWidget = Image.memory(
+          bytes,
+          fit: BoxFit.cover,
+          width: double.infinity,
+          height: widget.height,
+          errorBuilder: (context, error, stackTrace) => _buildFallback(item, isDark),
+        );
+      } catch (_) {
+        imageWidget = _buildFallback(item, isDark);
+      }
+    } else if (url.startsWith('http://') || url.startsWith('https://')) {
       imageWidget = Image.network(
         url,
         fit: BoxFit.cover,

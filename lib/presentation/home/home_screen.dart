@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app/app_state.dart';
 import '../../app/theme/app_colors.dart';
 import '../../app/theme/app_typography.dart';
+import '../../core/services/app_config_service.dart';
 import '../../domain/entities/exam_entity.dart';
 import '../buckets/pyq_buckets_screen.dart';
 import '../common/ios_grouped_list.dart';
@@ -228,39 +229,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
 
                 // 3. Featured Slideshow Section (Max 5 images/videos, 2s auto-scroll, white dots inside at bottom)
+                // Dynamically syncs custom in-app banner slides uploaded via Web Admin Portal,
+                // or displays the 5 default Flutter flagship showcase slides.
                 SlidebarSection(
-                  items: SlidebarSection.defaultFlutterSlides(
-                    onTop500Tap: () {
-                      Navigator.push(
-                        context,
-                        CupertinoPageRoute(builder: (_) => Top500Screen(examId: _selectedExamId)),
-                      );
-                    },
-                    onDppTap: () {
-                      Navigator.push(
-                        context,
-                        CupertinoPageRoute(builder: (_) => DppScreen(examId: _selectedExamId)),
-                      );
-                    },
-                    onTestTap: () {
-                      Navigator.push(
-                        context,
-                        CupertinoPageRoute(builder: (_) => const CustomTestScreen()),
-                      );
-                    },
-                    onMistakesTap: () {
-                      Navigator.push(
-                        context,
-                        CupertinoPageRoute(builder: (_) => const MistakeNotebookScreen()),
-                      );
-                    },
-                    onFormulasTap: () {
-                      Navigator.push(
-                        context,
-                        CupertinoPageRoute(builder: (_) => const FormulaCardsScreen()),
-                      );
-                    },
-                  ),
+                  items: _buildHomeSlideItems(ref.watch(appConfigProvider)),
                 ),
 
                 // 4. Quick Power Modes Bento Grid
@@ -587,5 +559,63 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       default:
         return AppColors.systemOrange;
     }
+  }
+
+  /// Builds home screen slides, dynamically rendering custom in-app banner slides
+  /// uploaded from Web Admin Portal or falling back to the 5 default Flutter slides.
+  List<SlideMediaItem> _buildHomeSlideItems(AppConfig config) {
+    if (config.hasCustomInAppSlides) {
+      final customSlides = <SlideMediaItem>[];
+      for (int i = 0; i < 3; i++) {
+        final img = config.getInAppSlide(i);
+        if (img != null && img.isNotEmpty) {
+          customSlides.add(
+            SlideMediaItem(
+              type: SlideMediaType.image,
+              mediaUrl: img,
+              badge: 'FEATURED',
+              title: i == 0 ? 'SCORE Flagship' : (i == 1 ? 'Exam Preparation' : 'Target AIR Series'),
+              subtitle: 'Tap to explore curated questions and high-yield problem solving',
+            ),
+          );
+        }
+      }
+      if (customSlides.isNotEmpty) {
+        return customSlides;
+      }
+    }
+
+    return SlidebarSection.defaultFlutterSlides(
+      onTop500Tap: () {
+        Navigator.push(
+          context,
+          CupertinoPageRoute(builder: (_) => Top500Screen(examId: _selectedExamId)),
+        );
+      },
+      onDppTap: () {
+        Navigator.push(
+          context,
+          CupertinoPageRoute(builder: (_) => DppScreen(examId: _selectedExamId)),
+        );
+      },
+      onTestTap: () {
+        Navigator.push(
+          context,
+          CupertinoPageRoute(builder: (_) => const CustomTestScreen()),
+        );
+      },
+      onMistakesTap: () {
+        Navigator.push(
+          context,
+          CupertinoPageRoute(builder: (_) => const MistakeNotebookScreen()),
+        );
+      },
+      onFormulasTap: () {
+        Navigator.push(
+          context,
+          CupertinoPageRoute(builder: (_) => const FormulaCardsScreen()),
+        );
+      },
+    );
   }
 }

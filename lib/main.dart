@@ -8,6 +8,7 @@ import 'app/theme/app_theme.dart';
 import 'presentation/auth/splash_screen.dart';
 import 'data/remote/supabase_service.dart';
 import 'core/services/firebase_notification_service.dart';
+import 'core/services/app_config_service.dart';
 import 'presentation/auth/auth_provider.dart';
 
 void main() async {
@@ -17,6 +18,9 @@ void main() async {
 
   // Initialize Supabase Backend Client (Email Auth, Google OAuth, Cloud DB)
   await SupabaseService.instance.initialize();
+
+  // Initialize Dynamic App Configuration (Live Logo & Slideshow Asset Synchronization)
+  await AppConfigService.instance.initialize();
 
   // Initialize Firebase and FCM (gracefully degrades if config files are absent)
   // google-services.json (Android) and GoogleService-Info.plist (iOS) must be

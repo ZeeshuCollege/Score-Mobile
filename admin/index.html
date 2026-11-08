@@ -1,0 +1,521 @@
+<!-- Mirrored from web/admin/index.html for root serving -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SCORE — Admin Portal</title>
+  <link rel="icon" type="image/png" href="../web/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <!-- DESKTOP-ONLY ACCESS RESTRICTION OVERLAY -->
+  <div id="desktop-only-warning" class="desktop-warning-container" style="display: none;">
+    <div class="desktop-warning-card">
+      <div class="desktop-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="device-icon">
+          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+          <line x1="8" y1="21" x2="16" y2="21"></line>
+          <line x1="12" y1="17" x2="12" y2="21"></line>
+        </svg>
+      </div>
+      <h2>Desktop Access Only</h2>
+      <p>The SCORE Admin Portal is restricted exclusively to desktop computers and laptops.</p>
+      <div class="url-badge">
+        <span>www.yourdomain.com/admin</span>
+      </div>
+      <p class="desktop-hint">Please open this URL in a desktop web browser (minimum width 1024px) to manage application assets.</p>
+    </div>
+  </div>
+
+  <!-- EXECUTIVE SIGN-IN VIEW -->
+  <div id="login-view" class="auth-wrapper">
+    <div class="auth-card glass-panel">
+      <div class="brand-header">
+        <div class="brand-logo-circle">
+          <span class="brand-letter">S</span>
+        </div>
+        <h1 class="brand-title">SCORE</h1>
+        <span class="brand-badge">ADMIN PORTAL</span>
+      </div>
+
+      <p class="auth-subtitle">Sign in with administrator credentials to manage app visual assets.</p>
+
+      <!-- Error Banner -->
+      <div id="login-error-banner" class="error-banner" style="display: none;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="error-icon">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <span id="login-error-text">Invalid username or password.</span>
+      </div>
+
+      <form id="admin-login-form" onsubmit="event.preventDefault(); adminApp.handleLogin();">
+        <div class="form-group">
+          <label for="admin-username" class="input-label">Username or Admin Email</label>
+          <div class="input-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="field-icon">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <input type="text" id="admin-username" class="text-input" placeholder="admin" required autocomplete="username">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="admin-password" class="input-label">Password</label>
+          <div class="input-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="field-icon">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            <input type="password" id="admin-password" class="text-input" placeholder="••••••••" required autocomplete="current-password">
+            <button type="button" class="toggle-pw-btn" onclick="adminApp.togglePasswordVisibility()">
+              <svg id="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="eye-svg">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" id="btn-login-submit" class="primary-btn login-btn">
+          <span>Sign In to Admin Panel</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="arrow-icon">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+
+        <div class="demo-credentials-helper">
+          <span class="helper-label">Demo Credentials:</span>
+          <code>admin</code> / <code>Admin@123</code>
+          <button type="button" class="autofill-btn" onclick="adminApp.autoFillCredentials()">Auto-Fill</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MAIN DESKTOP ADMIN PANEL VIEW -->
+  <div id="admin-view" class="admin-wrapper" style="display: none;">
+
+    <!-- TOP NAVIGATION BAR -->
+    <header class="admin-navbar glass-panel">
+      <div class="nav-left">
+        <div class="nav-brand-logo">
+          <span>S</span>
+        </div>
+        <div class="nav-brand-text">
+          <span class="nav-title">SCORE</span>
+          <span class="nav-tag">ADMIN PORTAL</span>
+        </div>
+      </div>
+
+      <div class="nav-center">
+        <div id="cloud-status-badge" class="cloud-badge connecting">
+          <span class="status-dot"></span>
+          <span id="cloud-status-text">Connecting to Cloud...</span>
+        </div>
+      </div>
+
+      <div class="nav-right">
+        <div class="admin-profile-pill">
+          <div class="admin-avatar">AD</div>
+          <span class="admin-name" id="display-admin-name">Administrator</span>
+        </div>
+        <button type="button" class="logout-btn" onclick="adminApp.handleLogout()" title="Sign Out">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+          <span>Sign Out</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- MAIN DASHBOARD CONTENT (ONLY THE 3 MENTIONED SECTIONS) -->
+    <main class="admin-content-container">
+
+      <!-- INTRO HEADER -->
+      <section class="portal-intro-section">
+        <div>
+          <h2 class="section-headline">Mobile App Visual Asset Customizer</h2>
+          <p class="section-lead">Manage the core mobile application visuals. Confirmed changes are synchronized instantly via Supabase to all installed student devices.</p>
+        </div>
+        <div class="live-sync-indicator">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="pulse-icon">
+            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+          </svg>
+          <span>Instant Device Push Sync</span>
+        </div>
+      </section>
+
+      <!-- SECTION 1: LOGO CHANGING OF THE APP (1:1 Square) -->
+      <section class="asset-card glass-panel">
+        <div class="asset-card-header">
+          <div class="header-icon-box blue-gradient">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="4" ry="4"></rect>
+              <circle cx="8.5" cy="8.5" r="1.5"></circle>
+              <polyline points="21 15 16 10 5 21"></polyline>
+            </svg>
+          </div>
+          <div>
+            <div class="title-with-dimension">
+              <h3 class="asset-title">1. App Logo</h3>
+              <span class="dimension-pill">Width: 512px × Height: 512px · 1:1 Square</span>
+            </div>
+            <p class="asset-subtitle">Upload the master app logo file. When confirmed, this logo appears on every device the app is installed immediately across Splash, Onboarding, and Auth screens.</p>
+          </div>
+        </div>
+
+        <div class="asset-card-body logo-layout-grid">
+          <!-- Active Logo Preview -->
+          <div class="current-asset-box">
+            <span class="box-micro-label">Current Active Logo</span>
+            <div class="logo-preview-frame">
+              <img id="active-logo-img" src="" alt="Active Logo" style="display: none;">
+              <div id="active-logo-placeholder" class="logo-flutter-fallback">
+                <span class="default-flutter-icon">Flutter</span>
+                <span class="default-flutter-text">Default Logo</span>
+              </div>
+            </div>
+            <span class="ratio-badge">1:1 Square Aspect</span>
+          </div>
+
+          <!-- Upload and Confirm Zone -->
+          <div class="upload-action-box">
+            <span class="box-micro-label">Upload New Logo File</span>
+            <div id="logo-dropzone" class="dropzone" onclick="document.getElementById('input-app-logo').click()">
+              <input type="file" id="input-app-logo" accept="image/*" style="display: none;" onchange="adminApp.handleFileSelect(event, 'logo')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="upload-cloud-icon">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+              <p class="dropzone-text"><strong>Click to upload</strong> or drag and drop image file</p>
+              <p class="dropzone-sub">PNG, JPG, WEBP, or SVG (Recommended: 512 × 512 px square)</p>
+            </div>
+
+            <!-- Staged File Preview -->
+            <div id="staged-logo-preview-wrap" class="staged-preview-wrap" style="display: none;">
+              <div class="staged-thumb-box">
+                <img id="staged-logo-img" src="" alt="Staged Logo Preview">
+              </div>
+              <div class="staged-meta">
+                <span class="staged-filename" id="staged-logo-name">logo.png</span>
+                <span class="staged-size" id="staged-logo-size">Ready to confirm</span>
+              </div>
+              <button type="button" class="btn-clear-staged" onclick="adminApp.clearStagedFile('logo')" title="Cancel file selection">✕</button>
+            </div>
+
+            <div class="confirm-bar">
+              <button type="button" id="btn-confirm-logo" class="confirm-action-btn" onclick="adminApp.confirmLogoChange()" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                <span>Confirm Logo Change</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 2: ONBOARDING SLIDES (3 separate boxes) -->
+      <section class="asset-card glass-panel">
+        <div class="asset-card-header">
+          <div class="header-icon-box purple-gradient">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+              <polyline points="2 17 12 22 22 17"></polyline>
+              <polyline points="2 12 12 17 22 12"></polyline>
+            </svg>
+          </div>
+          <div>
+            <h3 class="asset-title">2. Onboarding Slideshow (Landing Page)</h3>
+            <p class="asset-subtitle">When students launch the application, they view a 3-slide introductory walkthrough before reaching the login/signup page. Upload custom images for each slide below.</p>
+          </div>
+        </div>
+
+        <div class="slides-three-boxes-grid">
+
+          <!-- BOX 1: ONBOARDING SLIDE 1 -->
+          <div class="slide-box glass-panel-sub">
+            <div class="slide-box-header">
+              <div class="title-with-dimension-stacked">
+                <h4 class="slide-box-title">Onboarding Slide 1</h4>
+                <span class="dimension-pill">Width: 800px × Height: 800px · 1:1 Square</span>
+              </div>
+              <span class="slide-index-badge">Slide 1 of 3</span>
+            </div>
+
+            <div class="slide-box-content">
+              <div class="slide-preview-area">
+                <img id="active-ob-1-img" src="" alt="Slide 1 Preview" style="display: none;">
+                <div id="active-ob-1-placeholder" class="slide-placeholder-card">
+                  <span>Default Slide 1</span>
+                  <small>100K+ Authentic PYQs</small>
+                </div>
+              </div>
+
+              <div id="ob1-dropzone" class="dropzone dropzone-compact" onclick="document.getElementById('input-ob-1').click()">
+                <input type="file" id="input-ob-1" accept="image/*" style="display: none;" onchange="adminApp.handleFileSelect(event, 'ob1')">
+                <span class="compact-upload-label">📁 Upload Slide 1 Image</span>
+              </div>
+
+              <div id="staged-ob1-wrap" class="staged-preview-wrap compact" style="display: none;">
+                <img id="staged-ob1-img" src="" alt="Staged Slide 1">
+                <span id="staged-ob1-name" class="staged-filename">slide1.jpg</span>
+                <button type="button" class="btn-clear-staged" onclick="adminApp.clearStagedFile('ob1')">✕</button>
+              </div>
+
+              <button type="button" id="btn-confirm-ob1" class="confirm-action-btn btn-sm" onclick="adminApp.confirmOnboardingSlide(1)" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                <span>Confirm Slide 1 Change</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- BOX 2: ONBOARDING SLIDE 2 -->
+          <div class="slide-box glass-panel-sub">
+            <div class="slide-box-header">
+              <div class="title-with-dimension-stacked">
+                <h4 class="slide-box-title">Onboarding Slide 2</h4>
+                <span class="dimension-pill">Width: 800px × Height: 800px · 1:1 Square</span>
+              </div>
+              <span class="slide-index-badge">Slide 2 of 3</span>
+            </div>
+
+            <div class="slide-box-content">
+              <div class="slide-preview-area">
+                <img id="active-ob-2-img" src="" alt="Slide 2 Preview" style="display: none;">
+                <div id="active-ob-2-placeholder" class="slide-placeholder-card">
+                  <span>Default Slide 2</span>
+                  <small>NTA CBT Simulation</small>
+                </div>
+              </div>
+
+              <div id="ob2-dropzone" class="dropzone dropzone-compact" onclick="document.getElementById('input-ob-2').click()">
+                <input type="file" id="input-ob-2" accept="image/*" style="display: none;" onchange="adminApp.handleFileSelect(event, 'ob2')">
+                <span class="compact-upload-label">📁 Upload Slide 2 Image</span>
+              </div>
+
+              <div id="staged-ob2-wrap" class="staged-preview-wrap compact" style="display: none;">
+                <img id="staged-ob2-img" src="" alt="Staged Slide 2">
+                <span id="staged-ob2-name" class="staged-filename">slide2.jpg</span>
+                <button type="button" class="btn-clear-staged" onclick="adminApp.clearStagedFile('ob2')">✕</button>
+              </div>
+
+              <button type="button" id="btn-confirm-ob2" class="confirm-action-btn btn-sm" onclick="adminApp.confirmOnboardingSlide(2)" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                <span>Confirm Slide 2 Change</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- BOX 3: ONBOARDING SLIDE 3 -->
+          <div class="slide-box glass-panel-sub">
+            <div class="slide-box-header">
+              <div class="title-with-dimension-stacked">
+                <h4 class="slide-box-title">Onboarding Slide 3</h4>
+                <span class="dimension-pill">Width: 800px × Height: 800px · 1:1 Square</span>
+              </div>
+              <span class="slide-index-badge">Slide 3 of 3</span>
+            </div>
+
+            <div class="slide-box-content">
+              <div class="slide-preview-area">
+                <img id="active-ob-3-img" src="" alt="Slide 3 Preview" style="display: none;">
+                <div id="active-ob-3-placeholder" class="slide-placeholder-card">
+                  <span>Default Slide 3</span>
+                  <small>AI Mistake Notebook</small>
+                </div>
+              </div>
+
+              <div id="ob3-dropzone" class="dropzone dropzone-compact" onclick="document.getElementById('input-ob-3').click()">
+                <input type="file" id="input-ob-3" accept="image/*" style="display: none;" onchange="adminApp.handleFileSelect(event, 'ob3')">
+                <span class="compact-upload-label">📁 Upload Slide 3 Image</span>
+              </div>
+
+              <div id="staged-ob3-wrap" class="staged-preview-wrap compact" style="display: none;">
+                <img id="staged-ob3-img" src="" alt="Staged Slide 3">
+                <span id="staged-ob3-name" class="staged-filename">slide3.jpg</span>
+                <button type="button" class="btn-clear-staged" onclick="adminApp.clearStagedFile('ob3')">✕</button>
+              </div>
+
+              <button type="button" id="btn-confirm-ob3" class="confirm-action-btn btn-sm" onclick="adminApp.confirmOnboardingSlide(3)" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                <span>Confirm Slide 3 Change</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- SECTION 3: IN-APP SLIDESHOW (3 separate boxes) -->
+      <section class="asset-card glass-panel">
+        <div class="asset-card-header">
+          <div class="header-icon-box green-gradient">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+            </svg>
+          </div>
+          <div>
+            <h3 class="asset-title">3. In-App Slideshow (Home Screen Banner Slidebar)</h3>
+            <p class="asset-subtitle">The featured full-width carousel displayed on the student home screen. Upload custom banners for each slide below.</p>
+          </div>
+        </div>
+
+        <div class="slides-three-boxes-grid">
+
+          <!-- BOX 1: IN-APP SLIDE 1 -->
+          <div class="slide-box glass-panel-sub">
+            <div class="slide-box-header">
+              <div class="title-with-dimension-stacked">
+                <h4 class="slide-box-title">In-App Slide 1</h4>
+                <span class="dimension-pill">Width: 1080px × Height: 540px · 2:1 Widescreen Banner</span>
+              </div>
+              <span class="slide-index-badge">Banner 1</span>
+            </div>
+
+            <div class="slide-box-content">
+              <div class="slide-preview-area banner-ratio">
+                <img id="active-inapp-1-img" src="" alt="In-App Banner 1 Preview" style="display: none;">
+                <div id="active-inapp-1-placeholder" class="slide-placeholder-card">
+                  <span>Default In-App Slide 1</span>
+                  <small>SCORE Engine Flagship</small>
+                </div>
+              </div>
+
+              <div id="inapp1-dropzone" class="dropzone dropzone-compact" onclick="document.getElementById('input-inapp-1').click()">
+                <input type="file" id="input-inapp-1" accept="image/*" style="display: none;" onchange="adminApp.handleFileSelect(event, 'inapp1')">
+                <span class="compact-upload-label">📁 Upload In-App Banner 1</span>
+              </div>
+
+              <div id="staged-inapp1-wrap" class="staged-preview-wrap compact" style="display: none;">
+                <img id="staged-inapp1-img" src="" alt="Staged In-App Banner 1">
+                <span id="staged-inapp1-name" class="staged-filename">banner1.jpg</span>
+                <button type="button" class="btn-clear-staged" onclick="adminApp.clearStagedFile('inapp1')">✕</button>
+              </div>
+
+              <button type="button" id="btn-confirm-inapp1" class="confirm-action-btn btn-sm" onclick="adminApp.confirmInAppSlide(1)" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                <span>Confirm In-App Slide 1 Change</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- BOX 2: IN-APP SLIDE 2 -->
+          <div class="slide-box glass-panel-sub">
+            <div class="slide-box-header">
+              <div class="title-with-dimension-stacked">
+                <h4 class="slide-box-title">In-App Slide 2</h4>
+                <span class="dimension-pill">Width: 1080px × Height: 540px · 2:1 Widescreen Banner</span>
+              </div>
+              <span class="slide-index-badge">Banner 2</span>
+            </div>
+
+            <div class="slide-box-content">
+              <div class="slide-preview-area banner-ratio">
+                <img id="active-inapp-2-img" src="" alt="In-App Banner 2 Preview" style="display: none;">
+                <div id="active-inapp-2-placeholder" class="slide-placeholder-card">
+                  <span>Default In-App Slide 2</span>
+                  <small>Top 500 Questions Series</small>
+                </div>
+              </div>
+
+              <div id="inapp2-dropzone" class="dropzone dropzone-compact" onclick="document.getElementById('input-inapp-2').click()">
+                <input type="file" id="input-inapp-2" accept="image/*" style="display: none;" onchange="adminApp.handleFileSelect(event, 'inapp2')">
+                <span class="compact-upload-label">📁 Upload In-App Banner 2</span>
+              </div>
+
+              <div id="staged-inapp2-wrap" class="staged-preview-wrap compact" style="display: none;">
+                <img id="staged-inapp2-img" src="" alt="Staged In-App Banner 2">
+                <span id="staged-inapp2-name" class="staged-filename">banner2.jpg</span>
+                <button type="button" class="btn-clear-staged" onclick="adminApp.clearStagedFile('inapp2')">✕</button>
+              </div>
+
+              <button type="button" id="btn-confirm-inapp2" class="confirm-action-btn btn-sm" onclick="adminApp.confirmInAppSlide(2)" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                <span>Confirm In-App Slide 2 Change</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- BOX 3: IN-APP SLIDE 3 -->
+          <div class="slide-box glass-panel-sub">
+            <div class="slide-box-header">
+              <div class="title-with-dimension-stacked">
+                <h4 class="slide-box-title">In-App Slide 3</h4>
+                <span class="dimension-pill">Width: 1080px × Height: 540px · 2:1 Widescreen Banner</span>
+              </div>
+              <span class="slide-index-badge">Banner 3</span>
+            </div>
+
+            <div class="slide-box-content">
+              <div class="slide-preview-area banner-ratio">
+                <img id="active-inapp-3-img" src="" alt="In-App Banner 3 Preview" style="display: none;">
+                <div id="active-inapp-3-placeholder" class="slide-placeholder-card">
+                  <span>Default In-App Slide 3</span>
+                  <small>Daily Practice Target</small>
+                </div>
+              </div>
+
+              <div id="inapp3-dropzone" class="dropzone dropzone-compact" onclick="document.getElementById('input-inapp-3').click()">
+                <input type="file" id="input-inapp-3" accept="image/*" style="display: none;" onchange="adminApp.handleFileSelect(event, 'inapp3')">
+                <span class="compact-upload-label">📁 Upload In-App Banner 3</span>
+              </div>
+
+              <div id="staged-inapp3-wrap" class="staged-preview-wrap compact" style="display: none;">
+                <img id="staged-inapp3-img" src="" alt="Staged In-App Banner 3">
+                <span id="staged-inapp3-name" class="staged-filename">banner3.jpg</span>
+                <button type="button" class="btn-clear-staged" onclick="adminApp.clearStagedFile('inapp3')">✕</button>
+              </div>
+
+              <button type="button" id="btn-confirm-inapp3" class="confirm-action-btn btn-sm" onclick="adminApp.confirmInAppSlide(3)" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                <span>Confirm In-App Slide 3 Change</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="admin-footer">
+      <span>SCORE Engine Admin Portal · Connected to Supabase Project: <code>jpjvcimeggkcpvlybciq</code></span>
+    </footer>
+
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- ADMIN LOGIC CONTROLLER -->
+  <script src="admin.js"></script>
+</body>
+</html>

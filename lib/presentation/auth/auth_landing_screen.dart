@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app/theme/app_colors.dart';
+import '../common/widgets/app_logo_widget.dart';
 import '../main_nav_screen.dart';
 import 'auth_provider.dart';
 
@@ -225,7 +226,7 @@ class _AuthLandingScreenState extends ConsumerState<AuthLandingScreen> {
                       ],
                     ),
                     child: const Center(
-                      child: FlutterLogo(size: 46),
+                      child: AppLogoWidget(size: 46),
                     ),
                   ),
                   const SizedBox(height: 14),
